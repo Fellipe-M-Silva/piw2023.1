@@ -1,9 +1,17 @@
 import express from "express";
 import dotenv from "dotenv";
 import path from "path";
+import { AppDataSource } from "./data-source";
+import userRoutes from "./routes/user.route";
+import "reflect-metadata";
 
 const server = express();
+server.use(userRoutes);
 dotenv.config();
+//Criar o banco e gerar as tabelas
+AppDataSource.initialize().catch(error => {
+    console.log(error);
+});
 
 const port = process.env.BACK_PORT || 5000;
 
