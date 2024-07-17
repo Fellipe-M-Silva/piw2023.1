@@ -3,9 +3,104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alo</title>
+    <title>Projeto de Interfaces Web - Cita</title>
 </head>
 <body>
-    <h1>Alo alo</h1>
+    <h1>Projeto de Interfaces Web</h1>
+    <h2>Proposta de projeto final: Cita</h2>
+    <p>Cita é um repositório de fichamentos de citação nos quais usuários podem criar seus próprios fichamentos ou importar fichamentos de outros usuários ou de</p>
+    
+    <h3>Membros</h3>
+    <p>Fellipe Mayan da Silva</p>
+    
+    <h3>Entidades e relacionamentos</h3>
+    
+    <h4>Usuário</h4>
+    <p>Acessa o sistema e pode ver e gerenciar fichamentos. Se divide em 3 tipos, com papéis diferentes:</p>
+    <ul>
+        <li><strong>Visitante:</strong> visualiza os fichamentos públicos;</li>
+        <li><strong>Usuário:</strong> visualiza os fichamentos públicos, acessa o sistema, gerencia fichamentos, gerencia autores;</li>
+        <li><strong>Administrador:</strong> visualiza os fichamentos públicos, acessa o sistema, gerencia fichamentos, gerencia autores, gerencia usuários.</li>
+    </ul>
+    <p><strong>Atributos:</strong></p>
+    <ul>
+        <li>Nome;</li>
+        <li>E-mail;</li>
+        <li>Senha;</li>
+        <li>Perfil;</li>
+        <li>Fichamentos (chave estrangeira).</li>
+    </ul>
+    <p><strong>Relacionamentos:</strong></p>
+    <ul>
+        <li>Possui de 0 a n fichamentos.</li>
+    </ul>
+    
+    <h4>Fichamento</h4>
+    <p>Representa um grupo de citações de uma obra.</p>
+    <p><strong>Atributos:</strong></p>
+    <ul>
+        <li>Obra (chave estrangeira);</li>
+        <li>Fichas (chave estrangeira).</li>
+    </ul>
+    <p><strong>Relacionamentos:</strong></p>
+    <ul>
+        <li>Possui 1 obra;</li>
+        <li>Possui de 0 a n fichas.</li>
+    </ul>
+    
+    <h4>Obra</h4>
+    <p>Representa uma obra de forma geral, como um livro, artigo, tese ou outros tipos de mídia. É uma entidade fraca que precisa de um Fichário.</p>
+    <p><strong>Atributos:</strong></p>
+    <ul>
+        <li>Tipo;</li>
+        <li>Título;</li>
+        <li>Imagem;</li>
+        <li>Edição (opcional);</li>
+        <li>Data (opcional);</li>
+        <li>Autores (chave estrangeira).</li>
+    </ul>
+    <p><strong>Relacionamentos:</strong></p>
+    <ul>
+        <li>É possuído por 1 fichamento;</li>
+        <li>Possui de 1 a n autores.</li>
+    </ul>
+    
+    <h4>Autor</h4>
+    <p>Representa a pessoa ou entidade que escreveu ou produziu a obra. Existe aqui para fins de agrupamento de obras e otimização de busca; única entidade a não ter um CRUD completo.</p>
+    <p><strong>Atributos:</strong></p>
+    <ul>
+        <li>Nome;</li>
+        <li>Obras (chave estrangeira).</li>
+    </ul>
+    <p><strong>Relacionamentos:</strong></p>
+    <ul>
+        <li>Possui de 1 a n obras.</li>
+    </ul>
+    
+    <h4>Ficha</h4>
+    <p>Representa uma citação, ou uma ficha analógica. É uma entidade fraca que precisa de um Fichário.</p>
+    <p><strong>Atributos:</strong></p>
+    <ul>
+        <li>Texto;</li>
+        <li>Página inicial;</li>
+        <li>Página final;</li>
+        <li>Palavras-chave;</li>
+        <li>Anotação.</li>
+    </ul>
+    <p><strong>Relacionamentos:</strong></p>
+    <ul>
+        <li>É possuída por 1 fichamento.</li>
+    </ul>
+    
+    <h3>Funcionalidades do sistema</h3>
+    <ul>
+        <li><strong>RF01 - Acesso:</strong> Visitante, Usuário e Administrador podem acessar a área pública do sistema.</li>
+        <li><strong>RF02 - Cadastro:</strong> Visitante pode criar uma conta do tipo Usuário para ter acesso à área privada do sistema.</li>
+        <li><strong>RF03 - Autenticação:</strong> Usuários e Administradores podem acessar a área privada do sistema por meio de um acesso na página inicial.</li>
+        <li><strong>RF04 - Gestão de usuários:</strong> Administrador pode criar, editar e excluir usuários.</li>
+        <li><strong>RF05 - Gestão de Fichamentos:</strong> Usuário e Administrador podem visualizar, criar, editar e excluir fichamentos de sua autoria. Visitante, Usuário e Administrador podem visualizar fichamentos públicos.</li>
+        <li><strong>RF06 - Gestão de Fichas:</strong> Usuário e Administrador podem visualizar, criar, editar e excluir fichas em um fichamento de sua autoria. Visitante, Usuário e Administrador podem visualizar fichas em fichamentos públicos.</li>
+        <li><strong>RF07 - Importação de fichários:</strong> Usuário e Administrador podem criar uma cópia de um fichário público para sua área privada.</li>
+    </ul>
 </body>
 </html>
