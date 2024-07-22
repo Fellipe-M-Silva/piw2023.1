@@ -22,3 +22,10 @@ server.get("/", (req, res) =>{
 server.listen(port, ()=> {
     console.log("Servidor está rodando no talo")
 })
+
+server.use(express.static(path.join(__dirname,'public')));
+server.set('view engine', 'ejs');
+server.set('views', path.join(__dirname,'views'));
+server.get("/", (req, res) =>{
+    res.render('index')
+});
