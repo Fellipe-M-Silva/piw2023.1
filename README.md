@@ -94,7 +94,7 @@ Lista as tecnologias, frameworks e bibliotecas utilizados.
  
 | Entidade| Criação | Leitura | Atualização | Remoção |
 | --- | --- | --- | --- | --- |
-| Usuário | ⌀ | × ⌀ | × ⌀ | × ⌀ |
+| Usuário | ⌀ | ⊙ ⌀ | × ⌀ | × ⌀ |
 | Perfis |  |  |  |  |
 | Fichamento | × | ⊙ × ⌀ | × | × |
 | Obra | × | ⊙ × ⌀ | × | × |
