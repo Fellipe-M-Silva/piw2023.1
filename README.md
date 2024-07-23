@@ -91,12 +91,22 @@ Lista as tecnologias, frameworks e bibliotecas utilizados.
 
 ## :shipit: Operações implementadas para cada entidade da aplicação
 
-
+ 
 | Entidade| Criação | Leitura | Atualização | Remoção |
 | --- | --- | --- | --- | --- |
-| Visitante |  | X |  |  |
-| Usuário | X | X | X | X |
-| Administrador | X | X | X | X |
+| Usuário | ⌀ | × ⌀ | × ⌀ | × ⌀ |
+| Perfis |  |  |  |  |
+| Fichamento | × | ⊙ × ⌀ | × | × |
+| Obra | × | ⊙ × ⌀ | × | × |
+| Ficha | × | ⊙ × ⌀ | × | × |
+| Autor | × | ⌀ | × | × |
+
+<h4>Onde os seguintes símbolos representam as permissões para cada perfil:</h4>
+<ul>
+  <li>⊙ - Visitante (apenas para fichamentos públicos);</li>
+  <li>× - Usuário;</li>
+  <li>⌀ - Administrdador.</li>
+</ul>
 
 > Lembre-se que é necessário implementar o CRUD de pelo menos duas entidades.
 
