@@ -1,5 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ChildEntity } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, OneToOne, JoinColumn } from "typeorm"
 import { Annotation } from "./Annotation"
+import { Role } from "./Role"
 
 @Entity()
 export class User {
@@ -15,9 +16,6 @@ export class User {
     name: string
 
     @Column()
-    profile: string
-
-    @Column()
     email: string
 
     @Column()
@@ -25,4 +23,8 @@ export class User {
 
     @OneToMany(() => Annotation, (annotation)=> annotation.user)
     annotations: Annotation[]
+
+    // @OneToOne(() => Role, (role) => role.user)
+    // @JoinColumn()
+    // role: Role
 }

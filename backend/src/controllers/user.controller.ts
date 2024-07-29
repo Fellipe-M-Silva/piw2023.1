@@ -2,18 +2,21 @@ import { Request, Response } from "express";
 import { AppDataSource } from "../data-source";
 import { User } from "../entity/User";
 import userRoutes from "../routes/user.route";
+import bcrypt from "bcryptjs";
 
 async function Create (req: Request, res: Response) {
-    const {name, email, profile, password} = req.body;
+    const {name, email, role, password} = req.body;
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
     const newUser = new User();
     newUser.name = name;
     newUser.email = email;
-    newUser.profile = profile;
-    newUser.password = password;
+    // newUser.role = role;
+    newUser.password = hashedPassword;
 
     await AppDataSource.manager.save(newUser);
-    res.sendStatus(201);
-    res.json(newUser);
+    res.sendStatus(201).send("Conta criada");
 }
 async function List (req: Request, res: Response) {
     const users = await AppDataSource.manager.find(User);
@@ -26,7 +29,7 @@ async function Find (req: Request, res: Response) {
 }
 async function Update (req: Request, res: Response) {
     const {id} = req.params;
-    const {name, email, profile, password} = req.body;
+    const {name, email, password, role} = req.body;
 
     const user = await AppDataSource.manager.findOneBy(User, {id:id});
     if (name) {
@@ -35,11 +38,14 @@ async function Update (req: Request, res: Response) {
     if (email) {
         user.email = email;
     }
-    if (profile) {
-        user.profile = profile;
-    }
+    // if (role) {
+    //     user.role = role;
+    // }
     if (password) {
-        user.password = password;
+        const salt = await bcrypt.genSalt(9012);
+        const hashedPassword = await bcrypt.hash(password, salt);
+
+        user.password = hashedPassword;
     }
 
     await AppDataSource.manager.save(user);

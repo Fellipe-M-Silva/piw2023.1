@@ -20,10 +20,10 @@ async function List (req: Request, res: Response) {
     const works = await AppDataSource.manager.find(Work);
     const authorRepository = AppDataSource.getRepository(Author)
     const authors = await authorRepository.find({
-    relations: {
-        works: true,
-    },
-})
+        relations: {
+            works: true,
+        },
+    })
     res.json({works});
 }
 async function Find (req: Request, res: Response) {

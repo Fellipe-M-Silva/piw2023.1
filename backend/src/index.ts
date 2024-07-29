@@ -8,6 +8,7 @@ import authorRoutes from "./routes/author.route";
 import quoteRoutes from "./routes/quote.route";
 import userRoutes from "./routes/user.route";
 import workRoutes from "./routes/work.route";
+import authRoutes from "./routes/authentication.route";
 
 const server = express();
 dotenv.config();
@@ -16,6 +17,7 @@ server.use(authorRoutes);
 server.use(quoteRoutes);
 server.use(userRoutes);
 server.use(workRoutes);
+server.use(authRoutes);
 server.use(express.json());
 
 //Criar o banco e gerar as tabelas
@@ -27,7 +29,6 @@ const host = process.env.HOST_PORT || "localhost";
 const port = process.env.BACK_PORT || 5000;
 
 server.get("/", (req, res) =>{
-    // res.sendFile(path.join(__dirname, "/projeto/index.html"));
     res.send("Servidor funcionando ;)")
 })
 

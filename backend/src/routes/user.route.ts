@@ -11,7 +11,6 @@ userRoutes.get("/user/:id", Find);
 userRoutes.put("/user/:id", bodyParser.json(), Update);
 userRoutes.delete("/user/:id", Delete);
 
-//
 userRoutes.post("/cadastro", )
 
 export default userRoutes;
