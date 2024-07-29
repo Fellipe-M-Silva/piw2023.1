@@ -1,6 +1,10 @@
 import { Request, Response } from "express";
 import { AppDataSource } from "../data-source";
 import { Annotation } from "../entity/Annotation";
+import { Quote } from "../entity/Quote";
+import { User } from "../entity/User";
+import { Work } from "../entity/Work";
+
 
 async function Create (req: Request, res: Response) {
     const {isPublic, work, quotes, user} = req.body;
@@ -12,7 +16,6 @@ async function Create (req: Request, res: Response) {
 
     await AppDataSource.manager.save(newAnnotation);
     res.sendStatus(201);
-    res.json(newAnnotation);
 }
 async function List (req: Request, res: Response) {
     const annotations = await AppDataSource.manager.find(Annotation);

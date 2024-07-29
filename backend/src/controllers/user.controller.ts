@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { AppDataSource } from "../data-source";
 import { User } from "../entity/User";
+import userRoutes from "../routes/user.route";
 
 async function Create (req: Request, res: Response) {
     const {name, email, profile, password} = req.body;
@@ -52,5 +53,7 @@ async function Delete (req: Request, res: Response) {
     await AppDataSource.manager.remove(user);
     res.sendStatus(200);
 }
+
+
 
 export { Create, List, Find, Update, Delete };

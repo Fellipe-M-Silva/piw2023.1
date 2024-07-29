@@ -12,19 +12,26 @@ export class Work {
         length: 250,
         
     })
-    name: string
+    title: string
 
-    @Column()
+    @Column({
+        nullable: true
+    })
     edition: string
 
-    @Column()
+    @Column({
+        nullable: true
+    })
     publisher: string
 
     //como determinar que o ano precisa ser maior que 0?
-    @Column()
+    @Column({
+        type: "int",
+        nullable: true
+    })
     publishingYear: number
 
-    @ManyToMany(() => Author, (author) => author.works)
+    @ManyToMany(() => Author, (author) => author.works, {eager: true})
     @JoinTable()
     authors: Author[]
 }

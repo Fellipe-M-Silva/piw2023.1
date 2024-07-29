@@ -7,10 +7,14 @@ export class Author {
     @PrimaryGeneratedColumn("uuid")
     id: string
 
-    @Column()
+    @Column({
+        unique: true
+    })
     name: string
 
-    @ManyToMany(() => Work, (work) => work.authors)
+    @ManyToMany(() => Work, (work) => work.authors, {
+        nullable: true
+    })
     works: Work[]
 
 }

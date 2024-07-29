@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ChildEntity } from "typeorm"
 import { Annotation } from "./Annotation"
 
 @Entity()
@@ -22,11 +22,6 @@ export class User {
 
     @Column()
     password: string
-
-    @Column({
-        default: false
-    })
-    isAdmin: boolean
 
     @OneToMany(() => Annotation, (annotation)=> annotation.user)
     annotations: Annotation[]

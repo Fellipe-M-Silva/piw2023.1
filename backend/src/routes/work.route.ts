@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { Create, List, Find, Update, Delete } from "../controllers/user.controller";
+import { Create, List, Find, Update, Delete } from "../controllers/work.controller";
 import bodyParser from "body-parser";
 
 //criando rotas pra cada entidade :o

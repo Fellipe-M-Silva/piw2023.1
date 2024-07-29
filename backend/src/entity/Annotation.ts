@@ -10,7 +10,7 @@ export class Annotation {
     id: string
 
     @Column({
-        default: false
+        default: true
     })
     isPublic: boolean
 
@@ -22,5 +22,6 @@ export class Annotation {
     quotes: Quote[]
 
     @ManyToOne(() => User, (user) => user.annotations)
+    @JoinColumn({name: 'user_id'})
     user: User
 }

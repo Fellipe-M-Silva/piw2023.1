@@ -1,22 +1,30 @@
 import { Request, Response } from "express";
 import { AppDataSource } from "../data-source";
 import { Work } from "../entity/Work";
+import { Author } from "../entity/Author";
+
 
 async function Create (req: Request, res: Response) {
-    const {name, edition, publisher, publishingYear} = req.body;
+    const {title, edition, publisher, publishingYear, authors} = req.body;
     const newWork = new Work();
-    newWork.name = name;
+    newWork.title = title;
     newWork.edition = edition;
     newWork.publisher = publisher;
-    newWork.publishingYear = publishingYear;
+    newWork.publishingYear = Number(publishingYear);
+    newWork.authors = authors;
 
     await AppDataSource.manager.save(newWork);
     res.sendStatus(201);
-    res.json(newWork);
 }
 async function List (req: Request, res: Response) {
     const works = await AppDataSource.manager.find(Work);
-    res.json(works);
+    const authorRepository = AppDataSource.getRepository(Author)
+    const authors = await authorRepository.find({
+    relations: {
+        works: true,
+    },
+})
+    res.json({works});
 }
 async function Find (req: Request, res: Response) {
     const {id} = req.params;
@@ -25,11 +33,11 @@ async function Find (req: Request, res: Response) {
 }
 async function Update (req: Request, res: Response) {
     const {id} = req.params;
-    const {name, edition, publisher, publishingYear} = req.body;
+    const {title, edition, publisher, publishingYear} = req.body;
 
     const workToBeUpdated = await AppDataSource.manager.findOneBy(Work, {id:id});
-    if (name) {
-        workToBeUpdated.name = name;
+    if (title) {
+        workToBeUpdated.title = title;
     }
     if (edition) {
         workToBeUpdated.edition = edition;
