@@ -9,11 +9,15 @@ import quoteRoutes from "./routes/quote.route";
 import userRoutes from "./routes/user.route";
 import workRoutes from "./routes/work.route";
 import authRoutes from "./routes/authentication.route";
+import profileRoutes from "./routes/profile.route";
+import permissionRoutes from "./routes/permission.route";
 
 const server = express();
 dotenv.config();
 server.use(annotationRoutes);
 server.use(authorRoutes);
+server.use(permissionRoutes);
+server.use(profileRoutes);
 server.use(quoteRoutes);
 server.use(userRoutes);
 server.use(workRoutes);

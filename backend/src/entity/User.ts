@@ -1,9 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, OneToOne, JoinColumn } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne, JoinColumn } from "typeorm"
 import { Annotation } from "./Annotation"
-import { Role } from "./Role"
+import { Profile } from "./Profile"
 
 @Entity()
-export class User {
+export class User 
+{
 
     @PrimaryGeneratedColumn("uuid")
     id: string
@@ -15,16 +16,22 @@ export class User {
     })
     name: string
 
-    @Column()
+    @Column({
+        unique: true
+    })
     email: string
 
     @Column()
     password: string
 
+    //Relacionamentos
+
+    //Possui *apenas 1* Perfil
+    @ManyToOne(() => Profile, (profile) => profile.user, {eager:true,})
+    profile: Profile
+
+    //Possui de *0 a n* fichamentos
     @OneToMany(() => Annotation, (annotation)=> annotation.user)
     annotations: Annotation[]
 
-    // @OneToOne(() => Role, (role) => role.user)
-    // @JoinColumn()
-    // role: Role
 }

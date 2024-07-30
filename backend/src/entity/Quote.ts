@@ -17,18 +17,19 @@ export class Quote {
     })
     startingPage: number
 
-    //é assim que digo que o default é a mesma página?
     @Column({
         nullable: true
     })
     endingPage: number
 
-    //como determinar que o ano precisa ser maior que 0?
     @Column({
         nullable: true
     })
     note: string
 
+    // Relacionamentos
+
+    //Pertence a *apenas 1* fichamento
     @ManyToOne(() => Annotation, (annotation) => annotation.quotes)
     annotation: Annotation
 

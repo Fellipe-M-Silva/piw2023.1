@@ -1,8 +1,6 @@
 import { Request, Response } from "express";
 import { AppDataSource } from "../data-source";
 import { Work } from "../entity/Work";
-import { Author } from "../entity/Author";
-
 
 async function Create (req: Request, res: Response) {
     const {title, edition, publisher, publishingYear, authors} = req.body;
@@ -16,16 +14,13 @@ async function Create (req: Request, res: Response) {
     await AppDataSource.manager.save(newWork);
     res.sendStatus(201);
 }
+
 async function List (req: Request, res: Response) {
     const works = await AppDataSource.manager.find(Work);
-    const authorRepository = AppDataSource.getRepository(Author)
-    const authors = await authorRepository.find({
-        relations: {
-            works: true,
-        },
-    })
+
     res.json({works});
 }
+
 async function Find (req: Request, res: Response) {
     const {id} = req.params;
     const workToBeFound = await AppDataSource.manager.findOneBy(Work, {id:id});
@@ -51,8 +46,8 @@ async function Update (req: Request, res: Response) {
 
     await AppDataSource.manager.save(workToBeUpdated);
     res.sendStatus(202);
-    res.json(workToBeUpdated);
 }
+
 async function Delete (req: Request, res: Response) {
     const {id} = req.params;
     const workToBeDeleted = await AppDataSource.manager.findOneBy(Work, {id:id});

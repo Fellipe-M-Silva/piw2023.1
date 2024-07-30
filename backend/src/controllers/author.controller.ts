@@ -9,7 +9,6 @@ async function Create (req: Request, res: Response) {
 
     await AppDataSource.manager.save(newAuthor);
     res.sendStatus(201);
-    res.json(newAuthor);
 }
 async function List (req: Request, res: Response) {
     const authors = await AppDataSource.manager.find(Author);
@@ -31,7 +30,6 @@ async function Update (req: Request, res: Response) {
 
     await AppDataSource.manager.save(authorToBeUpdated);
     res.sendStatus(202);
-    res.json(authorToBeUpdated);
 }
 async function Delete (req: Request, res: Response) {
     const {id} = req.params;

@@ -1,8 +1,8 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, OneToMany, ManyToMany, JoinTable} from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable} from "typeorm"
 import { Work } from "./Work"
 
-@Entity()
-export class Author {
+@Entity() export class Author
+{
 
     @PrimaryGeneratedColumn("uuid")
     id: string
@@ -12,9 +12,13 @@ export class Author {
     })
     name: string
 
+    //Relacionamentos
+
+    //Possui de *1 a n* obras
     @ManyToMany(() => Work, (work) => work.authors, {
         nullable: true
     })
+    @JoinTable()
     works: Work[]
 
 }

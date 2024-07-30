@@ -1,18 +1,15 @@
 import { Request, Response } from "express";
 import { AppDataSource } from "../data-source";
 import { Annotation } from "../entity/Annotation";
-import { Quote } from "../entity/Quote";
-import { User } from "../entity/User";
-import { Work } from "../entity/Work";
 
 
 async function Create (req: Request, res: Response) {
-    const {isPublic, work, quotes, user} = req.body;
+    const {isPublic, user, work, quotes } = req.body;
     const newAnnotation = new Annotation;
     newAnnotation.isPublic = isPublic;
+    newAnnotation.user = user;
     newAnnotation.work = work;
     newAnnotation.quotes = quotes;
-    newAnnotation.user = user;
 
     await AppDataSource.manager.save(newAnnotation);
     res.sendStatus(201);
@@ -28,11 +25,14 @@ async function Find (req: Request, res: Response) {
 }
 async function Update (req: Request, res: Response) {
     const {id} = req.params;
-    const {isPublic, work, quotes, user} = req.body;
+    const {isPublic, user, work, quotes } = req.body;
 
     const annotationToBeUpdated = await AppDataSource.manager.findOneBy(Annotation, {id:id});
     if (isPublic) {
         annotationToBeUpdated.isPublic = isPublic;
+    }
+    if (user) {
+        annotationToBeUpdated.user = user;
     }
     if (work) {
         annotationToBeUpdated.work = work;
@@ -40,13 +40,9 @@ async function Update (req: Request, res: Response) {
     if (quotes) {
         annotationToBeUpdated.quotes = quotes;
     }
-    if (user) {
-        annotationToBeUpdated.user = user;
-    }
-
+    
     await AppDataSource.manager.save(annotationToBeUpdated);
     res.sendStatus(202);
-    res.json(annotationToBeUpdated);
 }
 async function Delete (req: Request, res: Response) {
     const {id} = req.params;

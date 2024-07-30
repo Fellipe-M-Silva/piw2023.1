@@ -1,10 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, OneToMany, ManyToOne} from "typeorm"
-import { Work } from "./Work"
+import { Entity, PrimaryGeneratedColumn, Column, JoinColumn, OneToMany, ManyToOne, OneToOne } from "typeorm"
 import { Quote } from "./Quote"
 import { User } from "./User"
+import { Work } from "./Work"
 
 @Entity()
-export class Annotation {
+export class Annotation
+{
 
     @PrimaryGeneratedColumn("uuid")
     id: string
@@ -14,14 +15,19 @@ export class Annotation {
     })
     isPublic: boolean
 
-    @OneToOne(() => Work)
+    //Relacionamentos
+
+    //Possuído por *Apenas 1* usuário
+    @ManyToOne(() => User, (user) => user.annotations)
+    user: User
+
+    //Possui *apenas 1* obra
+    @OneToOne(() => Work, { eager:true,})
     @JoinColumn()
     work: Work
 
-    @OneToMany(() => Quote, (quote) => quote.annotation)
+    //Possui de *0 a N* citações
+    @OneToMany(() => Quote, (quote) => quote.annotation, {eager:true})
     quotes: Quote[]
-
-    @ManyToOne(() => User, (user) => user.annotations)
-    @JoinColumn({name: 'user_id'})
-    user: User
+    
 }

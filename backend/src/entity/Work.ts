@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable, Auth } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany } from "typeorm"
 import { Author } from "./Author"
 
 @Entity()
@@ -31,7 +31,10 @@ export class Work {
     })
     publishingYear: number
 
+    //Relacionamentos
+
+    //Possui de *1 a n* autores
     @ManyToMany(() => Author, (author) => author.works, {eager: true})
-    @JoinTable()
     authors: Author[]
+
 }

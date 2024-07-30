@@ -8,7 +8,7 @@ import bodyParser from "body-parser";
 const authRoutes = Router();
 
 authRoutes.post("/cadastro", bodyParser.json(), async (req:Request, res:Response) => {
-    const {name, email, role, password} = req.body;
+    const {name, email, profile, password} = req.body;
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
@@ -16,7 +16,7 @@ authRoutes.post("/cadastro", bodyParser.json(), async (req:Request, res:Response
     const newUser = new User();
     newUser.name = name;
     newUser.email = email;
-    // newUser.role = role;
+    newUser.profile = profile;
     newUser.password = hashedPassword;
 
     await AppDataSource.manager.save(newUser);
@@ -38,4 +38,4 @@ authRoutes.post('/login', bodyParser.json(), async (req:Request, res:Response) =
     res.status(200).send({ token });
   });
 
-export default authRoutes
+export default authRoutes;
