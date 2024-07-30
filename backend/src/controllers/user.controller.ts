@@ -4,15 +4,16 @@ import { User } from "../entity/User";
 import bcrypt from "bcryptjs";
 
 async function Create (req: Request, res: Response) {
-    const {name, email, profile, password} = req.body;
+    const {name, email, password, isAdmin, isSuperAdmin} = req.body;
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
     const newUser = new User();
     newUser.name = name;
     newUser.email = email;
-    newUser.profile = profile;
     newUser.password = hashedPassword;
+    newUser.isAdmin = isAdmin;
+    newUser.isSuperAdmin = isSuperAdmin;
 
     await AppDataSource.manager.save(newUser);
     res.sendStatus(201);
@@ -30,7 +31,7 @@ async function Find (req: Request, res: Response) {
 }
 async function Update (req: Request, res: Response) {
     const {id} = req.params;
-    const {name, email, password, profile} = req.body;
+    const {name, email, password, isAdmin, isSuperAdmin} = req.body;
 
     const user = await AppDataSource.manager.findOneBy(User, {id:id});
     if (name) {
@@ -39,8 +40,11 @@ async function Update (req: Request, res: Response) {
     if (email) {
         user.email = email;
     }
-    if (profile) {
-        user.profile = profile;
+    if (isAdmin) {
+        user.isAdmin = isAdmin;
+    }
+    if (isSuperAdmin) {
+        user.isSuperAdmin = isSuperAdmin;
     }
     if (password) {
         const salt = await bcrypt.genSalt(9012);

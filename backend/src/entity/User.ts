@@ -1,6 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne, JoinColumn } from "typeorm"
 import { Annotation } from "./Annotation"
-import { Profile } from "./Profile"
 
 @Entity()
 export class User 
@@ -24,11 +23,11 @@ export class User
     @Column()
     password: string
 
-    //Relacionamentos
+    @Column({default:false})
+    isAdmin: boolean
 
-    //Possui *apenas 1* Perfil
-    @ManyToOne(() => Profile, (profile) => profile.user, {eager:true,})
-    profile: Profile
+    @Column({default:false})
+    isSuperAdmin: boolean
 
     //Possui de *0 a n* fichamentos
     @OneToMany(() => Annotation, (annotation)=> annotation.user)
