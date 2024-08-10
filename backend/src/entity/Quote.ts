@@ -15,12 +15,12 @@ export class Quote {
     @Column({
         nullable: true
     })
-    startingPage: number
+    startingPage: string
 
     @Column({
         nullable: true
     })
-    endingPage: number
+    endingPage: string
 
     @Column({
         nullable: true

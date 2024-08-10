@@ -1,18 +1,33 @@
 import { Request, Response } from "express";
 import { AppDataSource } from "../data-source";
 import { Quote } from "../entity/Quote";
+import { Annotation } from "../entity/Annotation";
+
+interface quoteBody {
+    annotation: Annotation;
+    text: string;
+    startingPage: string;
+    endingPage: string;
+    note: string;
+}
 
 async function Create (req: Request, res: Response) {
-    const {annotation, text, startingPage, endingPage, note} = req.body;
+    const data:quoteBody = req.body;
     const newQuote = new Quote();
-    newQuote.annotation = annotation
-    newQuote.text = text;
-    newQuote.startingPage = startingPage;
-    newQuote.endingPage = endingPage;
-    newQuote.note = note;
+    newQuote.annotation = data.annotation
+    newQuote.text = data.text;
+    newQuote.startingPage = data.startingPage;
+    newQuote.endingPage = data.endingPage;
+    newQuote.note = data.note;
 
-    await AppDataSource.manager.save(newQuote);
-    res.sendStatus(201);
+    try {
+        await AppDataSource.manager.save(newQuote);
+        res.sendStatus(201);
+        console.log("Registro criado.");
+    }
+    catch (err) {
+        console.log(err);
+    }
 }
 
 async function List (req: Request, res: Response) {
@@ -24,28 +39,41 @@ async function Find (req: Request, res: Response) {
     const quoteToBeFound = await AppDataSource.manager.findOneBy(Quote, {id:id});
     res.json(quoteToBeFound);
 }
+
 async function Update (req: Request, res: Response) {
-    const {id} = req.params;
-    //Não adicionei fichário por ele não ser alterável
-    const {text, startingPage, endingPage, note} = req.body;
+    const data:quoteBody = req.body;
+    const quoteToBeUpdated = await AppDataSource.manager.findOneBy(Quote, {id:req.params.id})
 
-    const quoteToBeUpdated = await AppDataSource.manager.findOneBy(Quote, {id:id});
-    if (text) {
-        quoteToBeUpdated.text = text;
+    try { 
+        quoteToBeUpdated.annotation = data.annotation;
+        quoteToBeUpdated.text = data.text;
+        quoteToBeUpdated.startingPage = data.startingPage;
+        quoteToBeUpdated.endingPage = data.endingPage;
+        quoteToBeUpdated.note = data.note;
+        await AppDataSource.manager.save(quoteToBeUpdated);
+        
+        res.sendStatus(200)
+        console.log("Registro atualizado");
+    } catch (error) {
+        console.log(error);
     }
-    if (startingPage) {
-        quoteToBeUpdated.startingPage = startingPage;
-    }
-    if (endingPage) {
-        quoteToBeUpdated.endingPage = endingPage;
-    }
-    if (note) {
-        quoteToBeUpdated.note = note;
-    }
+    // const quoteToBeUpdated = await AppDataSource.manager.findOneBy(Quote, {id:id});
+    // if (text) {
+    //     quoteToBeUpdated.text = text;
+    // }
+    // if (startingPage) {
+    //     quoteToBeUpdated.startingPage = startingPage;
+    // }
+    // if (endingPage) {
+    //     quoteToBeUpdated.endingPage = endingPage;
+    // }
+    // if (note) {
+    //     quoteToBeUpdated.note = note;
+    // }
 
-    await AppDataSource.manager.save(quoteToBeUpdated);
-    res.sendStatus(202);
-    res.json(quoteToBeUpdated);
+    // await AppDataSource.manager.save(quoteToBeUpdated);
+    // res.sendStatus(202);
+    // res.json(quoteToBeUpdated);
 }
 
 async function Delete (req: Request, res: Response) {
