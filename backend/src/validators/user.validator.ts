@@ -1,6 +1,7 @@
-import { body } from "express-validator"
+import { body, header } from "express-validator"
 
 const schema = [
+    header("id").exists().withMessage("Usuário não encontrado."),
     body("name")
     .notEmpty().withMessage("Campo obrigatório")
     .isLength({min:3, max:20}).withMessage("O nome deve possuir entre 2 e 20 caracteres"),

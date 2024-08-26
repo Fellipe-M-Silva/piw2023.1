@@ -12,44 +12,31 @@ interface userBody {
     isSuperAdmin: boolean;
 }
 
-async function Create (req: Request, res: Response) {
-    const data:userBody = req.body;
-    const newUser = new User;
-
-    newUser.name = data.name; 
-    newUser.email = data.email; 
-    newUser.isAdmin = data.isAdmin; 
-    newUser.isSuperAdmin = data.isSuperAdmin; 
-
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(data.password, salt);
-    newUser.password = hashedPassword;
-    
+async function Create (req: Request, res: Response) {    
     try {
-        await AppDataSource.manager.save(newUser);
-        console.log("Registro criado");
-        res.sendStatus(201);    
+        const data:userBody = req.body;
+        const newUser = new User;
+
+        newUser.name = data.name; 
+        newUser.email = data.email; 
+        newUser.isAdmin = data.isAdmin; 
+        newUser.isSuperAdmin = data.isSuperAdmin; 
+
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(data.password, salt);
+        newUser.password = hashedPassword;
+
+        if (newUser != null) {
+            await AppDataSource.manager.save(newUser);
+            return res.sendStatus(201);    
+        }
+        else {
+            return res.sendStatus(400);
+        }
     } catch (error) {
         console.log(error)
     }
-    
 }
-
-// async function Create (req: Request, res: Response) {
-//     const {name, email, password, isAdmin, isSuperAdmin} = req.body;
-//     const salt = await bcrypt.genSalt(10);
-//     const hashedPassword = await bcrypt.hash(password, salt);
-
-//     const newUser = new User();
-//     newUser.name = name;
-//     newUser.email = email;
-//     newUser.password = hashedPassword;
-//     newUser.isAdmin = isAdmin;
-//     newUser.isSuperAdmin = isSuperAdmin;
-
-//     await AppDataSource.manager.save(newUser);
-//     res.sendStatus(201).send("Conta criada com sucesso!");
-// }
 
 async function List (req: Request, res: Response) {
     const users = await AppDataSource.manager.find(User);
@@ -57,63 +44,63 @@ async function List (req: Request, res: Response) {
 }
 
 async function Find (req: Request, res: Response) {
-    const {id} = req.params;
-    const user = await AppDataSource.manager.findOneBy(User, {id:id});
-    res.status(200).json(user);
+    try {
+        const user = await AppDataSource.manager.findOneBy(User, {id:req.params.id});
+
+        if (user != null) {
+            return res.status(200).json(user);
+        }
+        else {
+            return res.sendStatus(404);
+        }
+    }
+    catch (error) {
+        console.log(error);
+    }
 }
+
 async function Update (req: Request, res: Response) {
-    const data:userBody = req.body;
-    const userToBeUpdated = await AppDataSource.manager.findOneBy(User, {id:req.params.id})
+    try {
+        const data:userBody = req.body;
+        const user = await AppDataSource.manager.findOneBy(User, {id:req.params.id})
 
-    userToBeUpdated.name = data.name; 
-    userToBeUpdated.email = data.email; 
-    userToBeUpdated.isAdmin = data.isAdmin; 
-    userToBeUpdated.isSuperAdmin = data.isSuperAdmin; 
+        if (user != null) {
+            user.name = data.name; 
+            user.email = data.email; 
+            user.isAdmin = data.isAdmin; 
+            user.isSuperAdmin = data.isSuperAdmin; 
 
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(userToBeUpdated.password, salt);
-    userToBeUpdated.password = hashedPassword;
+            const salt = await bcrypt.genSalt(10);
+            const hashedPassword = await bcrypt.hash(user.password, salt);
+            user.password = hashedPassword;
+            user.name = data.name;
 
-    try { 
-        userToBeUpdated.name = data.name;
-        await AppDataSource.manager.save(userToBeUpdated);
-
-        res.sendStatus(200)
-        console.log("Registro atualizado");
+            await AppDataSource.manager.save(user);
+            return res.sendStatus(200);
+        }
+        else {
+            return res.sendStatus(400);
+        }
     } catch (error) {
         console.log(error);
     }
-
-    // const user = await AppDataSource.manager.findOneBy(User, {id:id});
-    // if (name) {
-    //     user.name = name;
-    // }
-    // if (email) {
-    //     user.email = email;
-    // }
-    // if (isAdmin) {
-    //     user.isAdmin = isAdmin;
-    // }
-    // if (isSuperAdmin) {
-    //     user.isSuperAdmin = isSuperAdmin;
-    // }
-    // if (password) {
-    //     const salt = await bcrypt.genSalt(9012);
-    //     const hashedPassword = await bcrypt.hash(password, salt);
-
-    //     user.password = hashedPassword;
-    // }
-
-    // await AppDataSource.manager.save(user);
-    // res.sendStatus(202);
 }
 
 async function Delete (req: Request, res: Response) {
-    const {id} = req.params;
-    const user = await AppDataSource.manager.findOneBy(User, {id:id});
+    try {
+        const user = await AppDataSource.manager.findOneBy(User, {id:req.params.id});
 
-    await AppDataSource.manager.remove(user);
-    res.sendStatus(200);
+        if (user != null) {
+            await AppDataSource.manager.remove(user);
+            return res.sendStatus(200);
+        }
+        else {
+            return res.sendStatus(400);
+        }
+    }
+    catch (error) {
+        console.log(error);
+    }
 }
 
 export { Create, List, Find, Update, Delete };

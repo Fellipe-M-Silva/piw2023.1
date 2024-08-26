@@ -12,72 +12,84 @@ interface annotationBody {
     quotes: Quote[]
 }
 
-async function Create (req: Request, res: Response) {
-    const annotationData:annotationBody = req.body;
-    const newAnnotation = new Annotation;
-    newAnnotation.isPublic = annotationData.isPublic;
-    newAnnotation.user = annotationData.user;
-    newAnnotation.work = annotationData.work;
-    newAnnotation.quotes = annotationData.quotes;
-
+async function Create(req: Request, res: Response) {
     try {
-        await AppDataSource.manager.save(newAnnotation);
-        res.sendStatus(201);
-        console.log("Registro criado.");
+        const annotationData: annotationBody = req.body;
+        const newAnnotation = new Annotation;
+        newAnnotation.isPublic = annotationData.isPublic;
+        newAnnotation.user = annotationData.user;
+        newAnnotation.work = annotationData.work;
+        newAnnotation.quotes = annotationData.quotes;
+
+        if (newAnnotation != null) {
+            await AppDataSource.manager.save(newAnnotation);
+            return res.sendStatus(201);
+        }
+        else {
+            return res.sendStatus(400);
+        }
     }
-    catch (err) {
-        console.log(err);
+    catch (error) {
+        console.log(error);
     }
 }
 
-async function List (req: Request, res: Response) {
+async function List(req: Request, res: Response) {
     const annotations = await AppDataSource.manager.find(Annotation);
     res.json(annotations);
 }
-async function Find (req: Request, res: Response) {
-    const annotationToBeFound = await AppDataSource.manager.findOneBy(Annotation, {id:req.params.id});
-    res.json(annotationToBeFound);
+
+async function Find(req: Request, res: Response) {
+    try {
+        const annotationToBeFound = await AppDataSource.manager.findOneBy(Annotation, { id: req.params.id });
+
+        if (annotationToBeFound != null) {
+            return res.status(200).json(annotationToBeFound);
+        } else {
+            return res.sendStatus(404);
+        }
+    } catch (error) {
+        console.log(error)
+    }
+
 }
-async function Update (req: Request, res: Response) {
-    const data:annotationBody = req.body;
-    const annotationToBeUpdated = await AppDataSource.manager.findOneBy(Annotation, {id:req.params.id});
 
-    try { 
-        annotationToBeUpdated.isPublic = data.isPublic;
-        annotationToBeUpdated.user = data.user;
-        annotationToBeUpdated.work = data.work;
-        annotationToBeUpdated.quotes = data.quotes;   
+async function Update(req: Request, res: Response) {
+    try {
+        const data: annotationBody = req.body;
+        const annotationToBeUpdated = await AppDataSource.manager.findOneBy(Annotation, { id: req.params.id });
 
-        await AppDataSource.manager.save(annotationToBeUpdated);
-        res.sendStatus(200)
-        console.log("Registro atualizado");
+        if (annotationToBeUpdated != null) {
+            annotationToBeUpdated.isPublic = data.isPublic;
+            annotationToBeUpdated.user = data.user;
+            annotationToBeUpdated.work = data.work;
+            annotationToBeUpdated.quotes = data.quotes;
+
+            await AppDataSource.manager.save(annotationToBeUpdated);
+            return res.sendStatus(200);
+        } else {
+            return res.sendStatus(400);
+        }
     } catch (error) {
         console.log(error);
     }
 
-    // const annotationToBeUpdated = await AppDataSource.manager.findOneBy(Annotation, {id:id});
-    // if (isPublic) {
-    //     annotationToBeUpdated.isPublic = isPublic;
-    // }
-    // if (user) {
-    //     annotationToBeUpdated.user = user;
-    // }
-    // if (work) {
-    //     annotationToBeUpdated.work = work;
-    // }
-    // if (quotes) {
-    //     annotationToBeUpdated.quotes = quotes;
-    // }
-    
-    // await AppDataSource.manager.save(annotationToBeUpdated);
-    // res.sendStatus(202);
 }
-async function Delete (req: Request, res: Response) {
-    const annotationToBeDeleted = await AppDataSource.manager.findOneBy(Annotation, {id:req.params.id});
 
-    await AppDataSource.manager.remove(annotationToBeDeleted);
-    res.sendStatus(200);
-    console.log("Registro excluído");
+async function Delete(req: Request, res: Response) {
+    try {
+        const annotationToBeDeleted = await AppDataSource.manager.findOneBy(Annotation, { id: req.params.id });
+
+        if (annotationToBeDeleted != null) {
+            await AppDataSource.manager.remove(annotationToBeDeleted);
+            return res.sendStatus(200);
+        }
+        else {
+            return res.sendStatus(400);
+        }
+    } catch (error) {
+        console.log(error)
+    }
 }
 
 export { Create, List, Find, Update, Delete };

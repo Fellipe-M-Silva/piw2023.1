@@ -1,6 +1,7 @@
-import { body } from "express-validator"
+import { body, header } from "express-validator"
 
 const schema = [
+    header("id").exists().withMessage("Autor não encontrado."),
     body("name")
     .isString()
     .notEmpty().withMessage("O nome não pode ser vazio")

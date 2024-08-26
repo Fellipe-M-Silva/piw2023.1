@@ -11,77 +11,89 @@ interface workBody {
     authors: Author[]
 }
 
-async function Create (req: Request, res: Response) {
-    const data:workBody = req.body;
-    const newWork = new Work();
-    newWork.title = data.title;
-    newWork.edition = data.edition;
-    newWork.publisher = data.publisher;
-    newWork.publishingYear = Number(data.publishingYear);
-    newWork.authors = data.authors;
-
+async function Create(req: Request, res: Response) {
     try {
-        await AppDataSource.manager.save(newWork);
-        res.sendStatus(201);
-        console.log("Registro criado.");
+        const data: workBody = req.body;
+        const newWork = new Work();
+
+        newWork.title = data.title;
+        newWork.edition = data.edition;
+        newWork.publisher = data.publisher;
+        newWork.publishingYear = Number(data.publishingYear);
+        newWork.authors = data.authors;
+
+        if (newWork != null) {
+            await AppDataSource.manager.save(newWork);
+            return res.sendStatus(201);
+        }
+        else {
+            return res.sendStatus(400);
+        }
     }
-    catch (err) {
-        console.log(err);
+    catch (error) {
+        console.log(error);
     }
 }
 
-async function List (req: Request, res: Response) {
+async function List(req: Request, res: Response) {
     const works = await AppDataSource.manager.find(Work);
-
-    res.json({works});
+    res.json({ works });
 }
 
-async function Find (req: Request, res: Response) {
-    const { id } = req.params;
-    const workToBeFound = await AppDataSource.manager.findOneBy(Work, {id:id});
-    res.json(workToBeFound);
+async function Find(req: Request, res: Response) {
+    try {
+        const workToBeFound = await AppDataSource.manager.findOneBy(Work, { id: req.params.id });
+
+        if (workToBeFound != null) {
+            return res.status(200).json(workToBeFound);
+        }
+        else
+            return res.status(404);
+    }
+    catch (error) {
+        console.log(error);
+    }
 }
-async function Update (req: Request, res: Response) {
-    const data:workBody = req.body;
-    const workToBeUpdated = await AppDataSource.manager.findOneBy(Work, {id:req.params.id});
+async function Update(req: Request, res: Response) {
+    try {
+        const data: workBody = req.body;
+        const workToBeUpdated = await AppDataSource.manager.findOneBy(Work, { id: req.params.id });
 
-    try { 
-        workToBeUpdated.title = data.title;
-        workToBeUpdated.edition = data.edition;
-        workToBeUpdated.publisher = data.publisher;
-        workToBeUpdated.publishingYear = Number(data.publishingYear);
-        workToBeUpdated.authors = data.authors;
-        
-        await AppDataSource.manager.save(workToBeUpdated);
+        if (workToBeUpdated != null) {
+            workToBeUpdated.title = data.title;
+            workToBeUpdated.edition = data.edition;
+            workToBeUpdated.publisher = data.publisher;
+            workToBeUpdated.publishingYear = Number(data.publishingYear);
+            workToBeUpdated.authors = data.authors;
 
-        res.sendStatus(200)
-        console.log("Registro atualizado");
+            await AppDataSource.manager.save(workToBeUpdated);
+            return res.sendStatus(200);
+        }
+        else {
+            return res.sendStatus(404);
+        }
+
     } catch (error) {
         console.log(error);
     }
-    // if (title) {
-    //     workToBeUpdated.title = title;
-    // }
-    // if (edition) {
-    //     workToBeUpdated.edition = edition;
-    // }
-    // if (publisher) {
-    //     workToBeUpdated.publisher = publisher;
-    // }
-    // if (publishingYear) {
-    //     workToBeUpdated.publishingYear = publishingYear;
-    // }
-
-    // await AppDataSource.manager.save(workToBeUpdated);
-    // res.sendStatus(202);
 }
 
-async function Delete (req: Request, res: Response) {
-    const {id} = req.params;
-    const workToBeDeleted = await AppDataSource.manager.findOneBy(Work, {id:id});
+async function Delete(req: Request, res: Response) {
+    try {
+        const { id } = req.params;
+        const workToBeDeleted = await AppDataSource.manager.findOneBy(Work, { id: id });
 
-    await AppDataSource.manager.remove(workToBeDeleted);
-    res.sendStatus(200);
+        if (workToBeDeleted != null) {
+            await AppDataSource.manager.remove(workToBeDeleted);
+            return res.sendStatus(200);
+        }
+        else {
+            return res.sendStatus(404);
+        }
+    }
+    catch (error) {
+        console.log(error)
+    }
 }
 
 export { Create, List, Find, Update, Delete };

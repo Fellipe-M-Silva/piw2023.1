@@ -11,77 +11,82 @@ interface quoteBody {
     note: string;
 }
 
-async function Create (req: Request, res: Response) {
-    const data:quoteBody = req.body;
-    const newQuote = new Quote();
-    newQuote.annotation = data.annotation
-    newQuote.text = data.text;
-    newQuote.startingPage = data.startingPage;
-    newQuote.endingPage = data.endingPage;
-    newQuote.note = data.note;
-
+async function Create(req: Request, res: Response) {
     try {
-        await AppDataSource.manager.save(newQuote);
-        res.sendStatus(201);
-        console.log("Registro criado.");
+        const data: quoteBody = req.body;
+        const newQuote = new Quote();
+        newQuote.annotation = data.annotation
+        newQuote.text = data.text;
+        newQuote.startingPage = data.startingPage;
+        newQuote.endingPage = data.endingPage;
+        newQuote.note = data.note;
+
+        if (newQuote != null) {
+            await AppDataSource.manager.save(newQuote);
+            return res.sendStatus(201);
+        } else {
+            return res.sendStatus(400);
+        }
     }
-    catch (err) {
-        console.log(err);
+    catch (error) {
+        console.log(error);
     }
 }
 
-async function List (req: Request, res: Response) {
+async function List(req: Request, res: Response) {
     const quotes = await AppDataSource.manager.find(Quote);
     res.json(quotes);
 }
-async function Find (req: Request, res: Response) {
-    const {id} = req.params;
-    const quoteToBeFound = await AppDataSource.manager.findOneBy(Quote, {id:id});
-    res.json(quoteToBeFound);
-}
+async function Find(req: Request, res: Response) {
+    try {
+        const quoteToBeFound = await AppDataSource.manager.findOneBy(Quote, { id:req.params.id });
 
-async function Update (req: Request, res: Response) {
-    const data:quoteBody = req.body;
-    const quoteToBeUpdated = await AppDataSource.manager.findOneBy(Quote, {id:req.params.id})
-
-    try { 
-        quoteToBeUpdated.annotation = data.annotation;
-        quoteToBeUpdated.text = data.text;
-        quoteToBeUpdated.startingPage = data.startingPage;
-        quoteToBeUpdated.endingPage = data.endingPage;
-        quoteToBeUpdated.note = data.note;
-        await AppDataSource.manager.save(quoteToBeUpdated);
-        
-        res.sendStatus(200)
-        console.log("Registro atualizado");
+        if (quoteToBeFound != null) {
+            return res.status(200).json(quoteToBeFound);
+        } else {
+            return res.sendStatus(404);
+        }
     } catch (error) {
         console.log(error);
     }
-    // const quoteToBeUpdated = await AppDataSource.manager.findOneBy(Quote, {id:id});
-    // if (text) {
-    //     quoteToBeUpdated.text = text;
-    // }
-    // if (startingPage) {
-    //     quoteToBeUpdated.startingPage = startingPage;
-    // }
-    // if (endingPage) {
-    //     quoteToBeUpdated.endingPage = endingPage;
-    // }
-    // if (note) {
-    //     quoteToBeUpdated.note = note;
-    // }
-
-    // await AppDataSource.manager.save(quoteToBeUpdated);
-    // res.sendStatus(202);
-    // res.json(quoteToBeUpdated);
 }
 
-async function Delete (req: Request, res: Response) {
-    const {id} = req.params;
-    const quoteToBeDeleted = await AppDataSource.manager.findOneBy(Quote, {id:id});
+async function Update(req: Request, res: Response) {
+    try {
+        const data: quoteBody = req.body;
+        const quoteToBeUpdated = await AppDataSource.manager.findOneBy(Quote, { id: req.params.id })
 
-    await AppDataSource.manager.remove(quoteToBeDeleted);
-    res.sendStatus(200);
+        if (quoteToBeUpdated != null) {
+            quoteToBeUpdated.annotation = data.annotation;
+            quoteToBeUpdated.text = data.text;
+            quoteToBeUpdated.startingPage = data.startingPage;
+            quoteToBeUpdated.endingPage = data.endingPage;
+            quoteToBeUpdated.note = data.note;
+
+            await AppDataSource.manager.save(quoteToBeUpdated);
+            return res.sendStatus(200);
+        }
+        else {
+            return res.sendStatus(400);
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+async function Delete(req: Request, res: Response) {
+    try {
+        const quoteToBeDeleted = await AppDataSource.manager.findOneBy(Quote, { id: req.params.id });
+
+        if (quoteToBeDeleted != null) {
+            await AppDataSource.manager.remove(quoteToBeDeleted);
+            return res.sendStatus(200);
+        } else {
+            return res.sendStatus(400);
+        }
+    } catch (error) {
+        console.log(error)
+    }
 }
 
 export { Create, List, Find, Update, Delete };
