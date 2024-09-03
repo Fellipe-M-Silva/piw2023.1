@@ -1,0 +1,13 @@
+@import './base.css';
+
+#app {
+  margin: 0 auto;
+  padding: 1rem;
+  font-weight: normal;
+}
+
+#container {
+  background-color: var(--background-1);
+  padding: 1rem;
+  border-radius: 1.5rem;
+}
