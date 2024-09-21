@@ -1,31 +1,30 @@
-/* color palette from <https://github.com/vuejs/theme> */
+@import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap');
+
 :root {
-  --vt-c-white: #ffffff;
-  --vt-c-white-soft: #f8f8f8;
-  --vt-c-white-mute: #f2f2f2;
+  --surface-background-1: #e1e7e9;
+  --surface-background-2: #fafafa;
+  --surface-background-3: #fcfcfc;
+  --surface-primary-active: #101010;
+  --surface-primary-hover: #202020;
+  --surface-secondary-active: #f7f7f7;
+  --surface-secondary-hover: #969696;
+  
+  --text-strong: #202020;
+  --text-medium: #505050;
+  --text-weak: #606060;
+  --text-link: #0075c4;
+  --text-error: rgb(245, 57, 57);
+  --text-on-primary: #fff;
+  --text-on-secondary: var(--text-strong)
 
-  --vt-c-black: #181818;
-  --vt-c-black-soft: #222222;
-  --vt-c-black-mute: #282828;
-
-  --vt-c-indigo: #2c3e50;
-
-  --vt-c-divider-light-1: rgba(60, 60, 60, 0.29);
-  --vt-c-divider-light-2: rgba(60, 60, 60, 0.12);
-  --vt-c-divider-dark-1: rgba(84, 84, 84, 0.65);
-  --vt-c-divider-dark-2: rgba(84, 84, 84, 0.48);
-
-  --vt-c-text-light-1: var(--vt-c-indigo);
-  --vt-c-text-light-2: rgba(60, 60, 60, 0.66);
-  --vt-c-text-dark-1: var(--vt-c-white);
-  --vt-c-text-dark-2: rgba(235, 235, 235, 0.64);
-
-  --background-1: #FCFCFD;
-  --background-2: #E8EBEE;
+  --font-size: 16;
+  --header-font: 'Source Sans 3';
+  --body-font: 'Source Sans 3';
 }
 
 /* semantic color variables for this project */
-:root {
+/* :root {
   --color-background: var(--background-2);
   --color-background-soft: var(--vt-c-white-soft);
   --color-background-mute: var(--vt-c-white-mute);
@@ -37,7 +36,7 @@
   --color-text: var(--vt-c-text-light-1);
 
   --section-gap: 160px;
-}
+} */
 
 /* @media (prefers-color-scheme: dark) {
   :root {
@@ -61,14 +60,31 @@
   font-weight: normal;
 }
 
+.material-symbols-outlined {
+  font-variation-settings:
+    'FILL' 0,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' var(--font-size);
+}
+
 body {
-  min-height: 100vh;
-  color: var(--color-text);
-  background: var(--color-background);
+  color: var(--text-medium);
+  background: var(--surface-background-1);
+
+  padding: 0;
+  margin: 0;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex: 1 0 0;
+  align-self: stretch;
+
   transition:
     color 0.5s,
     background-color 0.5s;
-  line-height: 1.6;
+  line-height: 1.5;
   font-family:
     Inter,
     -apple-system,
@@ -82,8 +98,52 @@ body {
     'Droid Sans',
     'Helvetica Neue',
     sans-serif;
-  font-size: 15px;
+  font-size: var(--font-size);
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+h1 {
+  color: var(--text-strong);
+  font-family: var(--header-font, 'Source Sans 3');
+  font-size: 3rem;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 120%;
+}
+
+a {
+  color: var(--text-link);
+}
+
+.body1 {
+  font-family: var(--body-font, 'Source Sans 3');
+  font-size: 1rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 175%;
+}
+
+.body2 {
+  font-family: var(--body-font, 'Source Sans 3');
+  font-size: 0.8125rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 150%;
+}
+
+.caption {
+  font-family: var(--body-font, 'Source Sans 3');
+  font-size: 0.6875rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 150%;
+}
+.errortext {
+  color: var(--text-error);
+}
+
+.centered {
+  text-align: center;
 }

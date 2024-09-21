@@ -7,5 +7,15 @@
     {
       "path": "./tsconfig.app.json"
     }
-  ]
+  ],
+    "compilerOptions": {
+      "target": "esnext",
+      "module": "esnext",
+      // isso permite uma inferência mais estrita para propriedades de dados no `this`
+      "strict": true,
+      "jsx": "preserve",
+      "moduleResolution": "node",
+      "verbatimModuleSyntax": true,
+      "jsxImportSource": "vue"
+    }
 }

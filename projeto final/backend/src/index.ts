@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import dotenv from "dotenv";
 import "reflect-metadata";
 import path from "path";
@@ -18,15 +19,17 @@ server.use(quoteRoutes);
 server.use(userRoutes);
 server.use(workRoutes);
 server.use(authRoutes);
+server.use(cors());
 server.use(express.json());
 
-//Criar o banco e gerar as tabelas
 AppDataSource.initialize().catch(error => {
     console.log(error);
 });
 
 const host = process.env.HOST_PORT || "localhost";
 const port = process.env.BACK_PORT || 5000;
+
+
 
 server.get("/", (req, res) =>{
     res.send("Servidor funcionando ;)")
