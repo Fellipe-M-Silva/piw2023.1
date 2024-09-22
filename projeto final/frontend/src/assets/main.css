@@ -124,6 +124,7 @@ div {
 
 .card:hover {
   background: var(--surface-background-3);
+  color: #101010;
 }
 
 .holder {
@@ -179,6 +180,10 @@ button {
   color: var(--text-text-strong);
 }
 
+.btn-secondary:hover {
+  background: var(--surface-secondary-hover);
+}
+
 .btn-plain {
   background: transparent;
 }
@@ -199,6 +204,19 @@ button {
 
 .btn-icon-sm span {
   transform: scale(75%);
+}
+
+.btn-icon-sm:hover {
+  background: var(--surface-secondary-hover);
+}
+
+.btn-negative {
+  background-color: var(--surface-error);
+  color: #000;
+}
+
+.btn-negative:hover {
+  background-color: var(--surface-error-hover);
 }
 
 a {
@@ -241,9 +259,23 @@ label {
 
 .grid-list {
   display: inline-grid;
-  grid-template-columns: auto auto auto auto;
+  /* grid-template-columns: auto auto auto auto; */
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
   gap: 0.5rem;
   align-self: stretch;
+}
+
+@media screen and (max-width: 1440px) {
+  .grid-list {
+    /* grid-template-columns: auto auto auto; */
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .grid-list {
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  }
 }
 
 @media screen and (max-width: 480px) {
@@ -255,5 +287,8 @@ label {
     align-self: stretch;
 
     overflow: hidden;
+  }
+  .grid-list {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   }
 }

@@ -1,24 +1,48 @@
-<script setup>
-defineProps({
+<script setup lang="ts">
+import { api } from '@/api'
+import type { Work, Author } from '@/types'
+// import { onMounted, ref } from 'vue';
+
+interface Annotation {
+  id: String,
   title: String,
-  authors: String
-})
+  work: Work,
+  authors: Author
+}
+
+const props = defineProps<{
+  annotation: Annotation
+}>()
+
+
+// const annotations = ref([] as Annotation[])
+
+// onMounted(async () => {
+//   try {
+//     const { data } = await api.get('/users')
+//     annotations.value = data
+//   } catch (e) {}
+// })
+
+// console.log(annotations)
 </script>
 
 <template>
-  <article class="card">
-    <h3>{{ title }}</h3>
-    <div class="footer">
-      <ul>
-        <li v-for="author in authors">
-          <RouterLink> {{ author.name }}</RouterLink>
-        </li>
-      </ul>
-      <button class="btn-icon-sm">
-        <span class="material-symbols-outlined"> more_horiz </span>
-      </button>
-    </div>
-  </article>
+  <RouterLink :to="`/citacoes/${annotation.id}`">
+    <article class="card">
+      <h3>{{ annotation.title }}</h3>
+      <div class="footer">
+        <ul>
+          <li v-for="author in annotation.authors">
+            {{ annotation.authors.name }}
+          </li>
+        </ul>
+        <button class="btn-icon-sm">
+          <span class="material-symbols-outlined"> more_horiz </span>
+        </button>
+      </div>
+    </article>
+  </RouterLink>
 </template>
 
 <style scoped>

@@ -10,6 +10,8 @@ defineProps({
 
 const isCreate = ref(false)
 const nomePagina = ref('Novo fichamento')
+const isAdmin = ref(true)
+const isSuperAdmin = ref(true)
 
 const button1Label = ref('Importar')
 const button1Icon = ref('download')
@@ -80,7 +82,7 @@ const data = {
 
 <template>
   <main>
-    <NavBar></NavBar>
+    <NavBar :isAdmin="isAdmin" :isSuperAdmin="isSuperAdmin"></NavBar>
     <div class="container">
       <div class="content">
         <SectionHeader :pageName="nomePagina"></SectionHeader>

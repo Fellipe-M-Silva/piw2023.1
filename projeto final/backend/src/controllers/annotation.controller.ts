@@ -5,6 +5,7 @@ import { User } from "../entity/User";
 import { Work } from "../entity/Work";
 import { Quote } from "../entity/Quote";
 
+
 interface annotationBody {
     isPublic: boolean;
     user: User;

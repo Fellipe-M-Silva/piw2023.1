@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import SectionTitle from '../components/SectionTitle.vue';
 import FormInput from '../components/FormInput.vue'
-defineProps({
-  name: 'registerView',
-})
+
 </script>
 
 <template>

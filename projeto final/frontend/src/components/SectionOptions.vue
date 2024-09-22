@@ -6,6 +6,7 @@ const props = defineProps({
   button1Label: String,
   button1Icon: String,
   button1Link: String,
+  showButton2: Boolean,
   button2Label: String,
   button2Icon: String,
   button2Link: String
@@ -16,14 +17,14 @@ const props = defineProps({
   <div class="panel">
     <SearchBar/>
     <div class="actions">
-      <RouterLink to="button2Link" as="button">
+      <RouterLink :to="button1Link" as="button">
         <button v-if="showButton1" class="btn-secondary">
         <span class="material-symbols-outlined">{{ button1Icon }}</span> {{ button1Label }}
       </button>
       </RouterLink>
       
-      <RouterLink to="button2Link" as="button">
-        <button class="btn-primary">
+      <RouterLink :to="button2Link" as="button">
+        <button v-if="showButton2" class="btn-primary">
         <span class="material-symbols-outlined">{{ button2Icon }}</span> {{ button2Label }}
       </button>
       </RouterLink>

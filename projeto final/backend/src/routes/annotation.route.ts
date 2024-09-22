@@ -3,18 +3,18 @@ import { Create, List, Find, Update, Delete } from "../controllers/annotation.co
 import bodyParser from "body-parser";
 import { annotationSchema } from "../validators/annotation.validator";
 import { validateRequestSchema } from "../validators/validationFunction";
+import cors from 'cors'
 
-//criando rotas pra cada entidade :o
 const annotationRoutes = Router();
 
-annotationRoutes.post("/annotation", bodyParser.json(), annotationSchema, validateRequestSchema, Create);
+annotationRoutes.post("/annotation", cors(), bodyParser.json(), annotationSchema, validateRequestSchema, Create);
 
-annotationRoutes.get("/annotation", List);
+annotationRoutes.get("/annotations", cors(), List);
 
-annotationRoutes.get("/annotation/:id", Find);
+annotationRoutes.get("/annotation/:id", cors(), Find);
 
-annotationRoutes.put("/annotation/:id", bodyParser.json(), annotationSchema, validateRequestSchema, Update);
+annotationRoutes.put("/annotation/:id", cors(), bodyParser.json(), annotationSchema, validateRequestSchema, Update);
 
-annotationRoutes.delete("/annotation/:id", Delete);
+annotationRoutes.delete("/annotation/:id", cors(), Delete);
 
 export default annotationRoutes;

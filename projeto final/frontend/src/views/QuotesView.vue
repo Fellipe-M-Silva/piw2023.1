@@ -5,6 +5,9 @@ import SectionHeader from '@/components/SectionHeader.vue'
 import SectionOptions from '@/components/SectionOptions.vue'
 import { ref } from 'vue'
 
+const isAdmin = ref(true)
+const isSuperAdmin = ref(true)
+
 const nomePagina = ref('Citações')
 const button1Label = ref('Importar')
 const button1Icon = ref('download')
@@ -59,7 +62,7 @@ defineProps({
 
 <template>
   <main>
-    <NavBar></NavBar>
+    <NavBar :isAdmin="isAdmin" :isSuperAdmin="isSuperAdmin"></NavBar>
     <div class="container">
       <div class="content">
         <SectionHeader :pageName="nomePagina"></SectionHeader>

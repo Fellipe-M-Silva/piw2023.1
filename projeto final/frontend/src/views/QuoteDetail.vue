@@ -5,6 +5,8 @@ import FormInput from '@/components/FormInput.vue'
 import { ref } from 'vue'
 
 const modoEdicao = ref(false)
+const isAdmin = ref(true)
+const isSuperAdmin = ref(true)
 
 const data = {
   id: '10',
@@ -68,7 +70,7 @@ const data = {
 
 <template>
   <main>
-    <NavBar></NavBar>
+    <NavBar :isAdmin="isAdmin" :isSuperAdmin="isSuperAdmin"></NavBar>
     <div class="container">
       <div class="content">
         <SectionHeader pageName="Editar citação" v-if="modoEdicao"></SectionHeader>

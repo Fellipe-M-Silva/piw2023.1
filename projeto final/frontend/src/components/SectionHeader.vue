@@ -1,13 +1,14 @@
 <script setup lang="ts">
 defineProps({
   pageName: String,
+  backButton: Boolean,
   options: Boolean
 })
 </script>
 
 <template>
   <div class="panel">
-    <button class="button btn-secondary btn-icon">
+    <button v-if="backButton" class="button btn-secondary btn-icon">
       <span class="material-symbols-outlined"> arrow_back </span>
     </button>
     <h1>{{ pageName }}</h1>

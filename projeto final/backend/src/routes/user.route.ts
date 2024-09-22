@@ -3,19 +3,19 @@ import { Create, List, Find, Update, Delete } from "../controllers/user.controll
 import bodyParser from "body-parser";
 import { userSchema } from "../validators/user.validator";
 import { validateRequestSchema } from "../validators/validationFunction";
+import cors from "cors";
 
 const userRoutes = Router();
 
-userRoutes.post("/user", bodyParser.json(), userSchema, validateRequestSchema, Create);
+userRoutes.post("/users", cors(), bodyParser.json(), userSchema, validateRequestSchema, Create);
 
-userRoutes.get("/users", List);
+userRoutes.get("/users", cors(), List);
 
-userRoutes.get("/user/:id", Find);
+userRoutes.get("/users/:id", cors(), Find);
 
-userRoutes.put("/user/:id", bodyParser.json(), userSchema, validateRequestSchema, Update);
+userRoutes.put("/users/:id", cors(), bodyParser.json(), userSchema, validateRequestSchema, Update);
 
-userRoutes.delete("/user/:id", Delete);
+userRoutes.delete("/users/:id", cors(), Delete);
 
 // userRoutes.post("/cadastro", )
-
 export default userRoutes;

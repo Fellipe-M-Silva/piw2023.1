@@ -1,13 +1,14 @@
-<script setup>
+<script setup lang="ts">
 import CardAnnotation from './CardAnnotation.vue'
 
-defineProps({
+const props = defineProps({
   data: {
     works: {
       title: String,
       authors: [{ id: String, name: String }]
     }
   }
+  works
 })
 </script>
 

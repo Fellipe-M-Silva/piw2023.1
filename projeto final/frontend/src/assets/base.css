@@ -8,7 +8,9 @@
   --surface-primary-active: #101010;
   --surface-primary-hover: #202020;
   --surface-secondary-active: #f7f7f7;
-  --surface-secondary-hover: #969696;
+  --surface-secondary-hover: #d1cece;
+  --surface-error: rgb(235, 139, 139);
+  --surface-error-hover: rgb(250, 114, 114);
   
   --text-strong: #202020;
   --text-medium: #505050;
@@ -17,6 +19,7 @@
   --text-error: rgb(245, 57, 57);
   --text-on-primary: #fff;
   --text-on-secondary: var(--text-strong)
+  --text-on-error: #000000;
 
   --font-size: 16;
   --header-font: 'Source Sans 3';

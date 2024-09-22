@@ -19,7 +19,9 @@ server.use(quoteRoutes);
 server.use(userRoutes);
 server.use(workRoutes);
 server.use(authRoutes);
-server.use(cors());
+server.use(cors({
+    origin: "http://localhost:5173"
+}));
 server.use(express.json());
 
 AppDataSource.initialize().catch(error => {
@@ -28,7 +30,6 @@ AppDataSource.initialize().catch(error => {
 
 const host = process.env.HOST_PORT || "localhost";
 const port = process.env.BACK_PORT || 5000;
-
 
 
 server.get("/", (req, res) =>{
