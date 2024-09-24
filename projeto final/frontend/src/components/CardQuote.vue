@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 defineProps({
   id: String,
   text: String,
@@ -6,10 +6,56 @@ defineProps({
   endingPage: String,
   note: String
 })
+
+async function copyText(mytext:string) {
+    try {
+      await navigator.clipboard.writeText(mytext);
+      alert('Copied');
+    } catch($e) {
+      alert('Cannot copy');
+    }
+  }
+
+// interface ICopyToClipboard {
+//   /** HTML reference identifier ```<div id="foo"></div>```  */
+//   target?: string;
+//   /** String value */
+//   value?: string;
+//   /** (Optional) message to display in snackbar on success */
+//   message?: string;
+// }
+
+// const copyToClipboard = async ({ target, message, value }: ICopyToClipboard) => {
+//   try {
+//     let copyValue = "";
+
+//     if (!navigator.clipboard) {
+//       throw new Error("Browser don't have support for native clipboard.");
+//     }
+
+//     if (target) {
+//       const node = document.querySelector(target);
+
+//       if (!node || !node.textContent) {
+//         throw new Error("Element not found");
+//       }
+
+//       value = node.textContent;
+//     }
+
+//     if (value) {
+//       copyValue = value;
+//     }
+
+//     await navigator.clipboard.writeText(copyValue);
+//     console.log(message ?? "Copied!!!");
+//   } catch (e) {
+//     console.log(e);
+//   }
+// };
 </script>
 
 <template>
-  
   <article class="card">
     <p class="quote">“&hairsp;{{ text }}&hairsp;”</p>
 
@@ -25,10 +71,10 @@ defineProps({
         <button class="btn-icon-sm">
           <span class="material-symbols-outlined"> content_copy </span>
         </button>
-        <RouterLink :to="`/citacoes/${id}`"> 
+        <RouterLink :to="`/citacoes/${id}`">
           <button class="btn-icon-sm">
-          <span class="material-symbols-outlined"> edit </span>
-        </button>
+            <span class="material-symbols-outlined"> edit </span>
+          </button>
         </RouterLink>
         <button class="btn-icon-sm">
           <span class="material-symbols-outlined"> more_horiz </span>

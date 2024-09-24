@@ -8,7 +8,7 @@ interface workBody {
     edition: string;
     publisher: string;
     publishingYear: number;
-    authors: Author[]
+    authors: string
 }
 
 async function Create(req: Request, res: Response) {
@@ -21,7 +21,7 @@ async function Create(req: Request, res: Response) {
         newWork.publisher = data.publisher;
         newWork.publishingYear = Number(data.publishingYear);
         newWork.authors = data.authors;
-
+        
         if (newWork != null) {
             await AppDataSource.manager.save(newWork);
             return res.sendStatus(201);

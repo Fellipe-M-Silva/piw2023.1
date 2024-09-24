@@ -63,7 +63,7 @@ const button2Link = ref('fichamentos/novo')
     <div class="container">
       <div class="content">
         <SectionHeader :pageName="nomePagina"></SectionHeader>
-        <SectionOptions
+        <!-- <SectionOptions
           :showButton1="false"
           :button1Label="button1Label"
           :button1Icon="button1Icon"
@@ -71,7 +71,7 @@ const button2Link = ref('fichamentos/novo')
           :button2Label="button2Label"
           :button2Icon="button2Icon"
           :button2Link="button2Link"
-        />
+        /> -->
         <div class="grid-list">
           <!-- <RouterLink
             v-for="annotation in annotations"
@@ -106,7 +106,7 @@ const button2Link = ref('fichamentos/novo')
           </RouterLink> -->
           <div
           class="card"
-            @click="router.push(`/fichamentos/${annotation.id}`)"
+            
             v-for="annotation in annotations"
             :to="`/fichamentos/${annotation.id}`"
             as="article"
@@ -125,14 +125,14 @@ const button2Link = ref('fichamentos/novo')
                       <span class="material-symbols-outlined"> visibility </span>
                     </button>
                   </RouterLink>
-                  <RouterLink :to="`/fichamentos/${annotation.id}/editar`">
+                  <!-- <RouterLink :to="`/fichamentos/${annotation.id}/editar`">
                     <button class="btn-icon-sm">
                       <span class="material-symbols-outlined"> edit </span>
                     </button>
                   </RouterLink>
                   <button @click="askToDelete(annotation.id)" class="btn-negative btn-icon-sm">
                     <span class="material-symbols-outlined"> delete </span>
-                  </button>
+                  </button> -->
                 </div>
               </div>
             </article>

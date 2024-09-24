@@ -45,7 +45,6 @@ onMounted(async () => {
     }
     const { data } = await api.get('/users', {params})
     users.value = data
-    console.log(users.value)
   } catch (error) {
     console.log(error)
   }
@@ -75,16 +74,13 @@ const button2Link = ref('/usuarios/novo')
             <thead>
               <td class="body2">Nome</td>
               <td class="body2">E-mail</td>
-              <td class="body2">Cargo</td>
               <td class="body2">Ações</td>
             </thead>
-            <tr v-for="user in users">
-              <td class="body1">{{ user.name }}</td>
-              <td>{{ user.email }}</td>
-              <td v-if="user.isAdmin">Admin</td>
-              <td v-else>Usuário</td>
-              <td class="hold">
-                <div class="holder">
+            <tr v-for="user in users" >
+              <td v-if="user.isAdmin == false" class="body1">{{ user.name }}</td>
+              <td v-if="user.isAdmin == false">{{ user.email }}</td>
+              <td v-if="user.isAdmin == false" class="hold">
+                <div v-if="user.isAdmin == false" class="holder">
                   <RouterLink :to="`/usuarios/${user.id}`">
                     <button class="btn-icon-sm">
                       <span class="material-symbols-outlined"> edit </span>

@@ -6,14 +6,14 @@ import { validateRequestSchema } from "../validators/validationFunction";
 
 const workRoutes = Router();
 
-workRoutes.post("/work", bodyParser.json(), workSchema, validateRequestSchema, Create);
+workRoutes.post("/works", bodyParser.json(), workSchema, validateRequestSchema, Create);
 
-workRoutes.get("/work", List);
+workRoutes.get("/works", List);
 
-workRoutes.get("/work/:id", Find);
+workRoutes.get("/works/:id", Find);
 
-workRoutes.put("/work/:id", bodyParser.json(), workSchema, validateRequestSchema, Update);
+workRoutes.put("/works/:id", bodyParser.json(), workSchema, validateRequestSchema, Update);
 
-workRoutes.delete("/work/:id", Delete);
+workRoutes.delete("/works/:id", Delete);
 
 export default workRoutes;

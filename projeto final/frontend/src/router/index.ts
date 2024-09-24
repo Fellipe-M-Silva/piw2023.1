@@ -8,8 +8,11 @@ import AnnotationDetail from '../views/AnnotationDetail.vue'
 import QuoteDetail from '../views/QuoteDetail.vue'
 import UsersView from '../views/UsersView.vue'
 import UserDetail from '../views/UserDetail.vue'
+import AdminsView from '@/views/AdminsView.vue'
+import AdminDetail from '@/views/AdminDetail.vue'
 import NotFound from '@/views/NotFound.vue'
 import axios from 'axios'
+import HomeView from '@/views/HomeView.vue'
 
 
 const router = createRouter({
@@ -17,19 +20,20 @@ const router = createRouter({
   linkActiveClass: 'router-link-active',
   
   routes: [
-    {path: '/', component: AnnotationsView},
-    {path: '/repositorio', component: AnnotationsView},
+    {path: '/repositorio', component: HomeView},
+    {path: '/repositorio', component: HomeView},
     {path: '/login', component: LoginView},
     {path: '/cadastro', component: RegisterView},
     {path: '/usuarios', component: UsersView},
     {path: '/usuarios/novo', component: UserDetail},
     {path: '/usuarios/:id', component: UserDetail},
-    {path: '/administradores', component: UsersView},
-    {path: '/administradores/novo', component: UserDetail},
-    {path: '/administradores/:id', component: UserDetail},
+    {path: '/administradores', component: AdminsView},
+    {path: '/administradores/novo', component: AdminDetail},
+    {path: '/administradores/:id', component: AdminDetail},
     {path: '/fichamentos', component: AnnotationsView},
     {path: '/fichamentos/novo', component: AnnotationDetail},
     {path: '/fichamentos/:id', component: AnnotationView},
+    {path: '/fichamentos/:id/editar', component: AnnotationDetail},
     {path: '/citacoes', component: QuotesView},
     {path: '/citacoes/nova', component: QuoteDetail},
     {path: '/citacoes/:id', component: QuoteDetail},

@@ -301,6 +301,12 @@ input {
   background: var(--root-background-1, #fcfcfd);
 }
 
+.inputsection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
 label {
   color: var(--text-text-strong, #262626);
   font-variant-numeric: lining-nums proportional-nums;

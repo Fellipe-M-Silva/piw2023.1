@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { api } from '@/api'
 import type { Work, Author } from '@/types'
-// import { onMounted, ref } from 'vue';
+
+
 
 interface Annotation {
+  userName: String
   id: String,
   title: String,
   work: Work,
@@ -39,6 +41,9 @@ const props = defineProps<{
         </ul>
         <button class="btn-icon-sm">
           <span class="material-symbols-outlined"> more_horiz </span>
+        </button>
+        <button class="btn-negative btn-icon-sm">
+          <span class="material-symbols-outlined"> delete </span>
         </button>
       </div>
     </article>

@@ -6,14 +6,14 @@ import { authorSchema } from "../validators/author.validator";
 
 const authorRoutes = Router();
 
-authorRoutes.post("/author", bodyParser.json(), authorSchema, validateRequestSchema, Create);
+authorRoutes.post("/authors", bodyParser.json(), authorSchema, validateRequestSchema, Create);
 
-authorRoutes.get("/author", List);
+authorRoutes.get("/authors", List);
 
-authorRoutes.get("/author/:id", Find);
+authorRoutes.get("/authors/:id", Find);
 
-authorRoutes.put("/author/:id", bodyParser.json(), authorSchema, validateRequestSchema, Update);
+authorRoutes.put("/authors/:id", bodyParser.json(), authorSchema, validateRequestSchema, Update);
 
-authorRoutes.delete("/author/:id", Delete);
+authorRoutes.delete("/authors/:id", Delete);
 
 export default authorRoutes;

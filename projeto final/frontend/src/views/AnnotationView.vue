@@ -8,32 +8,57 @@ import { onMounted, ref } from 'vue'
 import type { Annotation } from '@/types'
 import { useRoute, useRouter } from 'vue-router'
 
-const annotation = ref({} as Annotation)
-const id = ref('1234')
 const isAdmin = ref(true)
 const isSuperAdmin = ref(true)
 
+// async function loadAnnotation(id: String) {
+//   try {
+//     const res = await api.get(`/annotations/${id}`)
+//     // console.log(res.data)
+//     annotation.value = res.data
+//   } catch (e) {
+//     console.log(e)
+//   }
+// }
+
+// onMounted(async () => {
+//   try {
+//     console.log(route.params.id)
+//     id.value = route.params.id || ''
+//     if (id.value && id.value != '1234') {
+//       await loadAnnotation(id.value)
+//     }
+//   } catch (e) {}
+// })
+
 const route = useRoute()
 const router = useRouter()
+const annotation = ref({} as Annotation)
+const id = ref('')
+const modoEdicao = ref(false)
 
-async function loadAnnotation(id: String) {
+async function fetchAnnotation() {
   try {
-    const res = await api.get(`/annotations/${id}`)
-    // console.log(res.data)
+    const res = await api.get(`/annotations/${id.value}`)
     annotation.value = res.data
-  } catch (e) {
-    console.log(e)
+    console.log(annotation.value)
+  } catch (error) {
+    console.log(error)
   }
 }
 
 onMounted(async () => {
   try {
-    console.log(route.params.id)
-    id.value = route.params.id || ''
-    if (id.value && id.value != '1234') {
-      await loadAnnotation(id.value)
+    id.value = route.params.id.toString()
+    if (id.value && id.value != '') {
+      modoEdicao.value = false
+      await fetchAnnotation()
+    } else {
+      modoEdicao.value = true
     }
-  } catch (e) {}
+  } catch (error) {
+    console.log(error)
+  }
 })
 
 const button2Label = ref('Nova citação')
@@ -46,16 +71,22 @@ const button2Icon = ref('add')
     <NavBar :isAdmin="isAdmin" :isSuperAdmin="isSuperAdmin"></NavBar>
     <div class="container">
       <div class="content">
-        <SectionHeader
-          v-if="annotation?.work?.title"
-          :pageName="annotation.work.title"
-          :options="true"
-        ></SectionHeader>
+        <div class="panel" style="flex-direction: row;">
+          <h1>{{ annotation.workTitle }}</h1>
+          <div class="holder">
+            <RouterLink :to="`/fichamentos/${id}/editar`">
+              <button class="button btn-secondary">Editar</button>
+            </RouterLink>
+            <button class="button btn-negative">
+              Excluir
+            </button>
+          </div>
+        </div>
         <SectionOptions
           :showButton2="true"
           :button2Label="button2Label"
           :button2Icon="button2Icon"
-          :button2Link="`/fichamentos/${id}/citacoes/nova`"
+          :button2Link="`/citacoes/nova`"
         />
 
         <div class="quoteList">
@@ -71,6 +102,8 @@ const button2Icon = ref('add')
       </div>
     </div>
   </main>
+
+  
 </template>
 
 <style scoped>

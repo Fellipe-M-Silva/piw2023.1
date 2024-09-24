@@ -31,10 +31,12 @@ export class Work {
     })
     publishingYear: number
 
+    @Column()
+    authors: string
     //Relacionamentos
 
     //Possui de *1 a n* autores
-    @ManyToMany(() => Author, (author) => author.works, {eager: true})
-    authors: Author[]
+    // @ManyToMany(() => Author, (author) => author.works, {eager: true})
+    // authors: Author[]
 
 }

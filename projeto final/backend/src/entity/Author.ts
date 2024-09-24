@@ -7,18 +7,16 @@ import { Work } from "./Work"
     @PrimaryGeneratedColumn("uuid")
     id: string
 
-    @Column({
-        unique: true
-    })
+    @Column()
     name: string
 
     //Relacionamentos
 
     //Possui de *1 a n* obras
-    @ManyToMany(() => Work, (work) => work.authors, {
-        nullable: true
-    })
-    @JoinTable()
-    works: Work[]
+    // @ManyToMany(() => Work, (work) => work.authors, {
+    //     nullable: true
+    // })
+    // @JoinTable()
+    // works: Work[]
 
 }

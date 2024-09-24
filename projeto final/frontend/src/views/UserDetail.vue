@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import NavBar from '@/components/NavBar.vue'
 import SectionHeader from '@/components/SectionHeader.vue'
-import FormInput from '@/components/FormInput.vue'
 import { onMounted, ref } from 'vue'
 import { api } from '@/api'
 import { useRoute, useRouter } from 'vue-router'
@@ -83,21 +82,26 @@ onMounted(async () => {
         <div class="panel">
           <form name="userForm" @submit.prevent="id ? updateUser() : createUser()">
             <div class="grid-list">
-              <label for="name">Nome</label>
-              <input type="text" id="name" v-model="user.name" />
+              <div class="inputsection">
+                <label for="name">Nome</label>
+                <input type="text" id="name" v-model="user.name" />
+              </div>
 
-              <label for="email">E-mail</label>
-              <input type="text" id="email" v-model="user.email" />
-
-              <label for="password">Senha</label>
-              <input type="password" id="password" v-model="user.password" />
-
-              <!-- <label for="isadmin">Admin</label>
-              <input type="checkbox" id="isadmin" v-model="user.isAdmin" /> -->
-
+              <div class="inputsection">
+                <label for="email">E-mail</label>
+                <input type="text" id="email" v-model="user.email" />
+              </div>
+              
+              <div class="inputsection">
+                <label for="password">Senha</label>
+                <input type="password" id="password" v-model="user.password" />
+              </div>
             </div>
 
             <div class="holder">
+              <button  @click="$router.go(-1)" class="btn-plain" type="submit" name="login" method="post">
+                Voltar
+              </button>
               <button
                 v-if="modoEdicao && id"
                 class="btn-primary"

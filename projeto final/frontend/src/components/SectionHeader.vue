@@ -1,5 +1,6 @@
 <script setup lang="ts">
 defineProps({
+  editLink: String,
   pageName: String,
   backButton: Boolean,
   options: Boolean
@@ -13,9 +14,13 @@ defineProps({
     </button>
     <h1>{{ pageName }}</h1>
     <div v-if="options"class="holder">
-      <button class="button btn-secondary">Editar</button>
-      <button class="button btn-secondary btn-icon">
-        <span class="material-symbols-outlined"> more_horiz </span>
+      <RouterLink to="editLink">
+        <button class="button btn-secondary">Editar</button>
+      </RouterLink>
+      
+      <button class="button btn-negative">
+        <span class="material-symbols-outlined"> delete </span>
+        Excluir
       </button>
     </div>
   </div>

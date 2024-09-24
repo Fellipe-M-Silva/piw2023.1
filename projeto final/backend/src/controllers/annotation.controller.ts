@@ -5,22 +5,26 @@ import { User } from "../entity/User";
 import { Work } from "../entity/Work";
 import { Quote } from "../entity/Quote";
 
-
 interface annotationBody {
     isPublic: boolean;
-    user: User;
-    work: Work;
+    userId: string;
+    workTitle: string;
+    workAuthors: string;
     quotes: Quote[]
 }
 
 async function Create(req: Request, res: Response) {
+    console.log(req.body)
     try {
         const annotationData: annotationBody = req.body;
         const newAnnotation = new Annotation;
         newAnnotation.isPublic = annotationData.isPublic;
-        newAnnotation.user = annotationData.user;
-        newAnnotation.work = annotationData.work;
-        newAnnotation.quotes = annotationData.quotes;
+        newAnnotation.workTitle = annotationData.workTitle;
+        newAnnotation.workAuthors = annotationData.workAuthors;
+
+        const user = await AppDataSource.manager.findOneBy(User, {id:annotationData.userId});
+        newAnnotation.user = user
+
 
         if (newAnnotation != null) {
             await AppDataSource.manager.save(newAnnotation);
@@ -62,9 +66,10 @@ async function Update(req: Request, res: Response) {
 
         if (annotationToBeUpdated != null) {
             annotationToBeUpdated.isPublic = data.isPublic;
-            annotationToBeUpdated.user = data.user;
-            annotationToBeUpdated.work = data.work;
-            annotationToBeUpdated.quotes = data.quotes;
+            annotationToBeUpdated.workTitle = data.workTitle;
+            annotationToBeUpdated.workAuthors = data.workAuthors;
+            // annotationToBeUpdated.workId = data.work.id;
+            // annotationToBeUpdated.quotesId = data.quotes.id;
 
             await AppDataSource.manager.save(annotationToBeUpdated);
             return res.sendStatus(200);

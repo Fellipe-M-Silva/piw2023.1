@@ -75,11 +75,11 @@ const button2Link = ref('/administradores/novo')
               <td class="body2">Ações</td>
             </thead>
             <tr v-for="user in users">
-              <td class="body1">{{ user.name }}</td>
-              <td>{{ user.email }}</td>
-              <td v-if="user.isAdmin">Admin</td>
-              <td v-else>Usuário</td>
-              <td class="hold">
+              <td v-if="user.isAdmin == true" class="body1">{{ user.name }}</td>
+              <td v-if="user.isAdmin == true" >{{ user.email }}</td>
+              <td v-if="user.isSuperAdmin == true">Super Admin</td>
+              <td v-else-if="user.isAdmin == true">Admin</td>
+              <td v-if="user.isAdmin == true" class="hold">
                 <div class="holder">
                   <RouterLink :to="`/usuarios/${user.id}`">
                     <button class="btn-icon-sm">
