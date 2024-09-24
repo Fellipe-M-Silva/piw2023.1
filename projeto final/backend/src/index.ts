@@ -12,6 +12,7 @@ import workRoutes from "./routes/work.route";
 import authRoutes from "./routes/authentication.route";
 
 const server = express();
+server.use(cors());
 dotenv.config();
 server.use(annotationRoutes);
 server.use(authorRoutes);
@@ -19,10 +20,13 @@ server.use(quoteRoutes);
 server.use(userRoutes);
 server.use(workRoutes);
 server.use(authRoutes);
-server.use(cors({
-    origin: "http://localhost:5173"
-}));
 server.use(express.json());
+
+server.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*"); // update to match the domain you will make the request from
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
 
 AppDataSource.initialize().catch(error => {
     console.log(error);

@@ -22,15 +22,13 @@ async function askToDelete(id:string) {
 
 async function removeUser() {
   try {
-    const res = await api.delete(`/users/${userToRemove.value?.id}`)
-    const removedUser: User = res.data
-    const toRemove = users.value.findIndex(u => removedUser.id == u.id)
+    const toRemove = users.value.findIndex(u => userToRemove.value?.id == u.id)
   users.value.splice(toRemove, 1)
   } catch (error) {
     console.log(error)
   } finally {
     toggleModal()
-  }
+  }  
 }
 
 async function toggleModal() {
@@ -40,21 +38,19 @@ async function toggleModal() {
 
 onMounted(async () => {
   try {
-    const params = {
-      isAdmin: false
-    }
-    const { data } = await api.get('/users', {params})
+    const { data } = await api.get('/users', {
+      params: {isAdmin:true}
+    })
     users.value = data
-    console.log(users.value)
   } catch (error) {
     console.log(error)
   }
 })
 
-const nomePagina = ref('Usuários')
-const button2Label = ref('Novo usuário')
+const nomePagina = ref('Administradores')
+const button2Label = ref('Novo administrador')
 const button2Icon = ref('add')
-const button2Link = ref('/usuarios/novo')
+const button2Link = ref('/administradores/novo')
 </script>
 
 <template>
@@ -107,20 +103,17 @@ const button2Link = ref('/usuarios/novo')
       <div class="modal-content">
         <div class="modal-header">
           <h5>Remover usuário</h5>
-          <button @click="deleteRequested = false" class="btn-icon btn-icon-sm btn-plain">
+          <button @click="deleteRequested=false" class="btn-icon btn-icon-sm btn-plain">
             <span class="material-symbols-outlined"> close </span>
           </button>
         </div>
 
         <div class="modal-body">
-          <p class="body1">
-            O usuário <strong>{{ userToRemove?.name }}</strong> será removido. Esta ação não pode
-            ser desfeita, tem certeza de que deseja continuar?
-          </p>
+          <p class="body1">O usuário administrador <strong>{{ userToRemove?.name }}</strong> será removido. Esta ação não pode ser desfeita, tem certeza de que deseja continuar?</p>
         </div>
 
         <div class="modal-footer">
-          <button @click="deleteRequested = false" class="btn-secondary">Voltar</button>
+          <button @click="deleteRequested=false" class="btn-secondary">Voltar</button>
           <button @click="removeUser" class="btn-primary">Confirmar</button>
         </div>
       </div>
@@ -146,4 +139,6 @@ tr:hover {
 td {
   padding: 0.5rem 0.5rem;
 }
+
+
 </style>

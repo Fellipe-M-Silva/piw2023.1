@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import CardQuote from '@/components/CardQuote.vue'
 import NavBar from '@/components/NavBar.vue'
 import SectionHeader from '@/components/SectionHeader.vue'

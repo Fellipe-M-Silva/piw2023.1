@@ -31,11 +31,11 @@ async function createUser() {
       name: user.value.name,
       email: user.value.email,
       password: user.value.password,
-      isAdmin: user.value.isAdmin,
+      isAdmin: true,
       isSuperAdmin: false
     })
     user.value = res.data
-    router.push('/usuarios')
+    router.push('/administradores')
   } catch (error) {
     console.log(error)
   }
@@ -47,7 +47,7 @@ async function updateUser() {
       name: user.value.name,
       email: user.value.email,
       password: user.value.password,
-      isAdmin: false,
+      isAdmin: true,
       isSuperAdmin: false
     })
     user.value = res.data

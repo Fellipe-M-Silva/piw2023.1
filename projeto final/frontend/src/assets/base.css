@@ -150,3 +150,7 @@ a {
 .centered {
   text-align: center;
 }
+
+strong {
+  font-weight: 600;
+}

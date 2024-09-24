@@ -11,6 +11,7 @@ import { api } from '@/api'
 const annotations = ref([] as Annotation[])
 const isAdmin = ref(true)
 const isSuperAdmin = ref(true)
+
 onMounted(async () => {
   try {
     const { data } = await api.get('/annotations')
@@ -45,7 +46,7 @@ const button2Link = ref('fichamentos/novo')
           :button2Link="button2Link"
         />
         <div class="grid-list">
-          <RouterLink v-for="annotation in annotations" :to="`/fichamento/${annotation.id}`" as="article">
+          <RouterLink v-for="annotation in annotations" :to="`/fichamentos/${annotation.id}`" as="article">
             <article class="card">
               <h2>{{ annotation.work.title }}</h2>
               <div class="footer">

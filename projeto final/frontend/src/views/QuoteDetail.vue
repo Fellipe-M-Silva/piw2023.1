@@ -1,71 +1,48 @@
-<script setup>
+<script setup lang="ts">
 import NavBar from '@/components/NavBar.vue'
 import SectionHeader from '@/components/SectionHeader.vue'
 import FormInput from '@/components/FormInput.vue'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
+import type { Quote } from '@/types'
+import { api } from '@/api'
+import { useRoute } from 'vue-router'
 
 const modoEdicao = ref(false)
 const isAdmin = ref(true)
 const isSuperAdmin = ref(true)
 
-const data = {
-  id: '10',
-  isPublic: false,
-  work: {
-    id: '10010c71-0713-438a-99c8-021db1a43577',
-    title: 'O detalhe na tipografia',
-    edition: '2ª',
-    publisher: 'WMF Martins Fontes',
-    publishingYear: 2013,
-    authors: [
-      {
-        id: '4de85426-ccdf-4027-8781-11e03c65d133',
-        name: 'Jost Hochuli'
-      },
-      {
-        id: '4de85426-ccdf-4027-8781-11e03c65d133',
-        name: 'Jost Hochuli da Silvasauro'
-      }
-    ]
-  },
-  quotes: [
-    {
-      id: '30cc6d43-0e1b-4744-b4e7-5e797894053b',
-      text: 'Somente durante uma fixação é que a informação é registrada',
-      startingPage: '8',
-      endingPage: null,
-      note: 'Retirado do começo do livro.'
-    },
-    {
-      id: '30cc6d43-0e1b-4744-b4e7-5e797894053b',
-      text: 'Somente durante uma fixação é que a informação é registrada',
-      startingPage: '8',
-      endingPage: null,
-      note: 'Retirado do começo do livro.'
-    },
-    {
-      id: '30cc6d43-0e1b-4744-b4e7-5e797894053b',
-      text: 'Somente durante uma fixação é que a informação é registrada',
-      startingPage: '8',
-      endingPage: null,
-      note: 'Retirado do começo do livro.'
-    },
-    {
-      id: '30cc6d43-0e1b-4744-b4e7-5e797894053b',
-      text: 'Somente durante uma fixação é que a informação é registrada',
-      startingPage: '8',
-      endingPage: null,
-      note: 'Retirado do começo do livro.'
-    },
-    {
-      id: 'cae2f1de-5171-4b8b-8c72-db011c407e2a',
-      text: 'Blebleble',
-      startingPage: '20',
-      endingPage: null,
-      note: 'Retirado do começo do livro.'
-    }
-  ]
+const quote = ref({} as Quote)
+const id = ref('1234')
+const route = useRoute()
+const text = ref("")
+const startingPage = ref("")
+const endingPage = ref("")
+const note = ref("")
+
+async function loadQuote(id: String) {
+  try {
+    const res = await api.get(`/quotes/${id}`)
+    console.log(res.data)
+    quote.value = res.data
+  } catch (e) {
+    console.log(e)
+  }
 }
+
+onMounted(async () => {
+  try {
+    console.log(route.query)
+    id.value = route.params.id || ''
+    if (id.value && id.value != '1234') {
+      await loadQuote(id.value)
+      modoEdicao.value = true
+    }
+    else {  
+      modoEdicao.value = false
+    }
+  } catch (e) {}
+})
+
 </script>
 
 <template>
@@ -73,7 +50,7 @@ const data = {
     <NavBar :isAdmin="isAdmin" :isSuperAdmin="isSuperAdmin"></NavBar>
     <div class="container">
       <div class="content">
-        <SectionHeader pageName="Editar citação" v-if="modoEdicao"></SectionHeader>
+        <SectionHeader pageName="Citação" v-if="modoEdicao"></SectionHeader>
         <SectionHeader pageName="Nova citação" v-else></SectionHeader>
 
         <div class="panel">
@@ -84,19 +61,26 @@ const data = {
                 label="Citação"
                 id="text"
                 name="text"
+                :value="quote.text" 
+                @input="event => text = event.target.value"
                 :hasError="false"
                 errorMessage="Informação obrigatória"
 								style="grid-column: 1/-1;"
               />
-              <FormInput type="text" label="Página inicial" id="startingPage" name="startingPage" 
+              <FormInput type="text" label="Página inicial" id="startingPage" name="startingPage" :value="quote.startingPage" 
+              @input="event => startingPage = event.target.value"
               :hasError="false"
                 errorMessage="Informação obrigatória"/>
-              <FormInput type="text" label="Página final (opcional)" id="endingPage" name="endingPage" />
+              <FormInput type="text" label="Página final (opcional)" 
+              @input="event => text = endingPage.target.value"
+              :value="quote.endingPage"  id="endingPage" name="endingPage" />
               <FormInput
                 type="textarea"
                 label="Nota (opcional)"
                 id="note"
                 name="note"
+                @input="event => note = event.target.value"
+                :value="quote.note" 
                 style="grid-column: 1/-1"
               />
             </div>

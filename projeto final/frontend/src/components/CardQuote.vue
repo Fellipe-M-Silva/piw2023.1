@@ -1,10 +1,4 @@
 <script setup>
-function copyText() {
-  try {
-    navigator.clipboard.writeText(this.text)
-  } catch (error) {}
-}
-
 defineProps({
   id: String,
   text: String,
@@ -15,8 +9,9 @@ defineProps({
 </script>
 
 <template>
+  
   <article class="card">
-    <p @click="copyText" class="quote">“&hairsp;{{ text }}&hairsp;”</p>
+    <p class="quote">“&hairsp;{{ text }}&hairsp;”</p>
 
     <p v-if="note" class="body2">{{ note }}</p>
 
@@ -30,9 +25,11 @@ defineProps({
         <button class="btn-icon-sm">
           <span class="material-symbols-outlined"> content_copy </span>
         </button>
-        <button class="btn-icon-sm">
+        <RouterLink :to="`/citacoes/${id}`"> 
+          <button class="btn-icon-sm">
           <span class="material-symbols-outlined"> edit </span>
         </button>
+        </RouterLink>
         <button class="btn-icon-sm">
           <span class="material-symbols-outlined"> more_horiz </span>
         </button>

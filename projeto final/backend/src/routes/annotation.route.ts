@@ -7,14 +7,14 @@ import cors from 'cors'
 
 const annotationRoutes = Router();
 
-annotationRoutes.post("/annotation", cors(), bodyParser.json(), annotationSchema, validateRequestSchema, Create);
+annotationRoutes.post("/annotations", cors(), bodyParser.json(), annotationSchema, validateRequestSchema, Create);
 
 annotationRoutes.get("/annotations", cors(), List);
 
-annotationRoutes.get("/annotation/:id", cors(), Find);
+annotationRoutes.get("/annotations/:id", cors(), Find);
 
-annotationRoutes.put("/annotation/:id", cors(), bodyParser.json(), annotationSchema, validateRequestSchema, Update);
+annotationRoutes.put("/annotations/:id", cors(), bodyParser.json(), annotationSchema, validateRequestSchema, Update);
 
-annotationRoutes.delete("/annotation/:id", cors(), Delete);
+annotationRoutes.delete("/annotations/:id", cors(), Delete);
 
 export default annotationRoutes;

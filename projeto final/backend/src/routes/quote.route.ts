@@ -3,17 +3,18 @@ import { Create, List, Find, Update, Delete } from "../controllers/quote.control
 import bodyParser from "body-parser";
 import { quoteSchema } from "../validators/quote.validator";
 import { validateRequestSchema } from "../validators/validationFunction";
+import cors from 'cors'
 
 const quoteRoutes = Router();
 
-quoteRoutes.post("/quote", bodyParser.json(), quoteSchema, validateRequestSchema, Create);
+quoteRoutes.post("/quotes", cors(), bodyParser.json(), quoteSchema, validateRequestSchema, Create);
 
-quoteRoutes.get("/quote", List);
+quoteRoutes.get("/quotes", cors(), List);
 
-quoteRoutes.get("/quote/:id", Find);
+quoteRoutes.get("/quotes/:id", cors(), Find);
 
-quoteRoutes.put("/quote/:id", bodyParser.json(), quoteSchema, validateRequestSchema, Update);
+quoteRoutes.put("/quotes/:id", cors(), bodyParser.json(), quoteSchema, validateRequestSchema, Update);
 
-quoteRoutes.delete("/quote/:id", Delete);
+quoteRoutes.delete("/quotes/:id", cors(), Delete);
 
 export default quoteRoutes;

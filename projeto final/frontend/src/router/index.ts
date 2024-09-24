@@ -18,22 +18,22 @@ const router = createRouter({
   
   routes: [
     {path: '/', component: AnnotationsView},
-    {path: '/repositorio', component: AnnotationsView, meta: {title: 'Repositório', personal: false}},
-    {path: '/login', component: LoginView, meta: {title: 'Cita - Login'}},
-    {path: '/cadastro', component: RegisterView, meta: {title: 'Cadastro'}},
-    {path: '/usuarios', component: UsersView, meta: {title: 'Usuários'}},
+    {path: '/repositorio', component: AnnotationsView},
+    {path: '/login', component: LoginView},
+    {path: '/cadastro', component: RegisterView},
+    {path: '/usuarios', component: UsersView},
     {path: '/usuarios/novo', component: UserDetail},
     {path: '/usuarios/:id', component: UserDetail},
-    {path: '/administradores', component: UsersView, meta: {title: 'Administradores'}},
+    {path: '/administradores', component: UsersView},
     {path: '/administradores/novo', component: UserDetail},
-    {path: '/administradores/:od', component: UserDetail},
-    {path: '/fichamentos', component: AnnotationsView, meta: {title: 'Meus fichamentos', personal: true}},
+    {path: '/administradores/:id', component: UserDetail},
+    {path: '/fichamentos', component: AnnotationsView},
     {path: '/fichamentos/novo', component: AnnotationDetail},
     {path: '/fichamentos/:id', component: AnnotationView},
-    {path: '/citacoes', component: QuotesView, meta: {title: 'Citações'}},
+    {path: '/citacoes', component: QuotesView},
     {path: '/citacoes/nova', component: QuoteDetail},
     {path: '/citacoes/:id', component: QuoteDetail},
-    {path: '/:pathMatch(.*)*', component: NotFound, meta: {title: 'Não encontrado'}}
+    {path: '/:pathMatch(.*)*', component: NotFound}
   ]
 })
 // router.beforeEach(async(to, from, next) => {

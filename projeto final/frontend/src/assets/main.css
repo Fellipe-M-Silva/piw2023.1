@@ -83,7 +83,7 @@ div {
   flex-direction: column;
   gap: 1.5rem;
   flex: 1 0 0;
-  align-self: stretch;  
+  align-self: stretch;
   overflow-y: scroll;
   background-color: var(--surface-background-1);
 }
@@ -130,6 +130,62 @@ div {
 .holder {
   display: flex;
   gap: 0.5rem;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: grid;
+  place-items: center;
+  animation: fadein .3s ease-out
+}
+
+@keyframes fadein {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.modal-dialog {
+  width: 288px;
+  padding: 1rem;
+  border-radius: 1rem;
+  background-color: var(--surface-background-3);
+}
+
+.modal-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  align-self: stretch;
+}
+
+.modal-content {
+  align-self: stretch;
+}
+
+.modal-content p {
+  align-self: stretch;
+}
+
+.modal-footer {
+  align-self: stretch;
+  display: flex;
+  gap: 0.5rem;
+  justify-content: right;
 }
 
 .titleandsubtitle {
