@@ -6,13 +6,12 @@ import { onMounted } from 'vue'
 import { ref } from 'vue'
 import { api } from '@/api'
 import type { User } from '@/types'
-
-const isAdmin = ref(true)
-const isSuperAdmin = ref(true)
+import { useUserStore } from '@/stores/userStore'
 
 const users = ref([] as User[])
 const userToRemove = ref<User>()
 const deleteRequested = ref(false)
+const userStore = useUserStore()
 
 async function askToDelete(id:string) {
   const index = users.value.findIndex(u => u.id === id)
@@ -43,7 +42,11 @@ onMounted(async () => {
     const params = {
       isAdmin: false
     }
-    const { data } = await api.get('/users', {params})
+    const { data } = await api.get('/users', {
+      headers: {
+        Authorization: `Bearer ${userStore.jwt}`
+      },
+      params})
     users.value = data
   } catch (error) {
     console.log(error)
@@ -58,7 +61,7 @@ const button2Link = ref('/usuarios/novo')
 
 <template>
   <main>
-    <NavBar :isAdmin="isAdmin" :isSuperAdmin="isSuperAdmin"></NavBar>
+    <NavBar></NavBar>
     <div class="container">
       <div class="content">
         <SectionHeader :pageName="nomePagina"></SectionHeader>

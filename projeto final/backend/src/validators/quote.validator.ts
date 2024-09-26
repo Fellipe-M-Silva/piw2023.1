@@ -1,8 +1,8 @@
 import { body } from "express-validator"
 
 const schema = [
-    body("annotation")
-    .notEmpty(),
+    // body("annotationId")
+    // .notEmpty(),
     body("text")
     .notEmpty().withMessage("Campo obrigatório"),
     body("startingPage")

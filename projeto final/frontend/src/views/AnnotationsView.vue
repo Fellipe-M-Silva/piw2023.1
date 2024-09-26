@@ -1,24 +1,19 @@
 <script setup lang="ts">
-// import WorkList from '@/components/WorkList.vue'
 import NavBar from '@/components/NavBar.vue'
 import SectionHeader from '@/components/SectionHeader.vue'
 import SectionOptions from '@/components/SectionOptions.vue'
-import CardAnnotation from '@/components/CardAnnotation.vue'
 import { onMounted, ref } from 'vue'
-import type { Annotation, Quote } from '@/types'
+import type { Annotation, Annotation2 } from '@/types'
 import { api } from '@/api'
-import { useRouter } from 'vue-router'
+import { useUserStore } from '@/stores/userStore'
 
 const annotations = ref([] as Annotation[])
-const isAdmin = ref(true)
-const isSuperAdmin = ref(true)
-const router = useRouter()
-
+const userStore = useUserStore()
 const annotationToRemove = ref<Annotation>()
 const deleteRequested = ref(false)
 
-async function askToDelete(id:string) {
-  const index = annotations.value.findIndex(u => u.id === id)
+async function askToDelete(id: string) {
+  const index = annotations.value.findIndex((u) => u.id === id)
   annotationToRemove.value = annotations.value[index]
   toggleModal()
 }
@@ -27,8 +22,8 @@ async function removeAnnotation() {
   try {
     const res = await api.delete(`/annotations/${annotationToRemove.value?.id}`)
     const removedUser: Annotation = res.data
-    const toRemove = annotations.value.findIndex(u => removedUser.id == u.id)
-  annotations.value.splice(toRemove, 1)
+    const toRemove = annotations.value.findIndex((u) => removedUser.id == u.id)
+    annotations.value.splice(toRemove, 1)
   } catch (error) {
     console.log(error)
   } finally {
@@ -40,14 +35,21 @@ async function toggleModal() {
   deleteRequested.value = !deleteRequested.value
 }
 
+
 onMounted(async () => {
   try {
-    const { data } = await api.get('/annotations')
-    annotations.value = data
+    const { data } = await api.get('/annotations', {
+      headers: {
+        Authorization: `Bearer ${userStore.jwt}`
+      }
+    })
+
+    const userId = userStore.user.id
+    const filter = annotations.value = data.filter((annotation: Annotation2) => annotation.user.id === userId)
+    annotations.value = filter
+    
   } catch (e) {}
 })
-
-const personal = ref(false)
 
 const nomePagina = ref('Fichamentos')
 const button1Label = ref('Importar')
@@ -59,7 +61,7 @@ const button2Link = ref('fichamentos/novo')
 
 <template>
   <main>
-    <NavBar :isAdmin="isAdmin" :isSuperAdmin="isSuperAdmin"></NavBar>
+    <NavBar></NavBar>
     <div class="container">
       <div class="content">
         <SectionHeader :pageName="nomePagina"></SectionHeader>
@@ -73,21 +75,18 @@ const button2Link = ref('fichamentos/novo')
           :button2Link="button2Link"
         />
         <div class="grid-list">
-          <!-- <RouterLink
-            v-for="annotation in annotations"
-            :to="`/fichamentos/${annotation.id}`"
-            as="article"
-          >
-            <article class="card">
-              <h2>{{ annotation.workTitle }}</h2>
+          <div v-for="annotation in annotations">
+            <div class="card">
+              <RouterLink :to="`/fichamentos/${annotation.id}/citacoes`"><h3>{{ annotation.workTitle }}</h3></RouterLink>
+              
               <div class="footer">
                 <ul>
-                  <li>
+                  <li class="body2">
                     {{ annotation.workAuthors }}
                   </li>
                 </ul>
                 <div class="holder">
-                  <RouterLink :to="`/fichamentos/${annotation.id}/`">
+                  <RouterLink :to="`/fichamentos/${annotation.id}/citacoes`">
                     <button class="btn-icon-sm">
                       <span class="material-symbols-outlined"> visibility </span>
                     </button>
@@ -102,40 +101,7 @@ const button2Link = ref('fichamentos/novo')
                   </button>
                 </div>
               </div>
-            </article>
-          </RouterLink> -->
-          <div
-          class="card"
-            @click="router.push(`/fichamentos/${annotation.id}`)"
-            v-for="annotation in annotations"
-            :to="`/fichamentos/${annotation.id}`"
-            as="article"
-          >
-            <article class="card">
-              <h2>{{ annotation.workTitle }}</h2>
-              <div class="footer">
-                <ul>
-                  <li>
-                    {{ annotation.workAuthors }}
-                  </li>
-                </ul>
-                <div class="holder">
-                  <RouterLink :to="`/fichamentos/${annotation.id}/`">
-                    <button class="btn-icon-sm">
-                      <span class="material-symbols-outlined"> visibility </span>
-                    </button>
-                  </RouterLink>
-                  <RouterLink :to="`/fichamentos/${annotation.id}/editar`">
-                    <button class="btn-icon-sm">
-                      <span class="material-symbols-outlined"> edit </span>
-                    </button>
-                  </RouterLink>
-                  <button @click="askToDelete(annotation.id)" class="btn-negative btn-icon-sm">
-                    <span class="material-symbols-outlined"> delete </span>
-                  </button>
-                </div>
-              </div>
-            </article>
+            </div>
           </div>
         </div>
       </div>
@@ -154,7 +120,9 @@ const button2Link = ref('fichamentos/novo')
 
         <div class="modal-body">
           <p class="body1">
-            O fichamendo da obra <strong>{{ annotationToRemove?.workTitle }}</strong> será removido junto de todas as suas citações. Esta ação não pode ser desfeita, tem certeza de que deseja continuar?
+            O fichamendo da obra <strong>{{ annotationToRemove?.workTitle }}</strong> será removido
+            junto de todas as suas citações. Esta ação não pode ser desfeita, tem certeza de que
+            deseja continuar?
           </p>
         </div>
 
@@ -176,11 +144,15 @@ span {
   transform: scale(75%);
 }
 
-h2 {
+h3 {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   align-self: stretch;
+}
+
+.card a {
+  align-self: stretch
 }
 
 ul {
@@ -196,31 +168,10 @@ li {
   margin: 0;
 }
 
-a {
-  border-radius: var(--root-025-rem, 0.25rem);
-  background: var(--root-background-2, #e8ebee);
-  /* padding: 0.25rem 0.5rem; */
-  align-self: stretch;
-
-  color: var(--text-text-medium, #626262);
-  font-variant-numeric: lining-nums proportional-nums;
-
-  /* body 2 */
-  font-family: var(--body-font, 'Source Sans 3');
-  font-size: var(--typography-font-size-body-2, 0.8125rem);
-  font-style: normal;
-  font-weight: 400;
-  line-height: 150%; /* 1.21875rem */
-  text-decoration: none;
-}
 
 .footer {
   display: flex;
   justify-content: space-between;
   align-self: stretch;
-}
-
-article {
-  min-width: 32.3%;
 }
 </style>

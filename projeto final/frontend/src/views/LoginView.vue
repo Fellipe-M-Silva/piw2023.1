@@ -1,17 +1,52 @@
 <script setup lang="ts">
+import { ref } from 'vue';
 import SectionTitle from '../components/SectionTitle.vue';
-import FormInput from '../components/FormInput.vue'
+import { useRouter } from 'vue-router';
+import { api } from '@/api';
+import { useUserStore } from '@/stores/userStore';
 
+// const user = ref<User>({})
+const email = ref('')
+const password = ref('')
+const router = useRouter()
+const userStore = useUserStore()
+
+
+async function authUser() {
+  try {
+    const { data } = await api.post('/login', {
+      email: email.value,
+      password: password.value
+    })
+
+    const { token, user } = data
+    userStore.authenticaded(user, token)
+
+    router.push('/fichamentos')
+  } catch (error) {
+  }
+}
 </script>
 
 <template>
   <div class="container">
     <div class="panel">
       <SectionTitle title="Olá!" subtitle="Faça login para coninuar" />
-      <form name="loginForm">
-        <FormInput type="text" label="E-mail" id="email" name="email" />
-        <FormInput type="password" label="Senha" id="password" name="password" :hasError="false" errorMessage="E-mail ou senha incorretos"/>
-        <button class="btn-primary"type="submit" name="login" method="post">Entrar</button>
+      <form name="loginForm" @submit.prevent="authUser()">
+        <div class="grid-list">
+
+          <div class="inputsection">
+            <label for="email">E-mail</label>
+            <input type="text" id="email" v-model="email" />
+          </div>
+
+          <div class="inputsection">
+            <label for="password">Senha</label>
+            <input type="password" id="password" v-model="password" />
+          </div>
+        </div>
+
+        <button class="btn-primary" type="submit" name="login" method="post">Entrar</button>
       </form>
       <div class="footer">
         <p class="body2 centered"> ou </p>

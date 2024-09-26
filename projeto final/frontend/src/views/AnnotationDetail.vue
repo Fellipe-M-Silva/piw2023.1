@@ -5,19 +5,22 @@ import { onMounted, ref } from 'vue'
 import { api } from '@/api'
 import type { Annotation } from '@/types'
 import { useRoute, useRouter } from 'vue-router'
-
-const isAdmin = ref(true)
-const isSuperAdmin = ref(true)
+import { useUserStore } from '@/stores/userStore'
 
 const route = useRoute()
 const router = useRouter()
 const annotation = ref({} as Annotation)
 const id = ref('')
 const modoEdicao = ref(false)
+const userStore = useUserStore()
 
 async function fetchAnnotation() {
   try {
-    const res = await api.get(`/annotations/${id.value}`)
+    const res = await api.get(`/annotations/${id.value}`,  {
+      headers: {
+        Authorization: `Bearer ${userStore.jwt}`
+      }
+    })
     annotation.value = res.data
   } catch (error) {
     console.log(error)
@@ -27,14 +30,14 @@ async function fetchAnnotation() {
 async function createAnnotation() {
   try {
     const res = await api.post(`/annotations`, {
-      userId: 'be36baf2-84ab-4e16-b4a1-f82adc0b9112',
+      userId: userStore.user.id,
       isPublic: annotation.value.isPublic,
       workTitle: annotation.value.workTitle,
       workAuthors: annotation.value.workAuthors
     })
 
     annotation.value = res.data
-    router.push(`/fichamentos/${id}`)
+    router.push(`/fichamentos/${annotation.value.id}/citacoes`)
   } catch (error) {
     console.log(error)
   }
@@ -51,7 +54,7 @@ async function updateAnnotation() {
     console.log(res.data)
     annotation.value = res.data
     
-    router.push(`/fichamentos/${id.value}`)
+    router.push(`/fichamentos/${annotation.value.id}/citacoes`)
   } catch (error) {
     console.log(error)
   }
@@ -74,7 +77,7 @@ onMounted(async () => {
 
 <template>
   <main>
-    <NavBar :isAdmin="isAdmin" :isSuperAdmin="isSuperAdmin"></NavBar>
+    <NavBar></NavBar>
     <div class="container">
       <div class="content">
         <SectionHeader pageName="Fichamento" v-if="modoEdicao"></SectionHeader>

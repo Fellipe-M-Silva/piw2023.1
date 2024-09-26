@@ -118,7 +118,7 @@ div {
 
   border-radius: 0.5rem;
   background: var(--surface-background-2);
-  cursor: pointer;
+  /* cursor: pointer; */
   transition: ease-in 0.1s;
 }
 
@@ -130,6 +130,10 @@ div {
 .holder {
   display: flex;
   gap: 0.5rem;
+}
+
+article {
+  min-width: 32.3%;
 }
 
 .modal {
@@ -188,6 +192,15 @@ div {
   justify-content: right;
 }
 
+.logindiv {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--surface-background-1);
+  padding: 1rem;
+  border-radius: 0.5rem;
+  gap: 1rem
+}
+
 .titleandsubtitle {
   margin: 0;
   display: flex;
@@ -238,6 +251,7 @@ button {
 
 .btn-secondary:hover {
   background: var(--surface-secondary-hover);
+  color: var(--text-text-strong);
 }
 
 .btn-plain {
@@ -276,6 +290,7 @@ button {
 }
 
 a {
+  color: var(--text-text-strong);
   text-decoration: none;
 }
 

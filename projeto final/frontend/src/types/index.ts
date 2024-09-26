@@ -9,7 +9,16 @@ export type User = {
 
 export type Quote = {
     id: string
-    annotation: Annotation
+    annotationId: string
+    text: string
+    startingPage: string
+    endingPage: string
+    note: string
+}
+
+export type Quote2 = {
+    id: string
+    annotation: Annotation2
     text: string
     startingPage: string
     endingPage: string
@@ -20,6 +29,15 @@ export type Annotation = {
     id: string
     isPublic: boolean
     userId: string
+    workTitle: string
+    workAuthors: string
+    quotes: Quote[]
+}
+
+export type Annotation2 = {
+    id: string
+    isPublic: boolean
+    user: User
     workTitle: string
     workAuthors: string
     quotes: Quote[]

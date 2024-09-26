@@ -25,10 +25,9 @@ async function Create(req: Request, res: Response) {
         const user = await AppDataSource.manager.findOneBy(User, {id:annotationData.userId});
         newAnnotation.user = user
 
-
         if (newAnnotation != null) {
             await AppDataSource.manager.save(newAnnotation);
-            return res.sendStatus(201);
+            return res.status(201).send(newAnnotation);
         }
         else {
             return res.sendStatus(400);
@@ -68,10 +67,9 @@ async function Update(req: Request, res: Response) {
             annotationToBeUpdated.isPublic = data.isPublic;
             annotationToBeUpdated.workTitle = data.workTitle;
             annotationToBeUpdated.workAuthors = data.workAuthors;
-            // annotationToBeUpdated.workId = data.work.id;
-            // annotationToBeUpdated.quotesId = data.quotes.id;
 
             await AppDataSource.manager.save(annotationToBeUpdated);
+            
             return res.sendStatus(200);
         } else {
             return res.sendStatus(400);

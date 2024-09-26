@@ -4,7 +4,7 @@ import { Quote } from "../entity/Quote";
 import { Annotation } from "../entity/Annotation";
 
 interface quoteBody {
-    annotation: Annotation;
+    annotationId: string;
     text: string;
     startingPage: string;
     endingPage: string;
@@ -14,12 +14,17 @@ interface quoteBody {
 async function Create(req: Request, res: Response) {
     try {
         const data: quoteBody = req.body;
-        const newQuote = new Quote();
-        newQuote.annotation = data.annotation
+        console.log(data)
+        const newQuote = new Quote;
         newQuote.text = data.text;
         newQuote.startingPage = data.startingPage;
         newQuote.endingPage = data.endingPage;
         newQuote.note = data.note;
+
+        const annotation = await AppDataSource.manager.findOneBy(Annotation, {id:data.annotationId});
+        console.log(annotation)
+        newQuote.annotation = annotation
+        
 
         if (newQuote != null) {
             await AppDataSource.manager.save(newQuote);
@@ -57,7 +62,6 @@ async function Update(req: Request, res: Response) {
         const quoteToBeUpdated = await AppDataSource.manager.findOneBy(Quote, { id: req.params.id })
 
         if (quoteToBeUpdated != null) {
-            quoteToBeUpdated.annotation = data.annotation;
             quoteToBeUpdated.text = data.text;
             quoteToBeUpdated.startingPage = data.startingPage;
             quoteToBeUpdated.endingPage = data.endingPage;

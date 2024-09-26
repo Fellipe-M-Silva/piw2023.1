@@ -5,19 +5,22 @@ import { onMounted, ref } from 'vue'
 import { api } from '@/api'
 import { useRoute, useRouter } from 'vue-router'
 import type { User } from '@/types'
-
-const isAdmin = ref(true)
-const isSuperAdmin = ref(true)
+import { useUserStore } from '@/stores/userStore'
 
 const route = useRoute()
 const router = useRouter()
 const user = ref({} as User)
 const id = ref('')
 const modoEdicao = ref(false)
+const userStore = useUserStore()
 
 async function fetchUser() {
   try {
-    const res = await api.get(`/users/${id.value}`)
+    const res = await api.get(`/users/${id.value}`, {
+      headers: {
+        Authorization: `Bearer ${userStore.jwt}`
+      }
+    })
     user.value = res.data
   } catch (error) {
     console.log(error)
@@ -73,7 +76,7 @@ onMounted(async () => {
 
 <template>
   <main>
-    <NavBar :isAdmin="isAdmin" :isSuperAdmin="isSuperAdmin"></NavBar>
+    <NavBar></NavBar>
     <div class="container">
       <div class="content">
         <SectionHeader pageName="Usuário" v-if="modoEdicao"></SectionHeader>

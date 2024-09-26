@@ -1,9 +1,35 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import router from '@/router';
+import { useUserStore } from '@/stores/userStore';
+import { onMounted, ref } from 'vue';
+
+defineProps ({ authenticated: Boolean })
+
+// const authenticated = ref<boolean>()
+
+// onMounted(async () => {
+//   if (userStore.user.id) {
+//     authenticated.value = true
+//     console.log('usuário logado')
+//   }
+//   else {
+//     authenticated.value = false
+//     console.log('usuário deslogado')
+//   }
+// })
+
+const userStore = useUserStore()
+
+async function logOut() {
+  userStore.logout()
+  router.push('/login')
+}
+</script>
 
 <template>
   <header>
     <div>
-      <RouterLink to="/">
+      <RouterLink to="/repositorio">
         <svg
           width="76"
           height="24"
@@ -30,7 +56,11 @@
         </svg>
       </RouterLink>
 
-      <div class="holder">
+      <div v-if="authenticated" class="holder">
+        
+        <button @click="logOut" class="btn-secondary">Sair</button>
+      </div>
+      <div v-else class="holder">
         <RouterLink to="/cadastro" as="button"
           ><button class="btn-secondary">Criar conta</button></RouterLink
         >
@@ -68,4 +98,5 @@ a {
   display: flex;
   gap: 0.5rem;
 }
+
 </style>

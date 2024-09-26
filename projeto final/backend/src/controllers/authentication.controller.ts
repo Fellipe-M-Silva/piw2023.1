@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { AppDataSource } from "../data-source";
 import { User } from "../entity/User";
-import bcrypt from "bcryptjs";
+import bcrypt, { hash } from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 
@@ -46,13 +46,12 @@ const secretKey = process.env.BACK_SECRET || "meianoiteeuteconto";
 async function Login(req: Request, res: Response) {
     try {
         const { email, password } = req.body;
-        const user = await AppDataSource.manager.findOneBy(User, { email: email });
+        const user = await AppDataSource.manager.findOneBy(User, { email: email }); 
 
-        const salt = await bcrypt.genSalt(10);
-        
-        if (bcrypt.compare(password, salt)) {
+        if (user && (await bcrypt.compare(password, user.password))) {
             const token = jwt.sign({ userId: user.email }, secretKey, { expiresIn: '1h' });
-            return res.status(200).send({ token });
+            // return res.status(200).send({ user, jwt: token });
+            return res.status(200).json({ user, token })
         }
         else {
             return res.sendStatus(401)
@@ -62,4 +61,12 @@ async function Login(req: Request, res: Response) {
     }
 }
 
-export { Register, Login };
+async function logout(req: Request, res: Response) {
+    res.status(200).json({
+        data: {
+            message: "Logout successful"
+        }
+    })
+}
+
+export { Register, Login, logout };

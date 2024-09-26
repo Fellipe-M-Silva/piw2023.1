@@ -1,91 +1,140 @@
 <script setup lang="ts">
 import NavBar from '@/components/NavBar.vue'
 import SectionHeader from '@/components/SectionHeader.vue'
-import FormInput from '@/components/FormInput.vue'
 import { onMounted, ref } from 'vue'
 import type { Quote } from '@/types'
 import { api } from '@/api'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
+import { useUserStore } from '@/stores/userStore'
 
-const modoEdicao = ref(false)
-const isAdmin = ref(true)
-const isSuperAdmin = ref(true)
-
-const quote = ref({} as Quote)
-const id = ref('1234')
 const route = useRoute()
-const text = ref("")
-const startingPage = ref("")
-const endingPage = ref("")
-const note = ref("")
+const router = useRouter()
+const quote = ref({} as Quote)
+const id = ref('')
+const quoteId = ref('')
+const modoEdicao = ref(false)
+const userStore = useUserStore()
 
-async function loadQuote(id: String) {
+async function fetchQuote() {
   try {
-    const res = await api.get(`/quotes/${id}`)
-    console.log(res.data)
+    const res = await api.get(`/quotes/${quoteId.value}`, {
+      headers: {
+        Authorization: `Bearer ${userStore.jwt}`
+      }
+    })
     quote.value = res.data
-  } catch (e) {
-    console.log(e)
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+async function createQuote() {
+  try {
+    console.log('criando citação')
+    const res = await api.post(`/quotes/`, {
+      text: quote.value.text,
+      annotationId: id.value,
+      startingPage: quote.value.startingPage,
+      endingPage: quote.value.endingPage,
+      note: quote.value.note
+    })
+    quote.value = res.data
+    console.log(quote.value)
+    router.push(`/fichamentos/${id.value}/citacoes`)
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+async function updateQuote() {
+  try {
+    const res = await api.put(`/quotes/${quoteId.value}`, {
+      text: quote.value.text,
+      annotationId: quoteId.value,
+      startingPage: quote.value.startingPage,
+      endingPage: quote.value.endingPage,
+      note: quote.value.note
+    })
+    quote.value = res.data
+    console.log(quote.value)
+    router.push(`/fichamentos/${id.value}/citacoes`)
+  } catch (error) {
+    console.log(error)
   }
 }
 
 onMounted(async () => {
   try {
-    console.log(route.query)
-    id.value = route.params.id || ''
-    if (id.value && id.value != '1234') {
-      await loadQuote(id.value)
+    const teste: string = String(route.params.id)
+    id.value = teste
+    
+    if(route.params.quoteId) {
+      const teste2: string = String(route.params.quoteId)
+      quoteId.value = teste2
+    }
+    
+    console.log(quoteId.value)
+
+    if (quoteId.value && quoteId.value != '') {
+      modoEdicao.value = false
+      await fetchQuote()
+    } else {
       modoEdicao.value = true
     }
-    else {  
-      modoEdicao.value = false
-    }
-  } catch (e) {}
+  } catch (error) {
+    console.log(error)
+  }
 })
-
 </script>
 
 <template>
   <main>
-    <NavBar :isAdmin="isAdmin" :isSuperAdmin="isSuperAdmin"></NavBar>
+    <NavBar></NavBar>
     <div class="container">
       <div class="content">
-        <SectionHeader pageName="Citação" v-if="modoEdicao"></SectionHeader>
+        <SectionHeader pageName="Citação" v-if="!modoEdicao"></SectionHeader>
         <SectionHeader pageName="Nova citação" v-else></SectionHeader>
 
         <div class="panel">
-          <form name="annotationForm">
+          <form name="quoteForm" @submit.prevent="quoteId ? updateQuote() : createQuote()">
             <div class="grid-list">
-              <FormInput
-                type="text-area"
-                label="Citação"
-                id="text"
-                name="text"
-                :value="quote.text" 
-                @input="event => text = event.target.value"
-                :hasError="false"
-                errorMessage="Informação obrigatória"
-								style="grid-column: 1/-1;"
-              />
-              <FormInput type="text" label="Página inicial" id="startingPage" name="startingPage" :value="quote.startingPage" 
-              @input="event => startingPage = event.target.value"
-              :hasError="false"
-                errorMessage="Informação obrigatória"/>
-              <FormInput type="text" label="Página final (opcional)" 
-              @input="event => text = endingPage.target.value"
-              :value="quote.endingPage"  id="endingPage" name="endingPage" />
-              <FormInput
-                type="textarea"
-                label="Nota (opcional)"
-                id="note"
-                name="note"
-                @input="event => note = event.target.value"
-                :value="quote.note" 
-                style="grid-column: 1/-1"
-              />
+              <div class="inputsection">
+                <label for="text">Texto</label>
+                <input type="text" id="text" v-model="quote.text" />
+              </div>
+
+              <div class="inputsection">
+                <label for="startingPage">Página inicial</label>
+                <input type="text" id="startingPage" v-model="quote.startingPage" />
+              </div>
+              
+              <div class="inputsection">
+                <label for="endingPage">Página final</label>
+                <input type="text" id="endingPage" v-model="quote.endingPage" />
+              </div>
+
+              <div class="inputsection">
+                <label for="note">Nota</label>
+                <input type="text" id="note" v-model="quote.note" />
+              </div>
             </div>
+
             <div class="holder">
-							<button class="btn-primary" type="submit" name="login" method="post">Salvar</button>
+              <button  @click="$router.go(-1)" class="btn-plain" type="submit" name="login" method="post">
+                Voltar
+              </button>
+              <button
+                v-if="modoEdicao && quoteId "
+                class="btn-primary"
+                type="submit"
+                name="login"
+                method="post"
+              >
+                Salvar alterações
+              </button>
+              <button v-else class="btn-primary" type="submit" name="login" method="post">
+                Salvar
+              </button>
             </div>
           </form>
         </div>
