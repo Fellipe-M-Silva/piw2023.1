@@ -95,17 +95,17 @@ Lista as tecnologias, frameworks e bibliotecas utilizados.
 | Entidade| Criação | Leitura | Atualização | Remoção |
 | --- | --- | --- | --- | --- |
 | Usuário | ⌀ | ⊙ ⌀ | × ⌀ | × ⌀ |
-| Perfis |  |  |  |  |
+| Perfis (descontinuado) |  |  |  |  |
 | Fichamento | × | ⊙ × ⌀ | × | × |
-| Obra | × | ⊙ × ⌀ | × | × |
-| Ficha | × | ⊙ × ⌀ | × | × |
-| Autor | × | ⌀ | × | × |
+| Obra (descontinuado) | × | ⊙ × ⌀ | × | × |
+| Citação | × | ⊙ × ⌀ | × | × |
+| Autor (descontinuado) | × | ⌀ | × | × |
 
 <h4>Onde os seguintes símbolos representam as permissões para cada perfil:</h4>
 <ul>
   <li>⊙ - Visitante (apenas para fichamentos públicos);</li>
   <li>× - Usuário;</li>
-  <li>⌀ - Administrdador.</li>
+  <li>⌀ - Administrdador (Super administrador pode gerenciar usuários do tipo Administrador). </li>
 </ul>
 
 > Lembre-se que é necessário implementar o CRUD de pelo menos duas entidades.
@@ -114,5 +114,20 @@ Lista as tecnologias, frameworks e bibliotecas utilizados.
 
 | Método HTTP | URL |
 | --- | --- |
-| GET | api/entidade1/|
-| POST | api/entidade2 |
+| GET | /users/|
+| GET | /users/:id|
+| POST | /users |
+| PUT | /users/:id |
+| DELETE | /users/:id |
+| GET | /annotations/ |
+| GET | /annotations/:id |
+| POST | /annotations |
+| PUT | /annotations/:id |
+| DELETE | /annotations/:id |
+| GET | /quotes/ |
+| GET | /quotes/:id |
+| POST | /quotes |
+| PUT | /quotes/:id |
+| DELETE | /quotes/:id |
+| POST | /login/|
+| GET | /logout/|
