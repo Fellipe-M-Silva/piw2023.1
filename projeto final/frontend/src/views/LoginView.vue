@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import SectionTitle from '../components/SectionTitle.vue';
-import { useRouter } from 'vue-router';
+import { parseQuery, useRouter } from 'vue-router';
 import { api } from '@/api';
 import { useUserStore } from '@/stores/userStore';
 
@@ -19,6 +19,7 @@ async function authUser() {
       password: password.value
     })
 
+    console.log(data)
     const { token, user } = data
     userStore.authenticaded(user, token)
 

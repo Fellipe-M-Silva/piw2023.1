@@ -65,6 +65,7 @@ async function logOut() {
           ><button class="btn-secondary">Criar conta</button></RouterLink
         >
         <RouterLink to="/login" as="button"><button class="btn-primary">Entrar</button></RouterLink>
+        <button @click="logOut" class="btn-secondary">Sair</button>
       </div>
     </div>
   </header>

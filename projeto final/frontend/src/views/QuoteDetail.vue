@@ -31,13 +31,21 @@ async function fetchQuote() {
 async function createQuote() {
   try {
     console.log('criando citação')
-    const res = await api.post(`/quotes/`, {
-      text: quote.value.text,
-      annotationId: id.value,
-      startingPage: quote.value.startingPage,
-      endingPage: quote.value.endingPage,
-      note: quote.value.note
-    })
+    const res = await api.post(
+      `/quotes/`,
+      {
+        text: quote.value.text,
+        annotationId: id.value,
+        startingPage: quote.value.startingPage,
+        endingPage: quote.value.endingPage,
+        note: quote.value.note
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${userStore.jwt}`
+        }
+      }
+    )
     quote.value = res.data
     console.log(quote.value)
     router.push(`/fichamentos/${id.value}/citacoes`)
@@ -48,15 +56,22 @@ async function createQuote() {
 
 async function updateQuote() {
   try {
-    const res = await api.put(`/quotes/${quoteId.value}`, {
-      text: quote.value.text,
-      annotationId: quoteId.value,
-      startingPage: quote.value.startingPage,
-      endingPage: quote.value.endingPage,
-      note: quote.value.note
-    })
+    const res = await api.put(
+      `/quotes/${quoteId.value}`,
+      {
+        text: quote.value.text,
+        annotationId: quoteId.value,
+        startingPage: quote.value.startingPage,
+        endingPage: quote.value.endingPage,
+        note: quote.value.note
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${userStore.jwt}`
+        }
+      }
+    )
     quote.value = res.data
-    console.log(quote.value)
     router.push(`/fichamentos/${id.value}/citacoes`)
   } catch (error) {
     console.log(error)
@@ -67,12 +82,12 @@ onMounted(async () => {
   try {
     const teste: string = String(route.params.id)
     id.value = teste
-    
-    if(route.params.quoteId) {
+
+    if (route.params.quoteId) {
       const teste2: string = String(route.params.quoteId)
       quoteId.value = teste2
     }
-    
+
     console.log(quoteId.value)
 
     if (quoteId.value && quoteId.value != '') {
@@ -107,7 +122,7 @@ onMounted(async () => {
                 <label for="startingPage">Página inicial</label>
                 <input type="text" id="startingPage" v-model="quote.startingPage" />
               </div>
-              
+
               <div class="inputsection">
                 <label for="endingPage">Página final</label>
                 <input type="text" id="endingPage" v-model="quote.endingPage" />
@@ -120,11 +135,17 @@ onMounted(async () => {
             </div>
 
             <div class="holder">
-              <button  @click="$router.go(-1)" class="btn-plain" type="submit" name="login" method="post">
+              <button
+                @click="$router.go(-1)"
+                class="btn-plain"
+                type="submit"
+                name="login"
+                method="post"
+              >
                 Voltar
               </button>
               <button
-                v-if="modoEdicao && quoteId "
+                v-if="modoEdicao && quoteId"
                 class="btn-primary"
                 type="submit"
                 name="login"
@@ -149,6 +170,6 @@ onMounted(async () => {
 }
 
 .holder {
-	justify-content: right;
+  justify-content: right;
 }
 </style>

@@ -5,24 +5,26 @@ import { onMounted, onUpdated, ref } from 'vue';
 import { useUserStore } from './stores/userStore';
 const authenticated = ref<boolean>()
 const userStore = useUserStore()
-console.log(userStore.isAuthenticated)
+
+
 onMounted(async () => {
-  if (userStore.isAuthenticated) {
-    authenticated.value = true
-  }
-  else {
-    authenticated.value = false
-  }
+  authenticated.value = await userStore.isAuthenticated
+  // if (userStore.jwt) {
+  //   authenticated.value = true
+  // }
+  // else {
+  //   authenticated.value = false
+  // }
 })
 
-onUpdated(async () => {
-  if (Boolean(userStore.isAuthenticated)) {
-    authenticated.value = true
-  }
-  else {
-    authenticated.value = false
-  }
-})
+// onUpdated(async () => {
+//   if (Boolean(userStore.jwt)) {
+//     authenticated.value = true
+//   }
+//   else {
+//     authenticated.value = false
+//   }
+// })
 
 </script>
 

@@ -3,10 +3,9 @@ import bodyParser from "body-parser";
 import { Login, Register } from "../controllers/authentication.controller";
 import { loginSchema, registerSchema } from "../validators/authentication.validator";
 import { validateRequestSchema } from "../validators/validationFunction";
-import { authenticateJWT } from "../middleware/authMiddleware";
 
 const authRoutes = Router();
-authRoutes.use(authenticateJWT)  
+ 
 
 authRoutes.post("/cadastro", bodyParser.json(), registerSchema, validateRequestSchema, Register)
 

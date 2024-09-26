@@ -25,7 +25,8 @@ export const useUserStore = defineStore('user', () => {
     localStorage.setItem('email', authUser.email)
     localStorage.setItem('isAdmin', authUser.isAdmin.toString())
     localStorage.setItem('isSuperAdmin', authUser.isSuperAdmin.toString())
-    // localStorage.setItem('isAuthenticated', isAuthenticated.value.toString())
+    localStorage.setItem('isAuthenticated', isAuthenticated.value.toString())
+    localStorage.setItem('token', token)
   }
 
   function logout() {

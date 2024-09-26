@@ -21,6 +21,7 @@ async function fetchUser() {
         Authorization: `Bearer ${userStore.jwt}`
       }
     })
+
     user.value = res.data
   } catch (error) {
     console.log(error)
@@ -29,13 +30,21 @@ async function fetchUser() {
 
 async function createUser() {
   try {
-    const res = await api.post(`/users/`, {
-      name: user.value.name,
-      email: user.value.email,
-      password: user.value.password,
-      isAdmin: user.value.isAdmin,
-      isSuperAdmin: false
-    })
+    const res = await api.post(
+      `/users/`,
+      {
+        name: user.value.name,
+        email: user.value.email,
+        password: user.value.password,
+        isAdmin: user.value.isAdmin,
+        isSuperAdmin: false
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${userStore.jwt}`
+        }
+      }
+    )
     user.value = res.data
     router.push('/usuarios')
   } catch (error) {
@@ -45,13 +54,21 @@ async function createUser() {
 
 async function updateUser() {
   try {
-    const res = await api.put(`/users/${id.value}`, {
-      name: user.value.name,
-      email: user.value.email,
-      password: user.value.password,
-      isAdmin: false,
-      isSuperAdmin: false
-    })
+    const res = await api.put(
+      `/users/${id.value}`,
+      {
+        name: user.value.name,
+        email: user.value.email,
+        password: user.value.password,
+        isAdmin: false,
+        isSuperAdmin: false
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${userStore.jwt}`
+        }
+      }
+    )
     user.value = res.data
     router.push('/usuarios')
   } catch (error) {
@@ -94,7 +111,7 @@ onMounted(async () => {
                 <label for="email">E-mail</label>
                 <input type="text" id="email" v-model="user.email" />
               </div>
-              
+
               <div class="inputsection">
                 <label for="password">Senha</label>
                 <input type="password" id="password" v-model="user.password" />
@@ -102,7 +119,13 @@ onMounted(async () => {
             </div>
 
             <div class="holder">
-              <button  @click="$router.go(-1)" class="btn-plain" type="submit" name="login" method="post">
+              <button
+                @click="$router.go(-1)"
+                class="btn-plain"
+                type="submit"
+                name="login"
+                method="post"
+              >
                 Voltar
               </button>
               <button

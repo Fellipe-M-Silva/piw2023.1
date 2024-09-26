@@ -4,17 +4,18 @@ import bodyParser from "body-parser";
 import { quoteSchema } from "../validators/quote.validator";
 import { validateRequestSchema } from "../validators/validationFunction";
 import cors from 'cors'
+import { authenticateJWT } from "../middleware/authMiddleware";
 
 const quoteRoutes = Router();
 
-quoteRoutes.post("/quotes", cors(), bodyParser.json(), quoteSchema, validateRequestSchema, Create);
+quoteRoutes.post("/quotes", authenticateJWT, bodyParser.json(), quoteSchema, validateRequestSchema, Create);
 
-quoteRoutes.get("/quotes", cors(), List);
+quoteRoutes.get("/quotes", authenticateJWT, List);
 
-quoteRoutes.get("/quotes/:id", cors(), Find);
+quoteRoutes.get("/quotes/:id", authenticateJWT, Find);
 
-quoteRoutes.put("/quotes/:id", cors(), bodyParser.json(), quoteSchema, validateRequestSchema, Update);
+quoteRoutes.put("/quotes/:id", authenticateJWT, bodyParser.json(), quoteSchema, validateRequestSchema, Update);
 
-quoteRoutes.delete("/quotes/:id", cors(), Delete);
+quoteRoutes.delete("/quotes/:id", authenticateJWT, Delete);
 
 export default quoteRoutes;

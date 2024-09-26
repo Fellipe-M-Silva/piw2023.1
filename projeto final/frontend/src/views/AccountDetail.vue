@@ -3,62 +3,41 @@ import NavBar from '@/components/NavBar.vue'
 import SectionHeader from '@/components/SectionHeader.vue'
 import { onMounted, ref } from 'vue'
 import { api } from '@/api'
-import type { Annotation } from '@/types'
 import { useRoute, useRouter } from 'vue-router'
+import type { User } from '@/types'
 import { useUserStore } from '@/stores/userStore'
 
 const route = useRoute()
 const router = useRouter()
-const annotation = ref({} as Annotation)
+const user = ref({} as User)
 const id = ref('')
 const modoEdicao = ref(false)
 const userStore = useUserStore()
 
-async function fetchAnnotation() {
+async function fetchUser() {
   try {
-    const res = await api.get(`/annotations/${id.value}`, {
+    const res = await api.get(`/users/${id.value}`, {
       headers: {
         Authorization: `Bearer ${userStore.jwt}`
       }
     })
-    annotation.value = res.data
+
+    user.value = res.data
   } catch (error) {
     console.log(error)
   }
 }
 
-async function createAnnotation() {
-  try {
-    const res = await api.post(
-      `/annotations`,
-      {
-        userId: userStore.user.id,
-        isPublic: annotation.value.isPublic,
-        workTitle: annotation.value.workTitle,
-        workAuthors: annotation.value.workAuthors
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${userStore.jwt}`
-        }
-      }
-    )
-
-    annotation.value = res.data
-    router.push(`/fichamentos/${annotation.value.id}/citacoes`)
-  } catch (error) {
-    console.log(error)
-  }
-}
-
-async function updateAnnotation() {
+async function updateUser() {
   try {
     const res = await api.put(
-      `/annotations/${id.value}`,
+      `/users/${id.value}`,
       {
-        isPublic: annotation.value.isPublic,
-        workTitle: annotation.value.workTitle,
-        workAuthors: annotation.value.workAuthors
+        name: user.value.name,
+        email: user.value.email,
+        password: user.value.password,
+        isAdmin: true,
+        isSuperAdmin: true
       },
       {
         headers: {
@@ -66,10 +45,7 @@ async function updateAnnotation() {
         }
       }
     )
-    annotation.value = res.data
-    console.log(annotation.value)
-
-    router.push(`/fichamentos/${id.value}/citacoes`)
+    user.value = res.data
   } catch (error) {
     console.log(error)
   }
@@ -79,10 +55,10 @@ onMounted(async () => {
   try {
     id.value = route.params.id.toString()
     if (id.value && id.value != '') {
-      modoEdicao.value = true
-      await fetchAnnotation()
-    } else {
       modoEdicao.value = false
+      await fetchUser()
+    } else {
+      modoEdicao.value = true
     }
   } catch (error) {
     console.log(error)
@@ -95,27 +71,24 @@ onMounted(async () => {
     <NavBar></NavBar>
     <div class="container">
       <div class="content">
-        <SectionHeader pageName="Fichamento" v-if="modoEdicao"></SectionHeader>
-        <SectionHeader pageName="Novo fichamento" v-else></SectionHeader>
+        <SectionHeader pageName="Minha conta" ></SectionHeader>
 
         <div class="panel">
-          <form
-            name="annotationForm"
-            @submit.prevent="id ? updateAnnotation() : createAnnotation()"
-          >
+          <form name="userForm" @submit.prevent="updateUser()">
             <div class="grid-list">
-              <p class="body2">OBRA</p>
               <div class="inputsection">
-                <label for="title">Título</label>
-                <input type="text" id="title" v-model="annotation.workTitle" />
+                <label for="name">Nome</label>
+                <input type="text" id="name" v-model="user.name" />
               </div>
+
               <div class="inputsection">
-                <label for="workAuthors">Autoria</label>
-                <input type="text" id="workAuthors" v-model="annotation.workAuthors" />
+                <label for="email">E-mail</label>
+                <input type="text" id="email" v-model="user.email" />
               </div>
+
               <div class="inputsection">
-                <label for="isPublic">Marcar como público</label>
-                <input type="checkbox" id="isPublic" v-model="annotation.isPublic" />
+                <label for="password">Senha</label>
+                <input type="password" id="password" v-model="user.password" />
               </div>
             </div>
 

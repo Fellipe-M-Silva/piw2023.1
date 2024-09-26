@@ -14,6 +14,7 @@ import NotFound from '@/views/NotFound.vue'
 import axios from 'axios'
 import HomeView from '@/views/HomeView.vue'
 import { useUserStore } from '@/stores/userStore'
+import AccountDetail from '@/views/AccountDetail.vue'
 
 
 const router = createRouter({
@@ -38,13 +39,14 @@ const router = createRouter({
     {path: '/citacoes', component: QuotesView, meta: { requitesAuth: true}},
     {path: '/fichamentos/:id/citacoes/:quoteId', component: QuoteDetail, meta: { requitesAuth: true}},
     {path: '/fichamentos/:id/citacoes/nova', component: QuoteDetail, meta: { requitesAuth: true}},
+    {path: '/conta/:id', component: AccountDetail, meta: { requitesAuth: true}},
     {path: '/:pathMatch(.*)*', component: NotFound}
   ]
 })
 
 router.beforeEach(async(to, from) => {
   const userStore = useUserStore()
-  if(to.meta.requitesAuth && !userStore.isAuthenticated) {
+  if(to.meta.requitesAuth && !localStorage.getItem('token')) {
     return '/login'
   }
 })

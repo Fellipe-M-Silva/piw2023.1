@@ -4,18 +4,19 @@ import bodyParser from "body-parser";
 import { userSchema } from "../validators/user.validator";
 import { validateRequestSchema } from "../validators/validationFunction";
 import cors from "cors";
+import { authenticateJWT } from "../middleware/authMiddleware";
 
 const userRoutes = Router();
 
-userRoutes.post("/users", cors(), bodyParser.json(), userSchema, validateRequestSchema, Create);
+userRoutes.post("/users", bodyParser.json(), userSchema, validateRequestSchema, Create);
 
-userRoutes.get("/users", cors(), List);
+userRoutes.get("/users", List);
 
-userRoutes.get("/users/:id", cors(), Find);
+userRoutes.get("/users/:id", Find);
 
-userRoutes.put("/users/:id", cors(), bodyParser.json(), userSchema, validateRequestSchema, Update);
+userRoutes.put("/users/:id", bodyParser.json(), userSchema, validateRequestSchema, Update);
 
-userRoutes.delete("/users/:id", cors(), Delete);
+userRoutes.delete("/users/:id", authenticateJWT, Delete);
 
 // userRoutes.post("/cadastro", )
 export default userRoutes;

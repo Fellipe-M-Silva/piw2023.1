@@ -34,8 +34,8 @@ async function createUser() {
       name: user.value.name,
       email: user.value.email,
       password: user.value.password,
-      isAdmin: true,
-      isSuperAdmin: false
+      isAdmin: user.value.isAdmin,
+      isSuperAdmin: user.value.isSuperAdmin
     })
     user.value = res.data
     router.push('/administradores')

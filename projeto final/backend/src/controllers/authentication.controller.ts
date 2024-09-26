@@ -46,9 +46,12 @@ const secretKey = process.env.BACK_SECRET || "meianoiteeuteconto";
 async function Login(req: Request, res: Response) {
     try {
         const { email, password } = req.body;
-        const user = await AppDataSource.manager.findOneBy(User, { email: email }); 
+        const user = await AppDataSource.manager.findOneBy(User, { email: email });
+        
+        console.log(await bcrypt.compare(password, user.password))
 
         if (user && (await bcrypt.compare(password, user.password))) {
+            
             const token = jwt.sign({ userId: user.email }, secretKey, { expiresIn: '1h' });
             // return res.status(200).send({ user, jwt: token });
             return res.status(200).json({ user, token })

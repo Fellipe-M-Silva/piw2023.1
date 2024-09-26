@@ -9,25 +9,25 @@ declare namespace Express {
 
 export function authenticateJWT(req: Request, res: Response, next: NextFunction) {
   const authHeader = req.headers['authorization']
-  console.log(authHeader)
   const token = authHeader && authHeader.split(' ')[1]
-  // if(!token) {
-  //   return res.status(401).json({
-  //     status: 401,
-  //     name: 'Authorization Error',
-  //     message: 'No token found'
-  //   })
-  // }
 
-  // try {
-  //   const verified = jwt.verify(token, process.env.BACK_SECRET)
-  //   req.user = verified
-  //   next()
-  // } catch(err) {
-  //   return res.status(403).json({
-  //     status: 403,
-  //     name: 'Forbidden Error',
-  //     message: 'Invalid token'
-  //   })
-  // }
+  if(!token) {
+    return res.status(401).json({
+      status: 401,
+      name: 'Authorization Error',
+      message: 'No token found'
+    })
+  }
+
+  try {
+    const verified = jwt.verify(token, process.env.BACK_SECRET)
+    req.user = verified
+    next()
+  } catch(err) {
+    return res.status(403).json({
+      status: 403,
+      name: 'Forbidden Error',
+      message: 'Invalid token'
+    })
+  }
 }

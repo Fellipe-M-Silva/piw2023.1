@@ -4,17 +4,19 @@ import bodyParser from "body-parser";
 import { annotationSchema } from "../validators/annotation.validator";
 import { validateRequestSchema } from "../validators/validationFunction";
 import cors from 'cors'
+import { authenticateJWT } from "../middleware/authMiddleware";
 
 const annotationRoutes = Router();
+// annotationRoutes.use(authenticateJWT) 
 
-annotationRoutes.post("/annotations", cors(), bodyParser.json(), annotationSchema, validateRequestSchema, Create);
+annotationRoutes.post("/annotations", authenticateJWT, bodyParser.json(), annotationSchema, validateRequestSchema, Create);
 
-annotationRoutes.get("/annotations", cors(), List);
+annotationRoutes.get("/annotations", List);
 
-annotationRoutes.get("/annotations/:id", cors(), Find);
+annotationRoutes.get("/annotations/:id", Find);
 
-annotationRoutes.put("/annotations/:id", cors(), bodyParser.json(), annotationSchema, validateRequestSchema, Update);
+annotationRoutes.put("/annotations/:id", authenticateJWT, bodyParser.json(), annotationSchema, validateRequestSchema, Update);
 
-annotationRoutes.delete("/annotations/:id", cors(), Delete);
+annotationRoutes.delete("/annotations/:id", authenticateJWT, Delete);
 
 export default annotationRoutes;

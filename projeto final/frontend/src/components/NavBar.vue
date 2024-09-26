@@ -9,6 +9,7 @@ const isSuperAdmin = ref(false)
 const userStore = useUserStore()
 
 onMounted(async () => {
+  console.log(Boolean(isAuthenticated))
   if (userStore.isAuthenticated) {
     isAuthenticated.value = Boolean(userStore.isAuthenticated)
     isAdmin.value = Boolean(userStore.user.isAdmin)
@@ -47,6 +48,25 @@ onMounted(async () => {
             to="/administradores"
             label="Administradores"
             icon="badge"
+          ></NavBarItem>
+        </div>
+      </div>
+      <div v-if="isAdmin && isAuthenticated" class="tituloelista">
+        <h5>Conta</h5>
+        <div class="menulista">
+          <NavBarItem
+            v-if="isAuthenticated"
+            :to="`/conta/${userStore.user.id}`"
+            label="Minha conta"
+            icon="person"
+          ></NavBarItem>
+          <NavBarItem
+          @click="userStore.logout()  "  
+          v-if="isAuthenticated"
+            :to="`/login`"
+            label="Sair"
+            icon="logout"
+            
           ></NavBarItem>
         </div>
       </div>
