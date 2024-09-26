@@ -36,8 +36,8 @@ async function updateUser() {
         name: user.value.name,
         email: user.value.email,
         password: user.value.password,
-        isAdmin: true,
-        isSuperAdmin: true
+        isAdmin: user.value.isAdmin,
+        isSuperAdmin: user.value.isSuperAdmin
       },
       {
         headers: {
