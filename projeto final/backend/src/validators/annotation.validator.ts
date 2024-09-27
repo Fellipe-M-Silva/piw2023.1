@@ -1,13 +1,43 @@
-import { body, header } from "express-validator"
+import { body, header, param } from "express-validator"
 
-const schema = [
-    // header("id").exists().withMessage("Fichamento não encontrado."),
-    // body("isPublic")
-    // .notEmpty(),
-    // body("user")
-    // .notEmpty(),
-    // body("work")
-    // .notEmpty().withMessage("Campo obrigatório")
+const postSchema = [
+    body("userID")
+    .exists().withMessage("Campo obrigatório")
+    .isEmpty().withMessage("Campo obrigatório"),
+
+    body("creatorUsername")
+    .exists().withMessage("Campo obrigatório")
+    .isEmpty().withMessage("Campo obrigatório"),
+
+    body("isPublic")
+    .exists().withMessage("Campo obrigatório"),
+
+    body("workTitle")
+    .exists().withMessage("Campo obrigatório")
+    .notEmpty().withMessage("Campo obrigatório"),
+
+    body("workAuthors")
+    .exists().withMessage("Campo obrigatório")
+    .notEmpty().withMessage("Campo obrigatório")
+    .isString().withMessage("Informação inválida")
+
 ]
 
-export { schema as annotationSchema }
+const putSchema = [
+    param("id")
+    .exists().withMessage("Fichamento não encontrado"),
+
+    body("isPublic")
+    .exists().withMessage("Campo obrigatório"),
+
+    body("workTitle")
+    .exists().withMessage("Campo obrigatório")
+    .notEmpty().withMessage("Campo obrigatório"),
+
+    body("workAuthors")
+    .exists().withMessage("Campo obrigatório")
+    .notEmpty().withMessage("Campo obrigatório")
+
+]
+
+export { postSchema as postAnnotationSchema, putSchema as putAnnotationSchema }

@@ -3,32 +3,38 @@ import { AppDataSource } from "../data-source";
 import { Quote } from "../entity/Quote";
 import { Annotation } from "../entity/Annotation";
 
-interface quoteBody {
-    annotationId: string;
-    text: string;
-    startingPage: string;
-    endingPage: string;
-    note: string;
-}
-
-async function Create(req: Request, res: Response) {
+async function create(req: Request, res: Response) {
     try {
-        const data: quoteBody = req.body;
-        console.log(data)
-        const newQuote = new Quote;
-        newQuote.text = data.text;
-        newQuote.startingPage = data.startingPage;
-        newQuote.endingPage = data.endingPage;
-        newQuote.note = data.note;
+        const { text, startingPage, endingPage, note, annotationId } = req.body;
+        const quote = new Quote();
+        quote.text = text;
+        quote.startingPage = startingPage;
+        quote.endingPage = endingPage;
+        quote.note = note;
 
-        const annotation = await AppDataSource.manager.findOneBy(Annotation, {id:data.annotationId});
-        console.log(annotation)
-        newQuote.annotation = annotation
+        const annotationInDB = await AppDataSource.manager.findOne(Annotation, {
+            where: { 
+                id:annotationId
+            }
+        });
         
+        if (!annotationInDB) {
+            return res.status(400).json({
+                errors: [ {
+                        type: "field",
+                        value: annotationId,
+                        msg: "Usuário não encontrado",
+                        path: "userId",
+                        location: "body"
+                } ]
+            })
+        }
+        
+        quote.annotation = annotationInDB
 
-        if (newQuote != null) {
-            await AppDataSource.manager.save(newQuote);
-            return res.sendStatus(201);
+        if (quote) {
+            await AppDataSource.manager.save(quote);
+            return res.status(200).json({data:quote});
         } else {
             return res.sendStatus(400);
         }
@@ -38,59 +44,89 @@ async function Create(req: Request, res: Response) {
     }
 }
 
-async function List(req: Request, res: Response) {
+async function list(req: Request, res: Response) {
     const quotes = await AppDataSource.manager.find(Quote);
-    res.json(quotes);
+    res.json({ data: quotes });
 }
-async function Find(req: Request, res: Response) {
+async function find(req: Request, res: Response) {
     try {
-        const quoteToBeFound = await AppDataSource.manager.findOneBy(Quote, { id:req.params.id });
+        const id = req.params.id
+        const quoteToBeFound = await AppDataSource.manager.findOne(Quote, {
+            where: {id : id},
+            relations: ['annotation'] 
+        });
 
-        if (quoteToBeFound != null) {
+        if (quoteToBeFound) {
             return res.status(200).json(quoteToBeFound);
         } else {
-            return res.sendStatus(404);
+            return res.status(404).json({
+                errors: [ {
+                        type: "field",
+                        value: id,
+                        msg: "Citação não encontrada",
+                        path: "id",
+                        location: "param"
+                } ]
+            });
         }
     } catch (error) {
         console.log(error);
     }
 }
 
-async function Update(req: Request, res: Response) {
+async function update(req: Request, res: Response) {
     try {
-        const data: quoteBody = req.body;
-        const quoteToBeUpdated = await AppDataSource.manager.findOneBy(Quote, { id: req.params.id })
+        const id = req.params.id
+        const { text, startingPage, endingPage, note } = req.body;
+        const quote = await AppDataSource.manager.findOneBy(Quote, { id : id })
 
-        if (quoteToBeUpdated != null) {
-            quoteToBeUpdated.text = data.text;
-            quoteToBeUpdated.startingPage = data.startingPage;
-            quoteToBeUpdated.endingPage = data.endingPage;
-            quoteToBeUpdated.note = data.note;
+        if (quote) {
+            quote.text = text;
+            quote.startingPage = startingPage;
+            quote.endingPage = endingPage;
+            quote.note = note;
 
-            await AppDataSource.manager.save(quoteToBeUpdated);
-            return res.sendStatus(200);
+            await AppDataSource.manager.save(quote);
+            return res.status(200).json({data:quote});
         }
         else {
-            return res.sendStatus(400);
+            return res.status(404).json({
+                errors: [ {
+                        type: "field",
+                        value: id,
+                        msg: "Citação não encontrada",
+                        path: "id",
+                        location: "param"
+                } ]
+            });
         }
     } catch (error) {
         console.log(error);
     }
 }
 
-async function Delete(req: Request, res: Response) {
+async function remove(req: Request, res: Response) {
     try {
-        const quoteToBeDeleted = await AppDataSource.manager.findOneBy(Quote, { id: req.params.id });
+        const id = req.params.id
+        const quote = await AppDataSource.manager.findOneBy(Quote, { id: id });
 
-        if (quoteToBeDeleted != null) {
-            await AppDataSource.manager.remove(quoteToBeDeleted);
-            return res.sendStatus(200);
+        if (quote) {
+            await AppDataSource.manager.remove(quote);
+            return res.status(200).json({data:quote});
         } else {
-            return res.sendStatus(400);
+            return res.status(404).json({
+                errors: [ {
+                        type: "field",
+                        value: id,
+                        msg: "Citação não encontrada",
+                        path: "id",
+                        location: "param"
+                } ]
+            });
         }
     } catch (error) {
         console.log(error)
     }
 }
 
-export { Create, List, Find, Update, Delete };
+export { create, list, find, update, remove };

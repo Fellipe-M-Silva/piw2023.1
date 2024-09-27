@@ -2,32 +2,55 @@ import { Request, Response } from "express";
 import { AppDataSource } from "../data-source";
 import { Annotation } from "../entity/Annotation";
 import { User } from "../entity/User";
-import { Work } from "../entity/Work";
-import { Quote } from "../entity/Quote";
 
-interface annotationBody {
-    isPublic: boolean;
-    userId: string;
-    workTitle: string;
-    workAuthors: string;
-    quotes: Quote[]
-}
-
-async function Create(req: Request, res: Response) {
-    console.log(req.body)
+async function create (req: Request, res: Response) {
     try {
-        const annotationData: annotationBody = req.body;
-        const newAnnotation = new Annotation;
-        newAnnotation.isPublic = annotationData.isPublic;
-        newAnnotation.workTitle = annotationData.workTitle;
-        newAnnotation.workAuthors = annotationData.workAuthors;
+        const { isPublic, workTitle, workAuthors, userId, creatorUsername } = req.body;
+        const annotation = new Annotation();
+        annotation.isPublic = isPublic;
+        annotation.workTitle = workTitle;
+        annotation.workAuthors = workAuthors;
+        annotation.createdAt = new Date();
+        annotation.updatedAt = new Date();
+        
+        const userinBD = await AppDataSource.manager.findOne(User, {
+            where: {
+                id: userId
+            }
+        });
 
-        const user = await AppDataSource.manager.findOneBy(User, {id:annotationData.userId});
-        newAnnotation.user = user
+        if (!userinBD) {
+            return res.status(400).json({
+                errors: [ {
+                        type: "field",
+                        value: userId,
+                        msg: "Usuário não encontrado",
+                        path: "userId",
+                        location: "body"
+                } ]
+            })
+        }
 
-        if (newAnnotation != null) {
-            await AppDataSource.manager.save(newAnnotation);
-            return res.status(201).send(newAnnotation);
+        const usernameInDB = await AppDataSource.manager.findOneBy(User, {username: creatorUsername})
+
+        if (!usernameInDB) {
+            return res.status(400).json({
+                errors: [ {
+                        type: "field",
+                        value: usernameInDB,
+                        msg: "Usuário não encontrado",
+                        path: "creatorUsername",
+                        location: "body"
+                } ]
+            })
+        }
+
+        annotation.user = userinBD
+        annotation.creatorUsername = usernameInDB.username
+
+        if (annotation != null) {
+            await AppDataSource.manager.save(annotation);
+            return res.status(200).json({ data: annotation });
         }
         else {
             return res.sendStatus(400);
@@ -38,62 +61,91 @@ async function Create(req: Request, res: Response) {
     }
 }
 
-async function List(req: Request, res: Response) {
+async function list(req: Request, res: Response) {
     const annotations = await AppDataSource.manager.find(Annotation);
-    res.json(annotations);
+    res.json({ data: annotations });
 }
 
-async function Find(req: Request, res: Response) {
+async function find(req: Request, res: Response) {
     try {
-        const annotationToBeFound = await AppDataSource.manager.findOneBy(Annotation, { id: req.params.id });
+        const id = req.params.id
+        const annotation = await AppDataSource.manager.findOne(Annotation, {
+            where: { id: id },
+            relations: ['user', 'quotes']
+        })
 
-        if (annotationToBeFound != null) {
-            return res.status(200).json(annotationToBeFound);
+        if (annotation != null) {
+            return res.status(200).json({ data: annotation });
         } else {
-            return res.sendStatus(404);
+            return res.status(404).json({
+                errors: [ {
+                        type: "field",
+                        value: id,
+                        msg: "Fichamento não encontrado",
+                        path: "id",
+                        location: "param"
+                } ]
+            });
         }
     } catch (error) {
         console.log(error)
     }
-
 }
 
-async function Update(req: Request, res: Response) {
+async function update(req: Request, res: Response) {
     try {
-        const data: annotationBody = req.body;
-        const annotationToBeUpdated = await AppDataSource.manager.findOneBy(Annotation, { id: req.params.id });
+        const id = req.params.id
+        const { isPublic, workTitle, workAuthors } = req.body;
+        const annotation = await AppDataSource.manager.findOneBy(Annotation, { id : id });
 
-        if (annotationToBeUpdated != null) {
-            annotationToBeUpdated.isPublic = data.isPublic;
-            annotationToBeUpdated.workTitle = data.workTitle;
-            annotationToBeUpdated.workAuthors = data.workAuthors;
+        if (annotation) {
+            annotation.isPublic = isPublic;
+            annotation.workTitle = workTitle;
+            annotation.workAuthors = workAuthors;
+            annotation.updatedAt = new Date();
 
-            await AppDataSource.manager.save(annotationToBeUpdated);
+            await AppDataSource.manager.save(annotation);
             
-            return res.sendStatus(200);
+            return res.status(200).json({ data: annotation });
         } else {
-            return res.sendStatus(400);
+            return res.status(404).json({
+                errors: [ {
+                        type: "field",
+                        value: id,
+                        msg: "Usuário não encontrado",
+                        path: "id",
+                        location: "param"
+                } ]
+            });
         }
     } catch (error) {
         console.log(error);
     }
-
 }
 
-async function Delete(req: Request, res: Response) {
+async function remove (req: Request, res: Response) {
     try {
-        const annotationToBeDeleted = await AppDataSource.manager.findOneBy(Annotation, { id: req.params.id });
+        const id = req.params.id
+        const annotation = await AppDataSource.manager.findOneBy(Annotation, { id: id });
 
-        if (annotationToBeDeleted != null) {
-            await AppDataSource.manager.remove(annotationToBeDeleted);
-            return res.sendStatus(200);
+        if (annotation) {
+            await AppDataSource.manager.remove(annotation);
+            return res.status(200).json({ data: annotation });
         }
         else {
-            return res.sendStatus(400);
+            return res.status(404).json({
+                errors: [ {
+                        type: "field",
+                        value: id,
+                        msg: "Usuário não encontrado",
+                        path: "id",
+                        location: "param"
+                } ]
+            });
         }
     } catch (error) {
         console.log(error)
     }
 }
 
-export { Create, List, Find, Update, Delete };
+export { create, list, find, update, remove };

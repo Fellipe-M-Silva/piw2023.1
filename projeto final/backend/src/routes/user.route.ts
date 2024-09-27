@@ -1,22 +1,21 @@
 import { Router } from "express";
-import { Create, List, Find, Update, Delete } from "../controllers/user.controller";
+import { create, list, find, update, remove } from "../controllers/user.controller";
 import bodyParser from "body-parser";
-import { userSchema } from "../validators/user.validator";
+import { putUserSchema, postUserSchema } from "../validators/user.validator";
 import { validateRequestSchema } from "../validators/validationFunction";
-import cors from "cors";
 import { authenticateJWT } from "../middleware/authMiddleware";
 
 const userRoutes = Router();
+// userRoutes.use(authenticateJWT)
 
-userRoutes.post("/users", bodyParser.json(), authenticateJWT, userSchema, validateRequestSchema, Create);
+userRoutes.post("/users", bodyParser.json(), postUserSchema, create);
 
-userRoutes.get("/users", List);
+userRoutes.get("/users", list);
 
-userRoutes.get("/users/:id", Find);
+userRoutes.get("/users/:id", find);
 
-userRoutes.put("/users/:id", bodyParser.json(), userSchema, validateRequestSchema, Update);
+userRoutes.put("/users/:id", bodyParser.json(), putUserSchema, validateRequestSchema, update);
 
-userRoutes.delete("/users/:id", Delete);
+userRoutes.delete("/users/:id", remove);
 
-// userRoutes.post("/cadastro", )
 export default userRoutes;

@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne, JoinColumn } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm"
 import { Annotation } from "./Annotation"
 
 @Entity()
@@ -11,7 +11,6 @@ export class User
     @Column({
         type: "varchar",
         length: 50,
-        
     })
     name: string
 
@@ -19,6 +18,11 @@ export class User
         unique: true
     })
     email: string
+
+    @Column({
+        unique: true
+    })
+    username: string
 
     @Column()
     password: string
@@ -32,5 +36,5 @@ export class User
     //Possui de *0 a n* fichamentos
     @OneToMany(() => Annotation, (annotation)=> annotation.user)
     annotations: Annotation[]
-
+    
 }

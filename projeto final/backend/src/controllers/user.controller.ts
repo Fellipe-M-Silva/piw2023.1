@@ -3,104 +3,123 @@ import { AppDataSource } from "../data-source";
 import { User } from "../entity/User";
 import bcrypt from "bcryptjs";
 
-interface userBody {
-    id: string;
-    name: string;
-    email: string;
-    password: string;
-    isAdmin: boolean;
-    isSuperAdmin: boolean;
-}
 
-async function Create (req: Request, res: Response) {    
+async function create (req: Request, res: Response) {    
     try {
-        const data:userBody = req.body;
-        const newUser = new User;
+        const { name, username, email, password, isAdmin, isSuperAdmin } = req.body;
+        const user = new User();
 
-        newUser.name = data.name; 
-        newUser.email = data.email; 
-        newUser.isAdmin = data.isAdmin; 
-        newUser.isSuperAdmin = data.isSuperAdmin; 
+        user.name = name; 
+        user.username = username; 
+        user.email = email; 
+        user.isAdmin = isAdmin; 
+        user.isSuperAdmin = isSuperAdmin; 
 
         const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(data.password, salt);
-        newUser.password = hashedPassword;
+        const hashedPassword = await bcrypt.hash(password, salt);
+        user.password = hashedPassword;
 
-        if (newUser != null) {
-            await AppDataSource.manager.save(newUser);
-            return res.sendStatus(201);    
+        if (user) {
+            
+            await AppDataSource.manager.save(user)
+            return res.status(201).json({
+                data: user
+            })
         }
         else {
-            return res.sendStatus(400);
+            return res.status(400)
         }
     } catch (error) {
         console.log(error)
     }
 }
 
-async function List (req: Request, res: Response) {
+async function list (req: Request, res: Response) {
     const users = await AppDataSource.manager.find(User);
-    res.json(users);
+    res.json({ data: users });
 }
 
-async function Find (req: Request, res: Response) {
+async function find (req: Request, res: Response) {
     try {
-        const user = await AppDataSource.manager.findOneBy(User, {id:req.params.id});
+        const id = req.params.id
+        const user = await AppDataSource.manager.findOne(User, { 
+            where: { id : id }
+        });
 
-        if (user != null) {
-            return res.status(200).json(user);
-        }
-        else {
-            return res.sendStatus(404);
-        }
+        if (user != null) { 
+            return res.status(200).json({ data: user }) }
+        else { return res.status(404).json({
+            errors: [ {
+			        type: "field",
+			        value: id,
+			        msg: "Usuário não encontrado",
+			        path: "id",
+			        location: "param"
+		    } ]
+        })}
     }
     catch (error) {
         console.log(error);
     }
 }
 
-async function Update (req: Request, res: Response) {
+async function update (req: Request, res: Response) {
     try {
-        const data:userBody = req.body;
-        const user = await AppDataSource.manager.findOneBy(User, {id:req.params.id})
+        const id = req.params.id
+        const { name, username, email, password, isAdmin, isSuperAdmin } = req.body;
+        const user = await AppDataSource.manager.findOneBy(User, { id : id })
 
-        if (user != null) {
-            user.name = data.name; 
-            user.email = data.email; 
-            user.isAdmin = data.isAdmin; 
-            user.isSuperAdmin = data.isSuperAdmin; 
+        if (user) {
+            user.name = name; 
+            user.username = username;
+            user.email = email; 
+            user.isAdmin = isAdmin; 
+            user.isSuperAdmin = isSuperAdmin; 
 
             const salt = await bcrypt.genSalt(10);
-            const hashedPassword = await bcrypt.hash(user.password, salt);
+            const hashedPassword = await bcrypt.hash(password, salt);
             user.password = hashedPassword;
-            user.name = data.name;
 
             await AppDataSource.manager.save(user);
-            return res.sendStatus(200);
+            return res.status(200).json({ data: user });
         }
         else {
-            return res.sendStatus(400);
+            return res.status(404).json({
+                errors: [ {
+                        type: "field",
+                        value: id,
+                        msg: "Usuário não encontrado",
+                        path: "id",
+                        location: "param"
+                } ]
+            });
         }
     } catch (error) {
         console.log(error);
     }
 }
 
-async function Delete (req: Request, res: Response) {
+async function remove (req: Request, res: Response) {
     try {
-        const user = await AppDataSource.manager.findOneBy(User, {id:req.params.id});
+        const id = req.params.id
+        const user = await AppDataSource.manager.findOneBy(User, { id : id });
 
-        if (user != null) {
+        if (user != null) { 
             await AppDataSource.manager.remove(user);
-            return res.sendStatus(200);
-        }
-        else {
-            return res.sendStatus(400);
-        }
+            return res.status(200).json({ data: user }) }
+        else { return res.status(404).json({
+            errors: [ {
+			        type: "field",
+			        value: id,
+			        msg: "Usuário não encontrado",
+			        path: "id",
+			        location: "param"
+		    } ]
+        })}
     }
     catch (error) {
         console.log(error);
     }
 }
 
-export { Create, List, Find, Update, Delete };
+export { create, list, find, update, remove };

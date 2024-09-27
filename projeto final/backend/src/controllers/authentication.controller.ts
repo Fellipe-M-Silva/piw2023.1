@@ -4,49 +4,48 @@ import { User } from "../entity/User";
 import bcrypt, { hash } from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-
-interface userBody {
-    id: string;
-    name: string;
-    email: string;
-    password: string;
-    isAdmin: boolean;
-    isSuperAdmin: boolean;
-}
-
-async function Register(req: Request, res: Response) {
+async function register(req: Request, res: Response) {
     try {
-        const data: userBody = req.body;
-        const newUser = new User;
+        const { name, username, email, password } = req.body;
+        const user = new User();
 
-        newUser.name = data.name;
-        newUser.email = data.email;
-        newUser.isAdmin = data.isAdmin;
-        newUser.isSuperAdmin = data.isSuperAdmin;
+        user.name = name; 
+        user.username = username; 
+        user.email = email; 
 
         const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(data.password, salt);
-        newUser.password = hashedPassword;
+        const hashedPassword = await bcrypt.hash(password, salt);
+        user.password = hashedPassword;
 
-        if (newUser != null) {
-            await AppDataSource.manager.save(newUser);
-            return res.sendStatus(201);
+        if (user) {
+            
+            await AppDataSource.manager.save(user)
+            return res.status(201).json({
+                data: user
+            })
         }
         else {
-            return res.sendStatus(400);
+            return res.status(400)
         }
     } catch (error) {
         console.log(error)
     }
-
 }
 
 const secretKey = process.env.BACK_SECRET || "meianoiteeuteconto";
 
-async function Login(req: Request, res: Response) {
+async function login(req: Request, res: Response) {
     try {
-        const { email, password } = req.body;
-        const user = await AppDataSource.manager.findOneBy(User, { email: email });
+        const { email, username, password } = req.body;
+
+        let user
+
+        if (!email) {
+            user = await AppDataSource.manager.findOne(User, {where : {email: email}});
+        }
+        else if (!username) {
+            user = await AppDataSource.manager.findOne(User, {where : {username: username}});
+        }
         
         console.log(await bcrypt.compare(password, user.password))
 
@@ -57,7 +56,14 @@ async function Login(req: Request, res: Response) {
             return res.status(200).json({ user, token })
         }
         else {
-            return res.sendStatus(401)
+            return res.status(401).json({
+                errors: [ {
+                        type: "field",
+                        msg: "Usuário não autorizado",
+                        path: "id",
+                        location: "param"
+                } ]
+            })
         }
     } catch (error) {
         console.log(error);
@@ -72,4 +78,4 @@ async function logout(req: Request, res: Response) {
     })
 }
 
-export { Register, Login, logout };
+export { register, login, logout };

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { Create, List, Find, Update, Delete } from "../controllers/quote.controller";
+import { create, list, find, update, remove } from "../controllers/quote.controller";
 import bodyParser from "body-parser";
 import { quoteSchema } from "../validators/quote.validator";
 import { validateRequestSchema } from "../validators/validationFunction";
@@ -7,15 +7,16 @@ import cors from 'cors'
 import { authenticateJWT } from "../middleware/authMiddleware";
 
 const quoteRoutes = Router();
+// quoteRoutes.use(authenticateJWT)
 
-quoteRoutes.post("/quotes", authenticateJWT, bodyParser.json(), quoteSchema, validateRequestSchema, Create);
+quoteRoutes.post("/quotes", bodyParser.json(), quoteSchema, validateRequestSchema, create);
 
-quoteRoutes.get("/quotes", authenticateJWT, List);
+quoteRoutes.get("/quotes", list);
 
-quoteRoutes.get("/quotes/:id", authenticateJWT, Find);
+quoteRoutes.get("/quotes/:id", find);
 
-quoteRoutes.put("/quotes/:id", authenticateJWT, bodyParser.json(), quoteSchema, validateRequestSchema, Update);
+quoteRoutes.put("/quotes/:id", bodyParser.json(), quoteSchema, validateRequestSchema, update);
 
-quoteRoutes.delete("/quotes/:id", authenticateJWT, Delete);
+quoteRoutes.delete("/quotes/:id", remove);
 
 export default quoteRoutes;

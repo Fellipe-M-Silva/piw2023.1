@@ -1,8 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, JoinColumn, OneToMany, ManyToOne, OneToOne } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne } from "typeorm"
 import { Quote } from "./Quote"
 import { User } from "./User"
-import { Work } from "./Work"
-
 @Entity()
 export class Annotation
 {
@@ -25,21 +23,23 @@ export class Annotation
     @Column()
     workAuthors: string
 
+    @Column()
+    creatorUsername: string
+
+    @Column()
+    createdAt: Date
+
+    @Column()
+    updatedAt: Date
+
     //Relacionamentos
 
     //Possuído por *Apenas 1* usuário
-    @ManyToOne(() => User, (user) => user.annotations, {eager:true})
+    @ManyToOne(() => User, (user) => user.annotations)
     user: User
 
-    //Possui *apenas 1* obra
-    // @OneToOne(() => Work, { eager:true,})
-    // @JoinColumn()
-    // work: Work
-
-
-
     //Possui de *0 a N* citações
-    @OneToMany(() => Quote, (quote) => quote.annotation, {eager:true})
+    @OneToMany(() => Quote, (quote) => quote.annotation)
     quotes: Quote[]
     
 }
