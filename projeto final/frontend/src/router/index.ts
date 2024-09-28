@@ -14,6 +14,7 @@ import NotFound from '@/views/NotFound.vue'
 import HomeView from '@/views/HomeView.vue'
 import { useUserStore } from '@/stores/userStore'
 import AccountDetail from '@/views/AccountDetail.vue'
+import { useAuthStore } from '@/stores/authStore'
 
 
 const router = createRouter({
@@ -21,31 +22,34 @@ const router = createRouter({
   linkActiveClass: 'router-link-active',
   
   routes: [
-    {path: '/repositorio', component: HomeView},
-    {path: '/repositorio', component: HomeView},
+    {path: '/', name: 'Repositório', component: HomeView},
     {path: '/login', component: LoginView},
     {path: '/cadastro', component: RegisterView},
-    {path: '/usuarios', component: UsersView, meta: { requitesAuth: true}},
-    {path: '/usuarios/novo', component: UserDetail, meta: { requitesAuth: true}},
-    {path: '/usuarios/:id', component: UserDetail, meta: { requitesAuth: true}},
-    {path: '/administradores', component: AdminsView, meta: { requitesAuth: true}},
-    {path: '/administradores/novo', component: AdminDetail, meta: { requitesAuth: true}},
-    {path: '/administradores/:id', component: AdminDetail, meta: { requitesAuth: true}},
-    {path: '/fichamentos', component: AnnotationsView, meta: { requitesAuth: true}},
-    {path: '/fichamentos/novo', component: AnnotationDetail, meta: { requitesAuth: true}},
-    {path: '/fichamentos/:id/citacoes', component: AnnotationView, meta: { requitesAuth: true}},
-    {path: '/fichamentos/:id/editar', component: AnnotationDetail, meta: { requitesAuth: true}},
-    {path: '/citacoes', component: QuotesView, meta: { requitesAuth: true}},
-    {path: '/fichamentos/:id/citacoes/:quoteId', component: QuoteDetail, meta: { requitesAuth: true}},
-    {path: '/fichamentos/:id/citacoes/nova', component: QuoteDetail, meta: { requitesAuth: true}},
-    {path: '/conta/:id', component: AccountDetail, meta: { requitesAuth: true}},
+    {path: '/usuarios', component: UsersView },
+    {path: '/usuarios/novo', component: UserDetail, props: { showAdmin: false } },
+    {path: '/usuarios/:id', component: UserDetail },
+    {path: '/administradores', component: UsersView, props: { showAdmin:true } },
+    {path: '/administradores/novo', component: AdminDetail },
+    {path: '/administradores/:id', component: AdminDetail },
+    {path: '/fichamentos', component: AnnotationsView },
+    {path: '/fichamentos/novo', component: AnnotationDetail },
+    {path: '/fichamentos/:id/citacoes', component: AnnotationView },
+    {path: '/fichamentos/:id/editar', component: AnnotationDetail },
+    {path: '/citacoes', component: QuotesView },
+    {path: '/fichamentos/:id/citacoes/:quoteId', component: QuoteDetail },
+    {path: '/fichamentos/:id/citacoes/nova', component: QuoteDetail },
+    {path: '/conta/:id', component: AccountDetail },
+    {path: '/notfound', component: NotFound},
     {path: '/:pathMatch(.*)*', component: NotFound}
   ]
 })
 
 router.beforeEach(async(to, from) => {
-  const userStore = useUserStore()
-  if(to.meta.requitesAuth && !localStorage.getItem('token')) {
+  const publicPages = [ '/', '/login', '/cadastro']
+  const authRequired = !publicPages.includes(to.path)
+  const auth = useUserStore()
+
+  if (authRequired && !auth.user) {
     return '/login'
   }
 })

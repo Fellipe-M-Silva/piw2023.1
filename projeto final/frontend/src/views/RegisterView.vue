@@ -10,12 +10,11 @@ const router = useRouter()
 
 async function createUser() {
   try {
-    const res = await api.post(`/users/`, {
+    const res = await api.post(`/register`, {
       name: user.value.name,
       email: user.value.email,
-      password: user.value.password,
-      isAdmin: user.value.isAdmin,
-      isSuperAdmin: false
+      username: user.value.username,
+      password: user.value.password
     })
     user.value = res.data
     router.push('/fichamentos')
@@ -43,6 +42,11 @@ async function createUser() {
           </div>
 
           <div class="inputsection">
+            <label for="username">Nome de usuário</label>
+            <input type="text" id="username" v-model="user.username" />
+          </div>
+
+          <div class="inputsection">
             <label for="password">Senha</label>
             <input type="password" id="password" v-model="user.password" />
           </div>
@@ -67,6 +71,7 @@ async function createUser() {
   justify-content: flex-start;
   align-items: center;
   overflow-y: scroll;
+  
 }
 
 .panel {

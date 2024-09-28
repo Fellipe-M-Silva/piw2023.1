@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import NavBar from '@/components/NavBar.vue'
 import SectionHeader from '@/components/SectionHeader.vue'
-import FormInput from '@/components/FormInput.vue'
 import { onMounted, ref } from 'vue'
 import { api } from '@/api'
 import { useRoute, useRouter } from 'vue-router'
 import type { User } from '@/types'
 import { useUserStore } from '@/stores/userStore'
+import { AxiosError } from 'axios'
 
 const route = useRoute()
 const router = useRouter()
@@ -14,6 +14,8 @@ const user = ref({} as User)
 const id = ref('')
 const modoEdicao = ref(false)
 const userStore = useUserStore()
+
+const erro = ref<AxiosError>()
 
 async function fetchUser() {
   try {
@@ -31,6 +33,9 @@ async function fetchUser() {
 async function createUser() {
   try {
     const res = await api.post(`/users/`, {
+      headers: {
+        Authorization: `Bearer ${userStore.jwt}`
+      },
       name: user.value.name,
       email: user.value.email,
       password: user.value.password,
@@ -41,6 +46,7 @@ async function createUser() {
     router.push('/administradores')
   } catch (error) {
     console.log(error)
+
   }
 }
 
@@ -103,7 +109,7 @@ onMounted(async () => {
             </div>
 
             <div class="holder">
-              <button  @click="$router.go(-1)" class="btn-plain" type="submit" name="login" method="post">
+              <button  @click="router.go(-1)" class="btn-plain" type="submit" name="login" method="post">
                 Voltar
               </button>
               <button

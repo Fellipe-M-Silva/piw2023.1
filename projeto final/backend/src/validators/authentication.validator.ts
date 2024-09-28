@@ -46,9 +46,6 @@ const loginSchema = [
                 {username: value}
             ]
         })
-
-        
-        console.log(user)
         
         if (!user.email || !user.username) {
             throw new Error("E-mail ou nome de usuário inválido")

@@ -1,40 +1,28 @@
 import { defineStore } from "pinia";
 import type { User } from "@/types";
-import { computed, ref } from "vue";
+import router from "@/router";
 
 
-export const useUserStore = defineStore('user', () => {
-  const user = ref<Omit<User, 'password'>>({
-    id: localStorage.getItem('id') || "",
-    name: localStorage.getItem('name') || "",
-    email: localStorage.getItem('email') || "",
-    isAdmin: Boolean(localStorage.getItem('isAdmin')) || false,
-    isSuperAdmin: Boolean(localStorage.getItem('isSuperAdmin')) || false
-  })
-  
-  const jwt = ref('')
-  const email = computed(() => user.value.email)
-  const isAuthenticated = computed(() => jwt.value !== "")
-  const isAdmin = computed(() => user.value.isAdmin)
-  const isSuperAdmin = computed(() => user.value.isSuperAdmin)
-  
-  function authenticaded(authUser: User, token: string) {
-    user.value = authUser
-    jwt.value = token
-    localStorage.setItem('id', authUser.id)
-    localStorage.setItem('email', authUser.email)
-    localStorage.setItem('isAdmin', authUser.isAdmin.toString())
-    localStorage.setItem('isSuperAdmin', authUser.isSuperAdmin.toString())
-    localStorage.setItem('isAuthenticated', isAuthenticated.value.toString())
-    localStorage.setItem('token', token)
+export const useUserStore = defineStore({
+  id: 'auth',
+  state: () => ({
+      user: JSON.parse(localStorage.getItem('user') || '{}'),
+      token: JSON.parse(localStorage.getItem('token') || '{}')
+  }),
+  actions: {
+    login(authUser: User, token: string) {
+      this.user = authUser
+      this.token = token
+      
+      localStorage.setItem('user', JSON.stringify(authUser))
+      localStorage.setItem('token', JSON.stringify(token))
+    },
+    
+    logout() {
+      this.user = null;
+      localStorage.removeItem('user');
+      localStorage.removeItem('token')
+      router.push('/login');
+     }
   }
-
-  function logout() {
-    jwt.value = ''
-    user.value = {} as User;
-
-    localStorage.clear()
-  }
-
-  return { user, email, jwt, isAdmin, isSuperAdmin, isAuthenticated, authenticaded, logout}
 })

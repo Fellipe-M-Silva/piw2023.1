@@ -1,30 +1,35 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import SectionTitle from '../components/SectionTitle.vue';
-import { parseQuery, useRouter } from 'vue-router';
+import { useRouter } from 'vue-router';
 import { api } from '@/api';
 import { useUserStore } from '@/stores/userStore';
 
-// const user = ref<User>({})
-const email = ref('')
+const login = ref('')
 const password = ref('')
 const router = useRouter()
 const userStore = useUserStore()
 
+const showError = ref(false)
+const message = ref('')
+
+async function toggleMessage() {
+  showError.value = !showError.value
+}
 
 async function authUser() {
   try {
     const { data } = await api.post('/login', {
-      email: email.value,
+      login: login.value,
       password: password.value
     })
+    const { token, user } = data.data
+    userStore.login(user, token)
 
-    console.log(data)
-    const { token, user } = data
-    userStore.authenticaded(user, token)
-
-    router.push('/fichamentos')
+    router.push('/')
   } catch (error) {
+    toggleMessage()
+    message.value = "Login ou senha incorretos."
   }
 }
 </script>
@@ -37,8 +42,8 @@ async function authUser() {
         <div class="grid-list">
 
           <div class="inputsection">
-            <label for="email">E-mail</label>
-            <input type="text" id="email" v-model="email" />
+            <label for="login">Login</label>
+            <input type="text" id="login" v-model="login" placeholder="E-mail ou nome de usuário" />
           </div>
 
           <div class="inputsection">
@@ -55,9 +60,23 @@ async function authUser() {
           <button class="btn-plain">Criar conta</button>
           </RouterLink>
       </div>
+    </div>
+  </div>
 
-      <!-- <RouterLink to="/fichamentos" class="body1">Fichamentos</RouterLink> -->
+  <div class="non-modal" v-if="showError">
+    <div class="non-modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5>Erro</h5>
+          <button @click="toggleMessage()" class="btn-icon btn-icon-sm btn-plain">
+            <span class="material-symbols-outlined"> close </span>
+          </button>
+        </div>
 
+        <div class="modal-body">
+          <p class="body1">{{ message }}</p>
+        </div>
+      </div>
     </div>
   </div>
 </template>

@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { api } from '@/api'
 import NavBar from '@/components/NavBar.vue'
-import SectionOptions from '@/components/SectionOptions.vue'
+import SearchBar from '@/components/SearchBar.vue'
 import { onMounted, ref } from 'vue'
 import type { Annotation, Quote } from '@/types'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { useUserStore } from '@/stores/userStore'
+import router from '@/router'
 
 const route = useRoute()
 const annotation = ref({} as Annotation)
@@ -16,11 +17,9 @@ const userStore = useUserStore()
 async function fetchAnnotation() {
   try {
     const res = await api.get(`/annotations/${id.value}`, {
-      headers: {
-        Authorization: `Bearer ${userStore.jwt}`
-      }
+      headers: { Authorization: `Bearer ${userStore.token}` }
     })
-    annotation.value = res.data
+    annotation.value = res.data.data
     console.log(annotation.value)
   } catch (error) {
     console.log(error)
@@ -38,7 +37,8 @@ async function askToDelete(id:string) {
 
 async function removeQuote() {
   try {
-    const res = await api.delete(`/quotes/${quoteToRemove.value?.id}`)
+    const res = await api.delete(`/quotes/${quoteToRemove.value?.id}`, {
+      headers: { Authorization: `Bearer ${userStore.token}`}})
     const removedUser: Annotation = res.data
     const toRemove = annotation.value.quotes.findIndex(u => removedUser.id == u.id)
   annotation.value.quotes.splice(toRemove, 1)
@@ -57,10 +57,9 @@ onMounted(async () => {
   try {
     id.value = route.params.id.toString()
     if (id.value && id.value != '') {
-      modoEdicao.value = false
       await fetchAnnotation()
     } else {
-      modoEdicao.value = true
+      router.push('/notfound')
     }
   } catch (error) {
     console.log(error)
@@ -93,19 +92,23 @@ function copyText(quoteId: string) {
       <div class="content">
         <div class="panel" style="flex-direction: row">
           <h1 style="flex: 1 0 0">{{ annotation.workTitle }}</h1>
+        </div>
+        <div class="panel" id="sectionOptions">
+          <SearchBar />
           <div class="holder">
             <RouterLink :to="`/fichamentos/${id}/editar`">
-              <button class="button btn-secondary">Editar</button>
+              <button class="button btn-secondary">
+                <span class="material-symbols-outlined">edit</span>Editar</button>
             </RouterLink>
-            <button class="button btn-negative">Excluir</button>
+            <button class="button btn-negative"><span class="material-symbols-outlined">delete</span>Excluir</button>
+            <RouterLink :to="`/fichamentos/${id}/citacoes/nova`" as="button">
+              <button class="btn-primary">
+                <span class="material-symbols-outlined">add</span>
+                Nova citação
+              </button>
+            </RouterLink>
           </div>
         </div>
-        <SectionOptions
-          :showButton2="true"
-          :button2Label="button2Label"
-          :button2Icon="button2Icon"
-          :button2Link="`/fichamentos/${id}/citacoes/nova`"
-        />
 
         <div class="quoteList">
           <article v-for="quote in annotation.quotes" class="card">

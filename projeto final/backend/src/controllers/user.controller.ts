@@ -19,7 +19,7 @@ async function create (req: Request, res: Response) {
         const hashedPassword = await bcrypt.hash(password, salt);
         user.password = hashedPassword;
 
-        if (user) {
+        if ( user ) {
             
             await AppDataSource.manager.save(user)
             return res.status(201).json({

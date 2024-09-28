@@ -1,21 +1,15 @@
 <script setup lang="ts">
 import { useUserStore } from '@/stores/userStore'
 import NavBarItem from './NavBarItem.vue'
-import { onMounted, onUpdated, ref } from 'vue'
+import { onMounted, ref } from 'vue'
 
-const isAuthenticated = ref<boolean>()
-const isAdmin = ref(false)
-const isSuperAdmin = ref(false)
 const userStore = useUserStore()
+const authenticated = ref(false)
 
-onMounted(async () => {
-  console.log(Boolean(isAuthenticated))
-  if (userStore.isAuthenticated) {
-    isAuthenticated.value = Boolean(userStore.isAuthenticated)
-    isAdmin.value = Boolean(userStore.user.isAdmin)
-    isSuperAdmin.value = Boolean(userStore.user.isSuperAdmin)
-  }
+onMounted(() => {
+  authenticated.value = !!userStore.token 
 })
+
 </script>
 
 <template>
@@ -27,7 +21,7 @@ onMounted(async () => {
           <NavBarItem to="/repositorio" label="Repositório" icon="public"></NavBarItem>
         </div>
       </div>
-      <div v-if="isAuthenticated" class="tituloelista">
+      <div v-if="authenticated" class="tituloelista">
         <h5>MEU FICHÁRIO</h5>
         <div class="menulista">
           <NavBarItem to="/fichamentos" label="Meus fichamentos" icon="folder_open"></NavBarItem>
@@ -39,30 +33,30 @@ onMounted(async () => {
         <p class="body2">Acesse sua conta para gerenciar seus fichamentos.</p>
         <RouterLink to="/login" as="button" class="btn-primary">Login</RouterLink>
       </div>
-      <div v-if="isAdmin && isAuthenticated" class="tituloelista">
+      <div v-if="userStore.user.isAdmin && authenticated" class="tituloelista">
         <h5>ADMINISTRAÇÃO</h5>
         <div class="menulista">
           <NavBarItem to="/usuarios" label="Usuários" icon="person"></NavBarItem>
           <NavBarItem
-            v-if="isSuperAdmin && isAuthenticated"
+            v-if="userStore.user.isSuperAdmin && authenticated"
             to="/administradores"
             label="Administradores"
             icon="badge"
           ></NavBarItem>
         </div>
       </div>
-      <div v-if="isAdmin && isAuthenticated" class="tituloelista">
+      <div v-if="userStore.user.isAdmin && authenticated" class="tituloelista">
         <h5>Conta</h5>
         <div class="menulista">
           <NavBarItem
-            v-if="isAuthenticated"
+            v-if="authenticated"
             :to="`/conta/${userStore.user.id}`"
             label="Minha conta"
             icon="person"
           ></NavBarItem>
           <NavBarItem
           @click="userStore.logout()  "  
-          v-if="isAuthenticated"
+          v-if="authenticated"
             :to="`/login`"
             label="Sair"
             icon="logout"

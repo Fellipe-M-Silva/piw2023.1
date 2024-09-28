@@ -1,32 +1,47 @@
 <script setup lang="ts">
 import NavBar from '@/components/NavBar.vue'
 import SectionHeader from '@/components/SectionHeader.vue'
-import SectionOptions from '@/components/SectionOptions.vue'
+import SearchBar from '@/components/SearchBar.vue'
 import { onMounted } from 'vue'
 import { ref } from 'vue'
 import { api } from '@/api'
 import type { User } from '@/types'
 import { useUserStore } from '@/stores/userStore'
 
+defineProps({
+  showAdmin: Boolean
+})
+
 const users = ref([] as User[])
 const userToRemove = ref<User>()
 const deleteRequested = ref(false)
 const userStore = useUserStore()
 
-async function askToDelete(id:string) {
-  const index = users.value.findIndex(u => u.id === id)
+const showError = ref(false)
+const message = ref('')
+
+async function toggleMessage() {
+  showError.value = !showError.value
+}
+
+async function askToDelete(id: string) {
+  const index = users.value.findIndex((u) => u.id === id)
   userToRemove.value = users.value[index]
   toggleModal()
 }
 
 async function removeUser() {
   try {
-    const res = await api.delete(`/users/${userToRemove.value?.id}`)
-    const removedUser: User = res.data
-    const toRemove = users.value.findIndex(u => removedUser.id == u.id)
-  users.value.splice(toRemove, 1)
+    const res = await api.delete(`/users/${userToRemove.value?.id}`, {
+      headers: { Authorization: `Bearer ${userStore.token}` },
+    })
+
+    const removedUser: User = res.data.data
+    const toRemove = users.value.findIndex((u) => removedUser.id == u.id)
+    users.value.splice(toRemove, 1)
   } catch (error) {
-    console.log(error)
+    toggleMessage()
+    message.value = "Não doi possível excluir o usuário."
   } finally {
     toggleModal()
   }
@@ -36,27 +51,24 @@ async function toggleModal() {
   deleteRequested.value = !deleteRequested.value
 }
 
-
 onMounted(async () => {
   try {
-    const params = {
-      isAdmin: false
-    }
     const { data } = await api.get('/users', {
       headers: {
-        Authorization: `Bearer ${userStore.jwt}`
+        Authorization: `Bearer ${userStore.token}`
       },
-      params})
-    users.value = data
+      params: {
+        isAdmin: false,
+        isSuperAdmin: false
+      }
+    })
+    users.value = data.data
   } catch (error) {
     console.log(error)
+    toggleMessage()
+    message.value = "Usuários não encontrados."
   }
 })
-
-const nomePagina = ref('Usuários')
-const button2Label = ref('Novo usuário')
-const button2Icon = ref('add')
-const button2Link = ref('/usuarios/novo')
 </script>
 
 <template>
@@ -64,26 +76,32 @@ const button2Link = ref('/usuarios/novo')
     <NavBar></NavBar>
     <div class="container">
       <div class="content">
-        <SectionHeader :pageName="nomePagina"></SectionHeader>
-        <SectionOptions
-          :showButton1="false"
-          :show-button2="true"
-          :button2Label="button2Label"
-          :button2Icon="button2Icon"
-          :button2Link="button2Link"
-        />
+        <SectionHeader pageName="Usuários"></SectionHeader>
+        <div class="panel" id="sectionOptions">
+          <SearchBar />
+          <div class="holder">
+            <RouterLink to="/usuarios/novo" as="button">
+              <button class="btn-primary">
+                <span class="material-symbols-outlined">add</span>
+                Novo usuário
+              </button>
+            </RouterLink>
+          </div>
+        </div>
         <div class="panel">
           <table>
             <thead>
               <td class="body2">Nome</td>
               <td class="body2">E-mail</td>
+              <td class="body2">Nome de usuário</td>
               <td class="body2">Ações</td>
             </thead>
-            <tr v-for="user in users" >
-              <td v-if="user.isAdmin == false" class="body1">{{ user.name }}</td>
-              <td v-if="user.isAdmin == false">{{ user.email }}</td>
-              <td v-if="user.isAdmin == false" class="hold">
-                <div v-if="user.isAdmin == false" class="holder">
+            <tr v-for="user in users">
+              <td class="body1">{{ user.name }}</td>
+              <td>{{ user.email }}</td>
+              <td>{{ user.username }}</td>
+              <td class="hold">
+                <div class="holder">
                   <RouterLink :to="`/usuarios/${user.id}`">
                     <button class="btn-icon-sm">
                       <span class="material-symbols-outlined"> edit </span>
@@ -131,6 +149,7 @@ const button2Link = ref('/usuarios/novo')
 .container {
   overflow-y: scroll;
 }
+
 
 table {
   align-self: stretch;

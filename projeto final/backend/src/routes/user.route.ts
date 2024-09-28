@@ -6,13 +6,12 @@ import { validateRequestSchema } from "../validators/validationFunction";
 import { authenticateJWT } from "../middleware/authMiddleware";
 
 const userRoutes = Router();
-// userRoutes.use(authenticateJWT)
 
-userRoutes.post("/users", bodyParser.json(), postUserSchema, create);
+userRoutes.post("/users", bodyParser.json(), postUserSchema, validateRequestSchema, create);
 
 userRoutes.get("/users", list);
 
-userRoutes.get("/users/:id", find);
+userRoutes.get("/users/:id", authenticateJWT, find);
 
 userRoutes.put("/users/:id", bodyParser.json(), putUserSchema, validateRequestSchema, update);
 

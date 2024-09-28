@@ -1,35 +1,23 @@
 <script setup lang="ts">
-import router from '@/router';
 import { useUserStore } from '@/stores/userStore';
-import { onMounted, ref } from 'vue';
-
-defineProps ({ authenticated: Boolean })
-
-// const authenticated = ref<boolean>()
-
-// onMounted(async () => {
-//   if (userStore.user.id) {
-//     authenticated.value = true
-//     console.log('usuário logado')
-//   }
-//   else {
-//     authenticated.value = false
-//     console.log('usuário deslogado')
-//   }
-// })
+import { computed, onMounted, onUpdated, ref } from 'vue';
 
 const userStore = useUserStore()
+const authenticated = computed(() => { return userStore.token.value})
 
-async function logOut() {
-  userStore.logout()
-  router.push('/login')
-}
+// onMounted(() => {
+//   if (useUserStore.user) {
+
+//   }
+//   // authenticated.value = !!userStore.token 
+// })
+
 </script>
 
 <template>
   <header>
     <div>
-      <RouterLink to="/repositorio">
+      <RouterLink to="/">
         <svg
           width="76"
           height="24"
@@ -56,16 +44,16 @@ async function logOut() {
         </svg>
       </RouterLink>
 
-      <div v-if="authenticated" class="holder">
-        
-        <button @click="logOut" class="btn-secondary">Sair</button>
+      <div v-if="!authenticated" class="holder">
+        <button @click="userStore.logout()" class="btn-secondary">Sair</button>
       </div>
       <div v-else class="holder">
-        <RouterLink to="/cadastro" as="button"
-          ><button class="btn-secondary">Criar conta</button></RouterLink
-        >
-        <RouterLink to="/login" as="button"><button class="btn-primary">Entrar</button></RouterLink>
-        <button @click="logOut" class="btn-secondary">Sair</button>
+        <RouterLink to="/cadastro" as="button">
+          <button class="btn-secondary">Criar conta</button>
+        </RouterLink>
+        <RouterLink to="/login" as="button">
+          <button class="btn-primary">Entrar</button>
+        </RouterLink>
       </div>
     </div>
   </header>

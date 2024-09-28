@@ -10,6 +10,6 @@ authRoutes.post("/register", bodyParser.json(), registerSchema, validateRequestS
 
 authRoutes.post("/login", bodyParser.json(), loginSchema, validateRequestSchema, login)
 
-authRoutes.get("/logout", bodyParser.json(), loginSchema, validateRequestSchema, logout)
+authRoutes.get("/logout", logout)
 
 export default authRoutes;

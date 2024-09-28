@@ -7,48 +7,63 @@ import { useRoute, useRouter } from 'vue-router'
 import type { User } from '@/types'
 import { useUserStore } from '@/stores/userStore'
 
+defineProps({
+  showAdmin: Boolean
+})
+
 const route = useRoute()
 const router = useRouter()
 const user = ref({} as User)
 const id = ref('')
-const modoEdicao = ref(false)
+const modoEdicao = ref<Boolean>()
 const userStore = useUserStore()
+
+const showError = ref(false)
+const message = ref('')
+
+async function toggleMessage() {
+  showError.value = !showError.value
+}
+
 
 async function fetchUser() {
   try {
     const res = await api.get(`/users/${id.value}`, {
-      headers: {
-        Authorization: `Bearer ${userStore.jwt}`
-      }
+      headers: { Authorization: `Bearer ${userStore.token}` }
     })
 
-    user.value = res.data
+    user.value = res.data.data
   } catch (error) {
     console.log(error)
+    toggleMessage()
+    message.value = "Usuário não encontrado"
+    router.push('/notfound')
   }
 }
 
 async function createUser() {
   try {
     const res = await api.post(
-      `/users/`,
+      `/users`,
       {
         name: user.value.name,
         email: user.value.email,
+        username: user.value.username,
         password: user.value.password,
         isAdmin: user.value.isAdmin,
-        isSuperAdmin: false
+        isSuperAdmin: user.value.isSuperAdmin
       },
       {
         headers: {
-          Authorization: `Bearer ${userStore.jwt}`
+          Authorization: `Bearer ${userStore.token}`
         }
       }
     )
     user.value = res.data
     router.push('/usuarios')
   } catch (error) {
-    console.log(error)
+    toggleMessage()
+    message.value = "Dados obrigatórios não adicionados."
   }
 }
 
@@ -59,20 +74,22 @@ async function updateUser() {
       {
         name: user.value.name,
         email: user.value.email,
+        username: user.value.username,
         password: user.value.password,
-        isAdmin: false,
-        isSuperAdmin: false
+        isAdmin: user.value.isAdmin,
+        isSuperAdmin: user.value.isSuperAdmin
       },
       {
         headers: {
-          Authorization: `Bearer ${userStore.jwt}`
+          Authorization: `Bearer ${userStore.token}`
         }
       }
     )
     user.value = res.data
     router.push('/usuarios')
   } catch (error) {
-    console.log(error)
+    toggleMessage()
+    message.value = "Dados obrigatórios não adicionados."
   }
 }
 
@@ -80,10 +97,10 @@ onMounted(async () => {
   try {
     id.value = route.params.id.toString()
     if (id.value && id.value != '') {
-      modoEdicao.value = false
+      modoEdicao.value = true
       await fetchUser()
     } else {
-      modoEdicao.value = true
+      modoEdicao.value = false
     }
   } catch (error) {
     console.log(error)
@@ -108,6 +125,11 @@ onMounted(async () => {
               </div>
 
               <div class="inputsection">
+                <label for="username">Nome de usuário</label>
+                <input type="text" id="username" v-model="user.username" />
+              </div>
+
+              <div class="inputsection">
                 <label for="email">E-mail</label>
                 <input type="text" id="email" v-model="user.email" />
               </div>
@@ -115,6 +137,16 @@ onMounted(async () => {
               <div class="inputsection">
                 <label for="password">Senha</label>
                 <input type="password" id="password" v-model="user.password" />
+              </div>
+
+              <div class="inputsection" v-if="userStore.user.isAdmin">
+                <label for="isAdmin">Administrador</label>
+                <input type="checkbox" id="isAdmin" v-model="user.isAdmin" />
+              </div>
+
+              <div class="inputsection" v-if="userStore.user.isSuperAdmin">
+                <label for="isSuperAdmin">Superdministrador</label>
+                <input type="checkbox" id="isSuperAdmin" v-model="user.isSuperAdmin" />
               </div>
             </div>
 
@@ -146,6 +178,40 @@ onMounted(async () => {
       </div>
     </div>
   </main>
+
+  <div class="non-modal" v-if="showError">
+    <div class="non-modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5>Erro</h5>
+          <button @click="toggleMessage()" class="btn-icon btn-icon-sm btn-plain">
+            <span class="material-symbols-outlined"> close </span>
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <p class="body1">{{ message }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="non-modal" v-if="showError">
+    <div class="non-modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5>Erro</h5>
+          <button @click="toggleMessage()" class="btn-icon btn-icon-sm btn-plain">
+            <span class="material-symbols-outlined"> close </span>
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <p class="body1">{{ message }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <style scoped>

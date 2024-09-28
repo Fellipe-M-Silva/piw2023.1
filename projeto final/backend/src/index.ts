@@ -30,8 +30,7 @@ server.get("/", (req, res) =>{
 })
 
 server.listen(port, ()=> {
-    console.log(`Servidor está rodando nos trinques em http://${host}:${port} :)`)
-})
+    console.log(`Servidor está rodando nos trinques em http://${host}:${port} :)`)})
 
 // server.use(express.static(path.join(__dirname,'public')));
 // server.set('view engine', 'ejs');

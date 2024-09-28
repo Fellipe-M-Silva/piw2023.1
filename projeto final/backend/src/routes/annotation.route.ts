@@ -6,16 +6,15 @@ import { authenticateJWT } from "../middleware/authMiddleware";
 import { validateRequestSchema } from "../validators/validationFunction";
 
 const annotationRoutes = Router();
-// annotationRoutes.use(authenticateJWT) 
 
-annotationRoutes.post("/annotations", bodyParser.json(), postAnnotationSchema, create);
+annotationRoutes.post("/annotations", authenticateJWT, bodyParser.json(), postAnnotationSchema, validateRequestSchema, create);
 
 annotationRoutes.get("/annotations", list);
 
 annotationRoutes.get("/annotations/:id", find);
 
-annotationRoutes.put("/annotations/:id", bodyParser.json(), putAnnotationSchema, validateRequestSchema, update);
+annotationRoutes.put("/annotations/:id", authenticateJWT, bodyParser.json(), putAnnotationSchema, validateRequestSchema, update);
 
-annotationRoutes.delete("/annotations/:id", remove);
+annotationRoutes.delete("/annotations/:id", authenticateJWT, remove);
 
 export default annotationRoutes;

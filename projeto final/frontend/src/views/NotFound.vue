@@ -9,7 +9,11 @@
           <h1 class="centered">Página não encontrada!</h1>
           <p class="body2 centered">A página que você procura não existe.</p>
         </div>
-        <RouterLink to="/repositorio"><button class="btn-primary">Voltar para início</button></RouterLink>
+        <button
+                @click="$router.go(-1)"
+                class="btn-plain"
+                name="back">Voltar</button>
+        <RouterLink to="/"><button class="btn-primary">Voltar para início</button></RouterLink>
       </div>
     </div>
   </div>

@@ -1,16 +1,16 @@
 import { body, header, param } from "express-validator"
 
 const postSchema = [
-    body("userID")
-    .exists().withMessage("Campo obrigatório")
-    .isEmpty().withMessage("Campo obrigatório"),
+    body("userId")
+    .exists().withMessage("Campo obrigatório"),
+    // .isEmpty().withMessage("Campo obrigatório"),
 
     body("creatorUsername")
-    .exists().withMessage("Campo obrigatório")
-    .isEmpty().withMessage("Campo obrigatório"),
-
-    body("isPublic")
     .exists().withMessage("Campo obrigatório"),
+    // .isEmpty().withMessage("Campo obrigatório"),
+
+    // body("isPublic")
+    // .exists().withMessage("Campo obrigatório"),
 
     body("workTitle")
     .exists().withMessage("Campo obrigatório")

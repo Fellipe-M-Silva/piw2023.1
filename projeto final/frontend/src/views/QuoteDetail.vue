@@ -15,11 +15,18 @@ const quoteId = ref('')
 const modoEdicao = ref(false)
 const userStore = useUserStore()
 
+const showError = ref(false)
+const message = ref('')
+
+async function toggleMessage() {
+  showError.value = !showError.value
+}
+
 async function fetchQuote() {
   try {
     const res = await api.get(`/quotes/${quoteId.value}`, {
       headers: {
-        Authorization: `Bearer ${userStore.jwt}`
+        Authorization: `Bearer ${userStore.token}`
       }
     })
     quote.value = res.data
@@ -30,7 +37,6 @@ async function fetchQuote() {
 
 async function createQuote() {
   try {
-    console.log('criando citação')
     const res = await api.post(
       `/quotes/`,
       {
@@ -42,32 +48,35 @@ async function createQuote() {
       },
       {
         headers: {
-          Authorization: `Bearer ${userStore.jwt}`
+          Authorization: `Bearer ${userStore.token}`
         }
       }
     )
-    quote.value = res.data
+    quote.value = res.data.data
     console.log(quote.value)
     router.push(`/fichamentos/${id.value}/citacoes`)
   } catch (error) {
     console.log(error)
+    toggleMessage()
+    message.value = "Dados obrigatórios não adicionados."
   }
 }
 
 async function updateQuote() {
   try {
+    
     const res = await api.put(
       `/quotes/${quoteId.value}`,
       {
         text: quote.value.text,
-        annotationId: quoteId.value,
+        annotationId: id.value,
         startingPage: quote.value.startingPage,
         endingPage: quote.value.endingPage,
         note: quote.value.note
       },
       {
         headers: {
-          Authorization: `Bearer ${userStore.jwt}`
+          Authorization: `Bearer ${userStore.token}`
         }
       }
     )
@@ -75,26 +84,20 @@ async function updateQuote() {
     router.push(`/fichamentos/${id.value}/citacoes`)
   } catch (error) {
     console.log(error)
+    toggleMessage()
+    message.value = "Dados obrigatórios não adicionados."
   }
 }
 
 onMounted(async () => {
   try {
-    const teste: string = String(route.params.id)
-    id.value = teste
-
-    if (route.params.quoteId) {
-      const teste2: string = String(route.params.quoteId)
-      quoteId.value = teste2
-    }
-
-    console.log(quoteId.value)
-
+    quoteId.value = route?.params?.quoteId?.toString()
+    id.value = route?.params?.id?.toString()
     if (quoteId.value && quoteId.value != '') {
-      modoEdicao.value = false
+      modoEdicao.value = true
       await fetchQuote()
     } else {
-      modoEdicao.value = true
+      modoEdicao.value = false
     }
   } catch (error) {
     console.log(error)
@@ -162,6 +165,23 @@ onMounted(async () => {
       </div>
     </div>
   </main>
+
+  <div class="non-modal" v-if="showError">
+    <div class="non-modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5>Erro</h5>
+          <button @click="toggleMessage()" class="btn-icon btn-icon-sm btn-plain">
+            <span class="material-symbols-outlined"> close </span>
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <p class="body1">{{ message }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <style scoped>

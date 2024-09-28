@@ -12,6 +12,13 @@
   gap: 0;
 }
 
+
+
+#sectionOptions {
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
 main {
   margin: 0;
   display: flex;
@@ -146,6 +153,29 @@ article {
   display: grid;
   place-items: center;
   animation: fadein .3s ease-out
+}
+
+.non-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: baseline;
+  animation: fadein .3s ease-out
+}
+
+.non-modal-dialog {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  z-index: 10;
+  width: 288px;
+  padding: 1rem;
+  border-radius: 1rem;
+  background-color: var(--surface-background-3);
+  border: 1px solid var(--surface-error);
 }
 
 @keyframes fadein {
@@ -318,6 +348,7 @@ input {
 
 .inputsection {
   display: flex;
+  align-self: stretch;
   flex-direction: column;
   gap: 0.5rem;
 }
@@ -351,7 +382,7 @@ label {
 
 @media screen and (max-width: 768px) {
   .grid-list {
-    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   }
 }
 

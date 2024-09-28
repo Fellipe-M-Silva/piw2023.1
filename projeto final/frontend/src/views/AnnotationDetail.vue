@@ -14,16 +14,23 @@ const id = ref('')
 const modoEdicao = ref(false)
 const userStore = useUserStore()
 
+const showError = ref(false)
+const message = ref('')
+
+async function toggleMessage() {
+  showError.value = !showError.value
+}
+
 async function fetchAnnotation() {
   try {
     const res = await api.get(`/annotations/${id.value}`, {
-      headers: {
-        Authorization: `Bearer ${userStore.jwt}`
-      }
+      headers: { Authorization: `Bearer ${userStore.token}`}
     })
-    annotation.value = res.data
+    annotation.value = res.data.data
   } catch (error) {
-    console.log(error)
+    router.push('/notFound')
+    toggleMessage()
+    message.value = "Usuário não encontrado."
   }
 }
 
@@ -33,21 +40,22 @@ async function createAnnotation() {
       `/annotations`,
       {
         userId: userStore.user.id,
+        creatorUsername: userStore.user.username, 
         isPublic: annotation.value.isPublic,
         workTitle: annotation.value.workTitle,
         workAuthors: annotation.value.workAuthors
       },
       {
         headers: {
-          Authorization: `Bearer ${userStore.jwt}`
+          Authorization: `Bearer ${userStore.token}`
         }
       }
     )
-
-    annotation.value = res.data
+    annotation.value = res.data.data
     router.push(`/fichamentos/${annotation.value.id}/citacoes`)
-  } catch (error) {
-    console.log(error)
+  } catch (error:any) {
+    toggleMessage()
+    message.value = "Dados obrigatórios não adicionados."
   }
 }
 
@@ -62,22 +70,22 @@ async function updateAnnotation() {
       },
       {
         headers: {
-          Authorization: `Bearer ${userStore.jwt}`
+          Authorization: `Bearer ${userStore.token}`
         }
       }
     )
     annotation.value = res.data
-    console.log(annotation.value)
 
     router.push(`/fichamentos/${id.value}/citacoes`)
   } catch (error) {
-    console.log(error)
+    toggleMessage()
+    message.value = "Dados obrigatórios não adicionados."
   }
 }
 
 onMounted(async () => {
   try {
-    id.value = route.params.id.toString()
+    id.value = route?.params?.id?.toString()
     if (id.value && id.value != '') {
       modoEdicao.value = true
       await fetchAnnotation()
@@ -97,7 +105,7 @@ onMounted(async () => {
       <div class="content">
         <SectionHeader pageName="Fichamento" v-if="modoEdicao"></SectionHeader>
         <SectionHeader pageName="Novo fichamento" v-else></SectionHeader>
-
+    
         <div class="panel">
           <form
             name="annotationForm"
@@ -106,8 +114,8 @@ onMounted(async () => {
             <div class="grid-list">
               <p class="body2">OBRA</p>
               <div class="inputsection">
-                <label for="title">Título</label>
-                <input type="text" id="title" v-model="annotation.workTitle" />
+                <label for="workTitle">Título</label>
+                <input type="text" id="workTitle" v-model="annotation.workTitle" />
               </div>
               <div class="inputsection">
                 <label for="workAuthors">Autoria</label>
@@ -147,6 +155,24 @@ onMounted(async () => {
       </div>
     </div>
   </main>
+
+
+  <div class="non-modal" v-if="showError">
+    <div class="non-modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5>Erro</h5>
+          <button @click="toggleMessage()" class="btn-icon btn-icon-sm btn-plain">
+            <span class="material-symbols-outlined"> close </span>
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <p class="body1">{{ message }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <style scoped>

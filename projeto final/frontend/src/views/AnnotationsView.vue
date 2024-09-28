@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import NavBar from '@/components/NavBar.vue'
 import SectionHeader from '@/components/SectionHeader.vue'
-import SectionOptions from '@/components/SectionOptions.vue'
+import SearchBar from '@/components/SearchBar.vue'
 import { onMounted, ref } from 'vue'
-import type { Annotation, Annotation2 } from '@/types'
+import type { Annotation } from '@/types'
 import { api } from '@/api'
 import { useUserStore } from '@/stores/userStore'
 
@@ -20,7 +20,9 @@ async function askToDelete(id: string) {
 
 async function removeAnnotation() {
   try {
-    const res = await api.delete(`/annotations/${annotationToRemove.value?.id}`)
+    const res = await api.delete(`/annotations/${annotationToRemove.value?.id}`,{headers: {
+        Authorization: `Bearer ${userStore.token}`
+      }})
     const removedUser: Annotation = res.data
     const toRemove = annotations.value.findIndex((u) => removedUser.id == u.id)
     annotations.value.splice(toRemove, 1)
@@ -35,28 +37,19 @@ async function toggleModal() {
   deleteRequested.value = !deleteRequested.value
 }
 
-
 onMounted(async () => {
   try {
     const { data } = await api.get('/annotations', {
+      params: { isPublic: true },
       headers: {
-        Authorization: `Bearer ${userStore.jwt}`
+        Authorization: `Bearer ${userStore.token}`
       }
     })
-
-    const userId = userStore.user.id
-    const filter = annotations.value = data.filter((annotation: Annotation2) => annotation.user.id === userId)
-    annotations.value = filter
-    
+    annotations.value = data.data
   } catch (e) {}
 })
 
 const nomePagina = ref('Fichamentos')
-const button1Label = ref('Importar')
-const button1Icon = ref('download')
-const button2Label = ref('Novo fichamento')
-const button2Icon = ref('add')
-const button2Link = ref('fichamentos/novo')
 </script>
 
 <template>
@@ -65,20 +58,24 @@ const button2Link = ref('fichamentos/novo')
     <div class="container">
       <div class="content">
         <SectionHeader :pageName="nomePagina"></SectionHeader>
-        <SectionOptions
-          :showButton1="false"
-          :button1Label="button1Label"
-          :button1Icon="button1Icon"
-          :showButton2="true"
-          :button2Label="button2Label"
-          :button2Icon="button2Icon"
-          :button2Link="button2Link"
-        />
+        <div class="panel" id="sectionOptions">
+          <SearchBar /> 
+          <div class="holder">
+            <RouterLink to="/fichamentos/novo" as="button">
+              <button class="btn-primary">
+                <span class="material-symbols-outlined">add</span>
+                Novo fichamento
+              </button>
+            </RouterLink>
+          </div>
+        </div>
         <div class="grid-list">
           <div v-for="annotation in annotations">
             <div class="card">
-              <RouterLink :to="`/fichamentos/${annotation.id}/citacoes`"><h3>{{ annotation.workTitle }}</h3></RouterLink>
-              
+              <RouterLink :to="`/fichamentos/${annotation.id}/citacoes`"
+                ><h3>{{ annotation.workTitle }}</h3></RouterLink
+              >
+
               <div class="footer">
                 <ul>
                   <li class="body2">
@@ -152,7 +149,7 @@ h3 {
 }
 
 .card a {
-  align-self: stretch
+  align-self: stretch;
 }
 
 ul {
@@ -167,7 +164,6 @@ ul {
 li {
   margin: 0;
 }
-
 
 .footer {
   display: flex;

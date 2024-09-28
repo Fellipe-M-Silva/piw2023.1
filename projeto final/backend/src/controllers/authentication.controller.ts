@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { AppDataSource } from "../data-source";
 import { User } from "../entity/User";
-import bcrypt, { hash } from "bcryptjs";
+import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 async function register(req: Request, res: Response) {
@@ -36,23 +36,20 @@ const secretKey = process.env.BACK_SECRET || "meianoiteeuteconto";
 
 async function login(req: Request, res: Response) {
     try {
-        const { email, username, password } = req.body;
-
-        let user
-
-        if (!email) {
-            user = await AppDataSource.manager.findOne(User, {where : {email: email}});
-        }
-        else if (!username) {
-            user = await AppDataSource.manager.findOne(User, {where : {username: username}});
-        }
+        const { login, password } = req.body;
         
-        console.log(await bcrypt.compare(password, user.password))
+        const user = await AppDataSource.manager.findOne(User, {
+            where: [
+                { email: login},
+                { username: login}
+            ]
+        })
+        
+        console.log(user)
 
         if (user && (await bcrypt.compare(password, user.password))) {
-            
+            console.log(user)
             const token = jwt.sign({ userId: user.email }, secretKey, { expiresIn: '1h' });
-            // return res.status(200).send({ user, jwt: token });
             return res.status(200).json({ user, token })
         }
         else {
@@ -60,8 +57,8 @@ async function login(req: Request, res: Response) {
                 errors: [ {
                         type: "field",
                         msg: "Usuário não autorizado",
-                        path: "id",
-                        location: "param"
+                        path: "login",
+                        location: "body"
                 } ]
             })
         }
