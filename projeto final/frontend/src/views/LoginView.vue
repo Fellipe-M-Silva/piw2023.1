@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import SectionTitle from '../components/SectionTitle.vue';
 import { useRouter } from 'vue-router';
 import { api } from '@/api';
 import { useUserStore } from '@/stores/userStore';
@@ -38,7 +37,10 @@ async function authUser() {
 <template>
   <div class="container">
     <div class="panel">
-      <SectionTitle title="Olá!" subtitle="Faça login para coninuar" />
+      <div class="titleandsubtitle">
+        <h1>Olá!</h1>
+        <p>Faça login para continuar.</p>
+      </div>
       <form name="loginForm" @submit.prevent="authUser()">
         <div class="grid-list">
 

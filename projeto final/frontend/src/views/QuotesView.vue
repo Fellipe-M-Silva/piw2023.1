@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { api } from '@/api'
 import NavBar from '@/components/NavBar.vue'
-import SectionHeader from '@/components/SectionHeader.vue'
-import SectionOptions from '@/components/SectionOptions.vue'
 import { useUserStore } from '@/stores/userStore'
 import type { Quote } from '@/types'
 import { onMounted, ref } from 'vue'
@@ -36,7 +34,7 @@ onMounted(async () => {
     <div class="container">
       <div class="content">
         <SectionHeader :pageName="nomePagina"></SectionHeader>
-        <SectionOptions/>
+        
 
         <div class="panel">
           <table>

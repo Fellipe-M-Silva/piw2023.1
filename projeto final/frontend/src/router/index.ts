@@ -17,19 +17,19 @@ const router = createRouter({
   linkActiveClass: 'router-link-active',
   
   routes: [
-    {path: '/', name: 'Repositório', component: AnnotationsView, props: {showOptions: false, name: "Repositório", showCardOptions: false}},
+    {path: '/', name: 'Repositório', component: AnnotationsView, props: {showOptions: false, name: "Repositório", showCardOptions: false, isPublic: true},},
     {path: '/login', component: LoginView},
     {path: '/cadastro', component: RegisterView},
 
     {path: '/usuarios', component: UsersView},
     {path: '/usuarios/novo', component: UserDetail, props: { showAdmin: false, hideEditSelf: false }},
-    {path: '/usuarios/:id', component: UserDetail, props:{hideEditSelf: false} },
+    {path: '/usuarios/:id', component: UserDetail, props:{ hideEditSelf: false} },
 
     {path: '/administradores', component: UsersView, props: { showAdmin:true } },
     {path: '/administradores/novo', component: UsersView },
     {path: '/administradores/:id', component: UsersView },
     
-    {path: '/fichamentos', component: AnnotationsView, props: {showOptions: true, name: "Fichamentos", showCardOptions: true} },
+    {path: '/fichamentos', component: AnnotationsView, props: {showOptions: true, name: "Fichamentos", showCardOptions: true, isPublic: false} },
     {path: '/fichamentos/novo', component: AnnotationDetail },
     {path: '/fichamentos/:id/citacoes', component: AnnotationView},
     {path: '/fichamentos/:id/editar', component: AnnotationDetail },

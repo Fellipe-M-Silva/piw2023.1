@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import SectionTitle from '../components/SectionTitle.vue'
 import { api } from '@/api'
 import { ref } from 'vue'
 import type { User } from '@/types'
-import { useRouter } from 'vue-router';
+import { useRouter } from 'vue-router'
 
 const user = ref({} as User)
 const router = useRouter()
@@ -13,7 +12,6 @@ const message = ref('')
 async function toggleMessage() {
   showError.value = !showError.value
 }
-
 
 async function createUser() {
   try {
@@ -28,7 +26,7 @@ async function createUser() {
   } catch (error) {
     console.log(error)
     toggleMessage()
-    message.value = "Dados obrigatórios não adicionados."
+    message.value = 'Dados obrigatórios não adicionados.'
   }
 }
 </script>
@@ -36,7 +34,10 @@ async function createUser() {
 <template>
   <div class="container">
     <div class="panel">
-      <SectionTitle title="Boas-vindas!" subtitle="Crie uma conta e comece o seu fichário particular."/>
+      <div class="titleandsubtitle">
+        <h1>Boas-vindas!</h1>
+        <p>Crie uma conta e comece o seu fichário particular.</p>
+      </div>
 
       <form name="registerForm" @submit.prevent="createUser()">
         <div class="grid-list">
@@ -63,14 +64,13 @@ async function createUser() {
 
         <button class="btn-primary" type="submit" name="login" method="post">Criar conta</button>
       </form>
-      
+
       <div class="footer">
         <p class="body2 centered">ou</p>
         <RouterLink to="/login">
           <button class="btn-plain">Fazer login</button>
         </RouterLink>
       </div>
-
     </div>
   </div>
 
@@ -97,7 +97,6 @@ async function createUser() {
   justify-content: flex-start;
   align-items: center;
   overflow-y: scroll;
-  
 }
 
 .panel {

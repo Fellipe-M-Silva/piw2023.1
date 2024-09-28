@@ -10,13 +10,15 @@ import { useUserStore } from '@/stores/userStore'
 defineProps({
   name: String,
   showOptions: Boolean,
-  showCardOptions: Boolean
+  showCardOptions: Boolean,
+  isPublic: Boolean
 })
 
 const annotations = ref([] as Annotation[])
 const userStore = useUserStore()
 const annotationToRemove = ref<Annotation>()
 const deleteRequested = ref(false)
+const isPublic = ref(false)
 
 async function askToDelete(id: string) {
   const index = annotations.value.findIndex((u) => u.id === id)
@@ -45,21 +47,18 @@ async function toggleModal() {
 
 onMounted(async () => {
   try {
-    const { data } = await api.get('/annotations', {
-      params: { isPublic: true},
-      headers: { Authorization: `Bearer ${userStore.token}` },
-    })
-    
+      const res = await api.get('/annotations', {
+      params: {
+        creatorUsername: userStore.user.username
+      },
+      headers: { Authorization: `Bearer ${userStore.token}` }})
 
-
-    console.log(data.data)
-    // const queriedAnnotations = data.data.filter((annotation: Annotation) => annotation.user.id == userStore.user.id)
-    // console.log(annotations.value)
-    // annotations.value = queriedAnnotations.value
-    
-  } catch (e) {}
+      annotations.value = res.data.data
+    console.log(res.data.data)
+  } catch (e) {
+    console.log(e)
+  }
 })
-
 </script>
 
 <template>
@@ -69,7 +68,7 @@ onMounted(async () => {
       <div class="content">
         <SectionHeader :pageName="name"></SectionHeader>
         <div v-if="showOptions" class="panel" id="sectionOptions">
-          <SearchBar /> 
+          <SearchBar />
           <div class="holder">
             <RouterLink to="/fichamentos/novo" as="button">
               <button class="btn-primary">
@@ -103,7 +102,11 @@ onMounted(async () => {
                       <span class="material-symbols-outlined"> edit </span>
                     </button>
                   </RouterLink>
-                  <button v-if="showCardOptions" @click="askToDelete(annotation.id)" class="btn-negative btn-icon-sm">
+                  <button
+                    v-if="showCardOptions"
+                    @click="askToDelete(annotation.id)"
+                    class="btn-negative btn-icon-sm"
+                  >
                     <span class="material-symbols-outlined"> delete </span>
                   </button>
                 </div>
