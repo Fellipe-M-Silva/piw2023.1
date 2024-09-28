@@ -23,11 +23,12 @@ async function authUser() {
       login: login.value,
       password: password.value
     })
-    const { token, user } = data.data
+    const { token, user } = data
     userStore.login(user, token)
 
     router.push('/')
   } catch (error) {
+    console.log(error)
     toggleMessage()
     message.value = "Login ou senha incorretos."
   }

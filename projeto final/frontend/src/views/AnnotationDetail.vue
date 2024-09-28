@@ -123,7 +123,7 @@ onMounted(async () => {
               </div>
               <div class="inputsection">
                 <label for="isPublic">Marcar como público</label>
-                <input type="checkbox" id="isPublic" v-model="annotation.isPublic" />
+                <input type="checkbox" id="isPublic" checked v-model="annotation.isPublic" />
               </div>
             </div>
 

@@ -7,6 +7,7 @@ import { ref } from 'vue'
 import { api } from '@/api'
 import type { User } from '@/types'
 import { useUserStore } from '@/stores/userStore'
+import router from '@/router'
 
 defineProps({
   showAdmin: Boolean
@@ -41,7 +42,7 @@ async function removeUser() {
     users.value.splice(toRemove, 1)
   } catch (error) {
     toggleMessage()
-    message.value = "Não doi possível excluir o usuário."
+    message.value = "Não foi possível excluir o usuário."
   } finally {
     toggleModal()
   }
@@ -53,16 +54,17 @@ async function toggleModal() {
 
 onMounted(async () => {
   try {
-    const { data } = await api.get('/users', {
+    if (userStore.user.isAdmin == true){
+      const { data } = await api.get('/users', {
       headers: {
         Authorization: `Bearer ${userStore.token}`
-      },
-      params: {
-        isAdmin: false,
-        isSuperAdmin: false
       }
     })
     users.value = data.data
+    } else {
+      router.push('/notfound  ')
+    }
+    
   } catch (error) {
     console.log(error)
     toggleMessage()

@@ -1,16 +1,20 @@
 <script setup lang="ts">
 import { useUserStore } from '@/stores/userStore';
-import { computed, onMounted, onUpdated, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 
 const userStore = useUserStore()
-const authenticated = computed(() => { return userStore.token.value})
+const authenticated = computed(() => {return userStore.token })
+const auth = ref(false)
 
-// onMounted(() => {
-//   if (useUserStore.user) {
-
-//   }
-//   // authenticated.value = !!userStore.token 
-// })
+onMounted(async () => {
+  if (authenticated) {
+    auth.value= true
+  }
+  else {
+    auth.value = false
+  }
+  // authenticated.value = !!userStore.token 
+})
 
 </script>
 
@@ -44,7 +48,7 @@ const authenticated = computed(() => { return userStore.token.value})
         </svg>
       </RouterLink>
 
-      <div v-if="!authenticated" class="holder">
+      <div v-if="auth" class="holder">
         <button @click="userStore.logout()" class="btn-secondary">Sair</button>
       </div>
       <div v-else class="holder">

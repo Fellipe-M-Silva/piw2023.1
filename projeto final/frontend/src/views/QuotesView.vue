@@ -16,13 +16,13 @@ onMounted(async () => {
   try {
     const { data } = await api.get('/quotes', {
       headers: {
-        Authorization: `Bearer ${userStore.jwt}`
+        Authorization: `Bearer ${userStore.token}`
       }
     })
-    const userId = userStore.user.id
-    const filter = quotes.value = data.filter((quote: Quote2) =>
-    quote.annotation.user.id == userId)
-    quotes.value = filter
+    const username = userStore.user.username
+    // const filter = quotes.value = data.filter((quote: Quote) =>
+    // quote.annotation.creatorUsername == username)
+    // quotes.value = filter
   } catch (error) {
     console.log(error)
   }
@@ -38,16 +38,6 @@ onMounted(async () => {
         <SectionHeader :pageName="nomePagina"></SectionHeader>
         <SectionOptions/>
 
-        <!-- <div class="quoteList">
-          <CardQuote
-            v-for="quote in quotes"
-            :text="quote.text"
-            :startingPage="quote.startingPage"
-            :endingPage="quote.endingPage"
-            :note="quote.note"
-          />
-        </div> -->
-
         <div class="panel">
           <table>
             <thead>
@@ -61,7 +51,7 @@ onMounted(async () => {
               <td style="display: flex; flex-direction: row; gap:0">{{ quote.startingPage }} 
                 <p v-if="quote.endingPage != ''"> - {{ quote.endingPage }}</p>
               </td>
-              <td>{{ quote.annotationId }}</td>
+              <td>{{ quote.annotation.workTitle }}</td>
               <td>{{ quote.note }}</td>
             </tr>
           </table>

@@ -20,7 +20,7 @@ export type Quote = {
 export type Annotation = {
     id: string
     isPublic: boolean
-    userId: string
+    user: User
     creatorUsername: String
     workTitle: string
     workAuthors: string

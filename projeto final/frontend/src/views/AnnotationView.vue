@@ -11,8 +11,8 @@ import router from '@/router'
 const route = useRoute()
 const annotation = ref({} as Annotation)
 const id = ref('')
-const modoEdicao = ref(false)
 const userStore = useUserStore()
+const creator = ref(false)
 
 async function fetchAnnotation() {
   try {
@@ -29,8 +29,8 @@ async function fetchAnnotation() {
 const quoteToRemove = ref<Quote>()
 const deleteRequested = ref(false)
 
-async function askToDelete(id:string) {
-  const index = annotation.value.quotes.findIndex(u => u.id === id)
+async function askToDelete(id: string) {
+  const index = annotation.value.quotes.findIndex((u) => u.id === id)
   quoteToRemove.value = annotation.value.quotes[index]
   toggleModal()
 }
@@ -38,10 +38,11 @@ async function askToDelete(id:string) {
 async function removeQuote() {
   try {
     const res = await api.delete(`/quotes/${quoteToRemove.value?.id}`, {
-      headers: { Authorization: `Bearer ${userStore.token}`}})
+      headers: { Authorization: `Bearer ${userStore.token}` }
+    })
     const removedUser: Annotation = res.data
-    const toRemove = annotation.value.quotes.findIndex(u => removedUser.id == u.id)
-  annotation.value.quotes.splice(toRemove, 1)
+    const toRemove = annotation.value.quotes.findIndex((u) => removedUser.id == u.id)
+    annotation.value.quotes.splice(toRemove, 1)
   } catch (error) {
     console.log(error)
   } finally {
@@ -58,6 +59,12 @@ onMounted(async () => {
     id.value = route.params.id.toString()
     if (id.value && id.value != '') {
       await fetchAnnotation()
+      if (annotation.value.user.id == userStore.user.id) {
+        creator.value = true
+      }
+      else {
+        creator.value = false
+      }
     } else {
       router.push('/notfound')
     }
@@ -66,23 +73,18 @@ onMounted(async () => {
   }
 })
 
-const button2Label = ref('Nova citação')
-const button2Icon = ref('add')
-
 const quoteToCopy = ref<Quote>()
-const copied = ref(false)
 
 function copyText(quoteId: string) {
-  const index = annotation.value.quotes.findIndex(u => u.id === quoteId)
+  const index = annotation.value.quotes.findIndex((u) => u.id === quoteId)
   quoteToCopy.value = annotation.value.quotes[index]
-  
+
   var copyText = quoteToCopy.value.text
 
-  navigator.clipboard.writeText(copyText);
+  navigator.clipboard.writeText(copyText)
 
-  alert("Texto copiado: " + copyText);
+  alert('Texto copiado: ' + copyText)
 }
-
 </script>
 
 <template>
@@ -95,12 +97,15 @@ function copyText(quoteId: string) {
         </div>
         <div class="panel" id="sectionOptions">
           <SearchBar />
-          <div class="holder">
+          <div v-if="creator" class="holder">
             <RouterLink :to="`/fichamentos/${id}/editar`">
               <button class="button btn-secondary">
-                <span class="material-symbols-outlined">edit</span>Editar</button>
+                <span class="material-symbols-outlined">edit</span>Editar
+              </button>
             </RouterLink>
-            <button class="button btn-negative"><span class="material-symbols-outlined">delete</span>Excluir</button>
+            <button class="button btn-negative">
+              <span class="material-symbols-outlined">delete</span>Excluir
+            </button>
             <RouterLink :to="`/fichamentos/${id}/citacoes/nova`" as="button">
               <button class="btn-primary">
                 <span class="material-symbols-outlined">add</span>
@@ -126,12 +131,12 @@ function copyText(quoteId: string) {
                 <button @click="copyText(quote.id)" class="btn-icon-sm">
                   <span class="material-symbols-outlined"> content_copy </span>
                 </button>
-                <RouterLink :to="`/fichamentos/${id}/citacoes/${quote.id}`">
+                <RouterLink v-if="creator"   :to="`/fichamentos/${id}/citacoes/${quote.id}`">
                   <button class="btn-icon-sm">
                     <span class="material-symbols-outlined"> edit </span>
                   </button>
                 </RouterLink>
-                <button @click="askToDelete(quote.id)" class="btn-icon-sm btn-negative">
+                <button v-if="creator" @click="askToDelete(quote.id)" class="btn-icon-sm btn-negative">
                   <span class="material-symbols-outlined"> delete </span>
                 </button>
               </div>
@@ -154,7 +159,8 @@ function copyText(quoteId: string) {
 
         <div class="modal-body">
           <p class="body1">
-            A citação será removida do fichamento. Esta ação não pode ser desfeita, tem certeza de que deseja continuar?
+            A citação será removida do fichamento. Esta ação não pode ser desfeita, tem certeza de
+            que deseja continuar?
           </p>
         </div>
 
@@ -221,5 +227,5 @@ function copyText(quoteId: string) {
   font-style: normal;
   font-weight: 400;
   line-height: 150%;
-  }
+}
 </style>

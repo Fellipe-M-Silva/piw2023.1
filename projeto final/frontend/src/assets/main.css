@@ -175,7 +175,7 @@ article {
   padding: 1rem;
   border-radius: 1rem;
   background-color: var(--surface-background-3);
-  border: 1px solid var(--surface-error);
+  border: 1px solid rgba(0, 0, 0, 0.5);
 }
 
 @keyframes fadein {

@@ -1,14 +1,16 @@
 <script setup lang="ts">
 import { useUserStore } from '@/stores/userStore'
 import NavBarItem from './NavBarItem.vue'
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 
 const userStore = useUserStore()
-const authenticated = ref(false)
+// const authenticated = ref(false)
 
-onMounted(() => {
-  authenticated.value = !!userStore.token 
-})
+const authenticated = computed(() => { return userStore.token} )
+
+// onMounted(() => {
+//   authenticated.value = !!userStore.token 
+// })
 
 </script>
 
@@ -18,7 +20,7 @@ onMounted(() => {
       <div class="tituloelista">
         <h5>COMUNIDADE</h5>
         <div class="menulista">
-          <NavBarItem to="/repositorio" label="Repositório" icon="public"></NavBarItem>
+          <NavBarItem to="/" label="Repositório" icon="public"></NavBarItem>
         </div>
       </div>
       <div v-if="authenticated" class="tituloelista">
@@ -45,7 +47,7 @@ onMounted(() => {
           ></NavBarItem>
         </div>
       </div>
-      <div v-if="userStore.user.isAdmin && authenticated" class="tituloelista">
+      <div v-if=" authenticated" class="tituloelista">
         <h5>Conta</h5>
         <div class="menulista">
           <NavBarItem
@@ -53,14 +55,6 @@ onMounted(() => {
             :to="`/conta/${userStore.user.id}`"
             label="Minha conta"
             icon="person"
-          ></NavBarItem>
-          <NavBarItem
-          @click="userStore.logout()  "  
-          v-if="authenticated"
-            :to="`/login`"
-            label="Sair"
-            icon="logout"
-            
           ></NavBarItem>
         </div>
       </div>

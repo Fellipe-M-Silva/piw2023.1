@@ -8,7 +8,8 @@ import type { User } from '@/types'
 import { useUserStore } from '@/stores/userStore'
 
 defineProps({
-  showAdmin: Boolean
+  showAdmin: Boolean,
+  hideEditSelf: Boolean
 })
 
 const route = useRoute()
@@ -60,7 +61,10 @@ async function createUser() {
       }
     )
     user.value = res.data
-    router.push('/usuarios')
+    toggleMessage()
+    message.value = "Usuário cadastrado com sucesso!"
+    router.push(`/usuarios/${user.value.id}`)
+    
   } catch (error) {
     toggleMessage()
     message.value = "Dados obrigatórios não adicionados."
@@ -86,7 +90,9 @@ async function updateUser() {
       }
     )
     user.value = res.data
-    router.push('/usuarios')
+    toggleMessage()
+    message.value = "Usuário atualizado com sucesso!"
+    
   } catch (error) {
     toggleMessage()
     message.value = "Dados obrigatórios não adicionados."
@@ -139,12 +145,12 @@ onMounted(async () => {
                 <input type="password" id="password" v-model="user.password" />
               </div>
 
-              <div class="inputsection" v-if="userStore.user.isAdmin">
+              <div class="inputsection" v-if="userStore.user.isAdmin && !hideEditSelf">
                 <label for="isAdmin">Administrador</label>
                 <input type="checkbox" id="isAdmin" v-model="user.isAdmin" />
               </div>
 
-              <div class="inputsection" v-if="userStore.user.isSuperAdmin">
+              <div class="inputsection" v-if="userStore.user.isSuperAdmin && !hideEditSelf">
                 <label for="isSuperAdmin">Superdministrador</label>
                 <input type="checkbox" id="isSuperAdmin" v-model="user.isSuperAdmin" />
               </div>

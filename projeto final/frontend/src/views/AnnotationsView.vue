@@ -7,6 +7,12 @@ import type { Annotation } from '@/types'
 import { api } from '@/api'
 import { useUserStore } from '@/stores/userStore'
 
+defineProps({
+  name: String,
+  showOptions: Boolean,
+  showCardOptions: Boolean
+})
+
 const annotations = ref([] as Annotation[])
 const userStore = useUserStore()
 const annotationToRemove = ref<Annotation>()
@@ -40,16 +46,20 @@ async function toggleModal() {
 onMounted(async () => {
   try {
     const { data } = await api.get('/annotations', {
-      params: { isPublic: true },
-      headers: {
-        Authorization: `Bearer ${userStore.token}`
-      }
+      params: { isPublic: true},
+      headers: { Authorization: `Bearer ${userStore.token}` },
     })
-    annotations.value = data.data
+    
+
+
+    console.log(data.data)
+    // const queriedAnnotations = data.data.filter((annotation: Annotation) => annotation.user.id == userStore.user.id)
+    // console.log(annotations.value)
+    // annotations.value = queriedAnnotations.value
+    
   } catch (e) {}
 })
 
-const nomePagina = ref('Fichamentos')
 </script>
 
 <template>
@@ -57,8 +67,8 @@ const nomePagina = ref('Fichamentos')
     <NavBar></NavBar>
     <div class="container">
       <div class="content">
-        <SectionHeader :pageName="nomePagina"></SectionHeader>
-        <div class="panel" id="sectionOptions">
+        <SectionHeader :pageName="name"></SectionHeader>
+        <div v-if="showOptions" class="panel" id="sectionOptions">
           <SearchBar /> 
           <div class="holder">
             <RouterLink to="/fichamentos/novo" as="button">
@@ -88,12 +98,12 @@ const nomePagina = ref('Fichamentos')
                       <span class="material-symbols-outlined"> visibility </span>
                     </button>
                   </RouterLink>
-                  <RouterLink :to="`/fichamentos/${annotation.id}/editar`">
+                  <RouterLink v-if="showCardOptions" :to="`/fichamentos/${annotation.id}/editar`">
                     <button class="btn-icon-sm">
                       <span class="material-symbols-outlined"> edit </span>
                     </button>
                   </RouterLink>
-                  <button @click="askToDelete(annotation.id)" class="btn-negative btn-icon-sm">
+                  <button v-if="showCardOptions" @click="askToDelete(annotation.id)" class="btn-negative btn-icon-sm">
                     <span class="material-symbols-outlined"> delete </span>
                   </button>
                 </div>

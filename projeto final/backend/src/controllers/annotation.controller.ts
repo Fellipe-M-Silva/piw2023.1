@@ -62,11 +62,17 @@ async function create (req: Request, res: Response) {
 }
 
 async function list(req: Request, res: Response) {
-    const filtros = JSON.stringify(req.params)
-    console.log(filtros)
     const annotations = await AppDataSource.manager.find(Annotation);
-    res.json({ data: annotations });
+    res.json({ data: annotations,
+        relations: ['user']});
 }
+
+// async function list(req: Request, res: Response) {
+//     const filtros = JSON.stringify(req.params)
+//     console.log(filtros)
+//     const annotations = await AppDataSource.manager.find(Annotation);
+//     res.json({ data: annotations });
+// }
 
 async function find(req: Request, res: Response) {
     try {
