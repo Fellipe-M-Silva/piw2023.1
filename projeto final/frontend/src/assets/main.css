@@ -383,6 +383,25 @@ label {
   line-height: 150%; /* 1.21875rem */
 }
 
+.searchform {
+  min-width: 288px;
+  max-width: 480px;
+  display: flex;
+  position:relative;
+  align-self: stretch;
+}
+.searchinput {
+  min-width: 288px;
+  max-width: 480px;
+  align-self: stretch;
+}
+
+.searchbutton {
+  position: absolute;
+  top: 0;
+  right: 0%
+}
+
 .grid-list {
   display: inline-grid;
   /* grid-template-columns: auto auto auto auto; */

@@ -25,8 +25,10 @@ const cloneRequested = ref(false)
 const home = computed(() => props.home)
 const searchItem = ref('')
 
-async function search() {
-  return 
+function filteredList() {
+  return annotations.value.filter((annotation)=>
+    annotation.workTitle.toLowerCase().includes(searchItem.value.toLowerCase())
+  )
 }
 
 async function askToDelete(id: string) {
@@ -116,10 +118,10 @@ onMounted(async () => {
       <div class="content">
         <SectionHeader :pageName="name"></SectionHeader>
         <div v-if="showOptions" class="panel" id="sectionOptions">
-          <!-- <SearchBar /> -->
-          <form>
-            <input type="text" v-model="searchItem" placeholder="Buscar" />
-            <button type="submit" class="btn-icon btn-plain">
+          <!-- <SearchBar :searchItem="searchItem" /> -->
+          <form class="searchform">
+            <input class="searchinput" type="text" v-model="searchItem" placeholder="Buscar" />
+            <button type="submit" class="btn-icon btn-plain searchbutton">
               <span class="material-symbols-outlined"> search </span>
             </button>
           </form>
@@ -133,7 +135,7 @@ onMounted(async () => {
           </div>
         </div>
         <div class="grid-list">
-          <div v-for="annotation in annotations">
+          <div v-for="annotation in filteredList()">
             <div class="card">
               <RouterLink :to="`/fichamentos/${annotation.id}/citacoes`"
                 ><h3>{{ annotation.workTitle }}</h3>
