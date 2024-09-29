@@ -143,6 +143,21 @@ article {
   min-width: 32.3%;
 }
 
+table {
+  align-self: stretch;
+}
+
+tr:hover {
+  transition: 0.2s ease-in;
+  border-radius: 2px;
+  background-color: rgba(0, 0, 0, 0.02);
+  color: #101010;
+}
+
+td {
+  padding: 0.5rem 0.5rem;
+}
+
 .modal {
   position: fixed;
   top: 0;
@@ -301,8 +316,11 @@ button {
   height: 1.5rem;
   width: 1.5rem;
 }
+.btn-sm {
+  padding: 0.25rem 0.5rem;
+}
 
-.btn-icon-sm span {
+.btn-icon-sm span, .btn-sm span {
   transform: scale(75%);
 }
 

@@ -2,21 +2,22 @@
 import NavBar from '@/components/NavBar.vue'
 import SectionHeader from '@/components/SectionHeader.vue'
 import SearchBar from '@/components/SearchBar.vue'
-import { onMounted } from 'vue'
+import { computed, onBeforeMount, onMounted } from 'vue'
 import { ref } from 'vue'
 import { api } from '@/api'
 import type { User } from '@/types'
 import { useUserStore } from '@/stores/userStore'
-import router from '@/router'
 
-defineProps({
-  showAdmin: Boolean
+const props = defineProps({
+  name: String,
+  admin: Boolean
 })
 
 const users = ref([] as User[])
 const userToRemove = ref<User>()
 const deleteRequested = ref(false)
 const userStore = useUserStore()
+const admin = computed(() => props.admin )
 
 const showError = ref(false)
 const message = ref('')
@@ -34,7 +35,7 @@ async function askToDelete(id: string) {
 async function removeUser() {
   try {
     const res = await api.delete(`/users/${userToRemove.value?.id}`, {
-      headers: { Authorization: `Bearer ${userStore.token}` },
+      headers: { Authorization: `Bearer ${userStore.token}` }
     })
 
     const removedUser: User = res.data.data
@@ -42,7 +43,7 @@ async function removeUser() {
     users.value.splice(toRemove, 1)
   } catch (error) {
     toggleMessage()
-    message.value = "Não foi possível excluir o usuário."
+    message.value = 'Não foi possível excluir o usuário.'
   } finally {
     toggleModal()
   }
@@ -52,23 +53,27 @@ async function toggleModal() {
   deleteRequested.value = !deleteRequested.value
 }
 
-onMounted(async () => {
+onBeforeMount(async () => {
   try {
-    if (userStore.user.isAdmin == true){
-      const { data } = await api.get('/users', {
-      headers: {
-        Authorization: `Bearer ${userStore.token}`
-      }
-    })
-    users.value = data.data
-    } else {
-      router.push('/notfound  ')
+    let data
+    if (admin.value) {
+      data = await api.get('/users', {
+        params: { isAdmin: true },
+        headers: { Authorization: `Bearer ${userStore.token}` }
+      })
+    }
+    else {
+      data = await api.get('/users', {
+        params: { isAdmin: false },
+        headers: { Authorization: `Bearer ${userStore.token}`}
+      })
     }
     
+    users.value = data.data.data
   } catch (error) {
     console.log(error)
     toggleMessage()
-    message.value = "Usuários não encontrados."
+    message.value = 'Usuários não encontrados.'
   }
 })
 </script>
@@ -78,7 +83,7 @@ onMounted(async () => {
     <NavBar></NavBar>
     <div class="container">
       <div class="content">
-        <SectionHeader pageName="Usuários"></SectionHeader>
+        <SectionHeader :pageName="name"></SectionHeader>
         <div class="panel" id="sectionOptions">
           <SearchBar />
           <div class="holder">
@@ -153,17 +158,5 @@ onMounted(async () => {
 }
 
 
-table {
-  align-self: stretch;
-}
 
-tr:hover {
-  transition: 0.2s ease-in;
-  background-color: rgba(0, 0, 0, 0.02);
-  color: #101010;
-}
-
-td {
-  padding: 0.5rem 0.5rem;
-}
 </style>

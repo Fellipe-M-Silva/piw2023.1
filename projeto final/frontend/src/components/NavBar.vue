@@ -1,16 +1,12 @@
 <script setup lang="ts">
 import { useUserStore } from '@/stores/userStore'
 import NavBarItem from './NavBarItem.vue'
-import { computed, onMounted, ref } from 'vue'
+import { computed, ref } from 'vue'
 
 const userStore = useUserStore()
-// const authenticated = ref(false)
-
-const authenticated = computed(() => { return userStore.token} )
-
-// onMounted(() => {
-//   authenticated.value = !!userStore.token 
-// })
+const isAdmin = computed(() => userStore.user?.isAdmin ? userStore.user?.isAdmin : false)
+const isSuperAdmin = computed(() => userStore.user?.isSuperAdmin ? userStore.user?.isSuperAdmin : false)
+const authenticated = computed(() => { return userStore.logged })
 
 </script>
 
@@ -35,12 +31,12 @@ const authenticated = computed(() => { return userStore.token} )
         <p class="body2">Acesse sua conta para gerenciar seus fichamentos.</p>
         <RouterLink to="/login" as="button" class="btn-primary">Login</RouterLink>
       </div>
-      <div v-if="userStore.user.isAdmin && authenticated" class="tituloelista">
+      <div v-if="isAdmin && authenticated" class="tituloelista">
         <h5>ADMINISTRAÇÃO</h5>
         <div class="menulista">
           <NavBarItem to="/usuarios" label="Usuários" icon="person"></NavBarItem>
           <NavBarItem
-            v-if="userStore.user.isSuperAdmin && authenticated"
+            v-if="isSuperAdmin && authenticated"
             to="/administradores"
             label="Administradores"
             icon="badge"

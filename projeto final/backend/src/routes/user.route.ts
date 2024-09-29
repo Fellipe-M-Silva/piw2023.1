@@ -7,13 +7,13 @@ import { authenticateJWT } from "../middleware/authMiddleware";
 
 const userRoutes = Router();
 
-userRoutes.post("/users", bodyParser.json(),authenticateJWT, postUserSchema, validateRequestSchema, create);
+userRoutes.post("/users", bodyParser.json(), authenticateJWT, postUserSchema, validateRequestSchema, create);
 
 userRoutes.get("/users", authenticateJWT, list);
 
 userRoutes.get("/users/:id", authenticateJWT, find);
 
-userRoutes.put("/users/:id", bodyParser.json(), putUserSchema, validateRequestSchema, update);
+userRoutes.put("/users/:id", bodyParser.json(), authenticateJWT, putUserSchema, validateRequestSchema, update);
 
 userRoutes.delete("/users/:id", authenticateJWT, remove);
 

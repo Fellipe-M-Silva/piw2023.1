@@ -37,11 +37,13 @@ async function fetchQuote() {
 
 async function createQuote() {
   try {
+    console.log(userStore.user.username)
     const res = await api.post(
       `/quotes/`,
       {
         text: quote.value.text,
         annotationId: id.value,
+        creatorUsername: userStore.user.username,
         startingPage: quote.value.startingPage,
         endingPage: quote.value.endingPage,
         note: quote.value.note
@@ -70,6 +72,7 @@ async function updateQuote() {
       {
         text: quote.value.text,
         annotationId: id.value,
+        userId: userStore.user.id,
         startingPage: quote.value.startingPage,
         endingPage: quote.value.endingPage,
         note: quote.value.note

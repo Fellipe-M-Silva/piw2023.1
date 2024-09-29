@@ -11,25 +11,24 @@ import UserDetail from '../views/UserDetail.vue'
 import NotFound from '@/views/NotFound.vue'
 import { useUserStore } from '@/stores/userStore'
 
-
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   linkActiveClass: 'router-link-active',
   
   routes: [
-    {path: '/', name: 'Repositório', component: AnnotationsView, props: {showOptions: false, name: "Repositório", showCardOptions: false, isPublic: true},},
+    {path: '/', component: AnnotationsView, props: { showOptions: false, name: "Repositório", showCardOptions: false, home:true }},
     {path: '/login', component: LoginView},
     {path: '/cadastro', component: RegisterView},
 
-    {path: '/usuarios', component: UsersView},
+    {path: '/usuarios', component: UsersView, props: { name: 'Usuários', admin: false }},
     {path: '/usuarios/novo', component: UserDetail, props: { showAdmin: false, hideEditSelf: false }},
-    {path: '/usuarios/:id', component: UserDetail, props:{ hideEditSelf: false} },
+    {path: '/usuarios/:id', component: UserDetail, props:{ hideEditSelf : false } },
 
-    {path: '/administradores', component: UsersView, props: { showAdmin:true } },
+    {path: '/administradores', component: UsersView, props: { name: 'Administradores', admin :true } },
     {path: '/administradores/novo', component: UsersView },
     {path: '/administradores/:id', component: UsersView },
     
-    {path: '/fichamentos', component: AnnotationsView, props: {showOptions: true, name: "Fichamentos", showCardOptions: true, isPublic: false} },
+    {path: '/fichamentos/', component: AnnotationsView, props: { showOptions: true, name: "Fichamentos", showCardOptions: true, home: false}},
     {path: '/fichamentos/novo', component: AnnotationDetail },
     {path: '/fichamentos/:id/citacoes', component: AnnotationView},
     {path: '/fichamentos/:id/editar', component: AnnotationDetail },

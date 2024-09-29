@@ -5,12 +5,13 @@ import { Annotation } from "../entity/Annotation";
 
 async function create(req: Request, res: Response) {
     try {
-        const { text, startingPage, endingPage, note, annotationId } = req.body;
+        const { text, startingPage, endingPage, note, annotationId, creatorUsername } = req.body;
         const quote = new Quote();
         quote.text = text;
         quote.startingPage = startingPage;
         quote.endingPage = endingPage;
         quote.note = note;
+        quote.creatorUsername = creatorUsername;
 
         const annotationInDB = await AppDataSource.manager.findOne(Annotation, {
             where: { 
@@ -23,13 +24,29 @@ async function create(req: Request, res: Response) {
                 errors: [ {
                         type: "field",
                         value: annotationId,
-                        msg: "Usuário não encontrado",
+                        msg: "Fichamento não encontrado",
                         path: "userId",
                         location: "body"
                 } ]
             })
         }
         
+        // const userInBD = await AppDataSource.manager.findOne(User, {
+        //     where: { id : userId }
+        // });
+
+        // if (!userInBD) {
+        //     return res.status(400).json({
+        //         errors: [ {
+        //                 type: "field",
+        //                 value: annotationId,
+        //                 msg: "Usuário não encontrado",
+        //                 path: "userId",
+        //                 location: "body"
+        //         } ]
+        //     })
+        // }
+
         quote.annotation = annotationInDB
 
         if (quote) {
@@ -45,7 +62,8 @@ async function create(req: Request, res: Response) {
 }
 
 async function list(req: Request, res: Response) {
-    const quotes = await AppDataSource.manager.find(Quote);
+    const filtros = req.query
+    const quotes = await AppDataSource.manager.find(Quote, { relations: ['annotation'], where: filtros });
     res.json({ data: quotes });
 }
 async function find(req: Request, res: Response) {

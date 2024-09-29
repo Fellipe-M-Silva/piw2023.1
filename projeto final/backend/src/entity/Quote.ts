@@ -1,5 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToOne, JoinColumn } from "typeorm"
 import { Annotation } from "./Annotation"
+import { User } from "./User"
 
 @Entity()
 export class Quote {
@@ -27,10 +28,18 @@ export class Quote {
     })
     note: string
 
+    @Column()
+    creatorUsername: string
+
     // Relacionamentos
 
     //Pertence a *apenas 1* fichamento
     @ManyToOne(() => Annotation, (annotation) => annotation.quotes)
     annotation: Annotation
+
+    //Cadastrador por 1 usuário 
+    // @OneToOne(() => User)
+    // @JoinColumn()
+    // user: User
 
 }

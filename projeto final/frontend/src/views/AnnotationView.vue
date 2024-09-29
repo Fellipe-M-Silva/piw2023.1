@@ -61,8 +61,7 @@ onMounted(async () => {
       await fetchAnnotation()
       if (annotation.value.user.id == userStore.user.id) {
         creator.value = true
-      }
-      else {
+      } else {
         creator.value = false
       }
     } else {
@@ -92,20 +91,43 @@ function copyText(quoteId: string) {
     <NavBar></NavBar>
     <div class="container">
       <div class="content">
-        <div class="panel" style="flex-direction: row">
-          <h1 style="flex: 1 0 0">{{ annotation.workTitle }}</h1>
+        <div class="panel" style="flex-direction: column">
+          <h1 style="align-self: stretch">{{ annotation.workTitle }}</h1>
+          <div class="holder info">
+            <div class="holder">
+              <div class="holder">
+                <span class="material-symbols-outlined">person</span>
+                <p class="body2">{{ annotation.workAuthors }}</p>
+              </div>
+              <div class="holder">
+                <span class="material-symbols-outlined">person</span>
+                <p class="body2">{{ annotation.creatorUsername }}</p>
+              </div>
+            </div>
+
+            <div v-if="creator" class="holder">
+              <RouterLink :to="`/fichamentos/${id}/editar`">
+                <button class="button btn-secondary btn-sm">
+                  <span class="material-symbols-outlined">edit</span>Editar
+                </button>
+              </RouterLink>
+              <button class="button btn-negative btn-sm">
+                <span class="material-symbols-outlined">delete</span>Excluir
+              </button>
+            </div>
+          </div>
         </div>
         <div class="panel" id="sectionOptions">
           <SearchBar />
           <div v-if="creator" class="holder">
-            <RouterLink :to="`/fichamentos/${id}/editar`">
+            <!-- <RouterLink :to="`/fichamentos/${id}/editar`">
               <button class="button btn-secondary">
                 <span class="material-symbols-outlined">edit</span>Editar
               </button>
             </RouterLink>
             <button class="button btn-negative">
               <span class="material-symbols-outlined">delete</span>Excluir
-            </button>
+            </button> -->
             <RouterLink :to="`/fichamentos/${id}/citacoes/nova`" as="button">
               <button class="btn-primary">
                 <span class="material-symbols-outlined">add</span>
@@ -131,12 +153,16 @@ function copyText(quoteId: string) {
                 <button @click="copyText(quote.id)" class="btn-icon-sm">
                   <span class="material-symbols-outlined"> content_copy </span>
                 </button>
-                <RouterLink v-if="creator"   :to="`/fichamentos/${id}/citacoes/${quote.id}`">
+                <RouterLink v-if="creator" :to="`/fichamentos/${id}/citacoes/${quote.id}`">
                   <button class="btn-icon-sm">
                     <span class="material-symbols-outlined"> edit </span>
                   </button>
                 </RouterLink>
-                <button v-if="creator" @click="askToDelete(quote.id)" class="btn-icon-sm btn-negative">
+                <button
+                  v-if="creator"
+                  @click="askToDelete(quote.id)"
+                  class="btn-icon-sm btn-negative"
+                >
                   <span class="material-symbols-outlined"> delete </span>
                 </button>
               </div>
@@ -227,5 +253,16 @@ function copyText(quoteId: string) {
   font-style: normal;
   font-weight: 400;
   line-height: 150%;
+}
+.holder span {
+  transform: scale(75%);
+}
+
+.info {
+  align-self: stretch;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
 }
 </style>

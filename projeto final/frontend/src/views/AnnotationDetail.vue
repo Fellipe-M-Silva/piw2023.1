@@ -26,6 +26,7 @@ async function fetchAnnotation() {
     const res = await api.get(`/annotations/${id.value}`, {
       headers: { Authorization: `Bearer ${userStore.token}`}
     })
+    console.log(res.data.data)
     annotation.value = res.data.data
   } catch (error) {
     router.push('/notFound')
@@ -54,6 +55,7 @@ async function createAnnotation() {
     annotation.value = res.data.data
     router.push(`/fichamentos/${annotation.value.id}/citacoes`)
   } catch (error:any) {
+    console.log(error)
     toggleMessage()
     message.value = "Dados obrigatórios não adicionados."
   }
@@ -121,7 +123,7 @@ onMounted(async () => {
                 <label for="workAuthors">Autoria</label>
                 <input type="text" id="workAuthors" v-model="annotation.workAuthors" />
               </div>
-              <div class="inputsection">
+              <div v-if="annotation.creatorUsername == userStore.user.username" class="inputsection">
                 <label for="isPublic">Marcar como público</label>
                 <input type="checkbox" id="isPublic" checked v-model="annotation.isPublic" />
               </div>

@@ -35,7 +35,9 @@ async function create (req: Request, res: Response) {
 }
 
 async function list (req: Request, res: Response) {
-    const users = await AppDataSource.manager.find(User);
+    const filtros = req.query
+    filtros.isAdmin == 'true'? filtros.isAdmin = true : filtros.isAdmin = false
+    const users = await AppDataSource.manager.find(User, { where: filtros });
     res.json({ data: users });
 }
 

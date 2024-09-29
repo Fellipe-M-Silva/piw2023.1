@@ -45,10 +45,7 @@ async function login(req: Request, res: Response) {
             ]
         })
         
-        console.log(user)
-
         if (user && (await bcrypt.compare(password, user.password))) {
-            console.log(user)
             const token = jwt.sign({ userId: user.email }, secretKey, { expiresIn: '1h' });
             return res.status(200).json({ user, token })
         }

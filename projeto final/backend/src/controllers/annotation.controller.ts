@@ -62,9 +62,13 @@ async function create (req: Request, res: Response) {
 }
 
 async function list(req: Request, res: Response) {
-    const filtros = JSON.stringify(req.params)
-    console.log(filtros)
-    const annotations = await AppDataSource.manager.find(Annotation);
+    const filtros = req.query
+    if (filtros.isPublic) { filtros.isPublic = true }
+    
+    const annotations = await AppDataSource.manager.find(Annotation, {
+        where: filtros,
+        relations: ['user']
+    });
     res.json({ data: annotations });
 }
 
@@ -104,7 +108,7 @@ async function update(req: Request, res: Response) {
             annotation.isPublic = isPublic;
             annotation.workTitle = workTitle;
             annotation.workAuthors = workAuthors;
-            annotation.updatedAt = new Date();
+            annotation.updatedAt = new Date();  
 
             await AppDataSource.manager.save(annotation);
             

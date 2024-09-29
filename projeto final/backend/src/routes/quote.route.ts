@@ -11,7 +11,7 @@ quoteRoutes.post("/quotes", authenticateJWT, bodyParser.json(), quoteSchema, val
 
 quoteRoutes.get("/quotes", list);
 
-quoteRoutes.get("/quotes/:id", find);
+quoteRoutes.get("/quotes/:id", authenticateJWT, find);
 
 quoteRoutes.put("/quotes/:id", authenticateJWT, bodyParser.json(), quoteSchema, validateRequestSchema, update);
 

@@ -7,12 +7,14 @@ export const useUserStore = defineStore({
   id: 'auth',
   state: () => ({
       user: JSON.parse(localStorage.getItem('user') || '{}'),
-      token: JSON.parse(localStorage.getItem('token') || '{}')
+      token: JSON.parse(localStorage.getItem('token') || '{}'),
+      logged: localStorage.getItem('user')? true : false 
   }),
   actions: {
     login(authUser: User, token: string) {
       this.user = authUser
       this.token = token
+      this.logged = true
       
       localStorage.setItem('user', JSON.stringify(authUser))
       localStorage.setItem('token', JSON.stringify(token))
@@ -20,6 +22,7 @@ export const useUserStore = defineStore({
     
     logout() {
       this.user = null;
+      this.logged = false
       localStorage.removeItem('user');
       localStorage.removeItem('token')
       router.push('/login');

@@ -184,9 +184,7 @@ onMounted(async () => {
       </div>
     </div>
   </main>
-
-  <div class="non-modal" v-if="showError">
-    <div class="non-modal-dialog">
+    <div v-if="showError" class="non-modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
           <h5>Erro</h5>
@@ -200,24 +198,6 @@ onMounted(async () => {
         </div>
       </div>
     </div>
-  </div>
-
-  <div class="non-modal" v-if="showError">
-    <div class="non-modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5>Erro</h5>
-          <button @click="toggleMessage()" class="btn-icon btn-icon-sm btn-plain">
-            <span class="material-symbols-outlined"> close </span>
-          </button>
-        </div>
-
-        <div class="modal-body">
-          <p class="body1">{{ message }}</p>
-        </div>
-      </div>
-    </div>
-  </div>
 </template>
 
 <style scoped>
