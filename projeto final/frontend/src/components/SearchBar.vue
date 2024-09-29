@@ -1,6 +1,6 @@
 <template>
   <form>
-    <input type="text" action="" placeholder="Buscar" />
+    <input type="text"  placeholder="Buscar" />
     <button type="submit" class="btn-icon btn-plain" >
       <span class="material-symbols-outlined"> search </span>
     </button>
@@ -12,7 +12,6 @@ form {
   min-width: 288px;
   max-width: 480px;
   display: flex;
-  /* justify-content: center; */
   position:relative;
   align-self: stretch;
 }

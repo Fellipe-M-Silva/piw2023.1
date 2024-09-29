@@ -127,6 +127,10 @@ onMounted(async () => {
                 <label for="isPublic">Marcar como público</label>
                 <input type="checkbox" id="isPublic" checked v-model="annotation.isPublic" />
               </div>
+              <div v-else class="holder" style="align-self: stretch; justify-content: center; align-items: center; padding:   1rem 1rem">
+                <span style="transform: scale(75%);" class="material-symbols-outlined"> info </span>
+                <p style="align-self: stretch;" class="body2">Fichamentos clonados não podem ser publicados.</p>
+              </div>
             </div>
 
             <div class="holder">

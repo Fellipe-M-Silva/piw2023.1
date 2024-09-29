@@ -19,18 +19,21 @@ const annotations = ref([] as Annotation[])
 const userStore = useUserStore()
 const router = useRouter()
 const annotationToRemove = ref<Annotation>()
-const annotationToClone = ref<Annotation>() 
+const annotationToClone = ref<Annotation>()
 const deleteRequested = ref(false)
 const cloneRequested = ref(false)
-const home = computed(() => props.home )
+const home = computed(() => props.home)
+const searchItem = ref('')
 
+async function search() {
+  return 
+}
 
 async function askToDelete(id: string) {
   const index = annotations.value.findIndex((u) => u.id === id)
   annotationToRemove.value = annotations.value[index]
   toggleModal()
 }
-
 
 async function removeAnnotation() {
   try {
@@ -57,24 +60,20 @@ async function askToClone(id: string) {
 
 async function cloneAnnotation() {
   try {
-    const annotation = await api.get(`/annotations/${annotationToClone.value?.id}`, {
-      headers: { Authorization: `Bearer ${userStore.token}` }
-     })
-     
     const res = await api.post(
       `/annotations`,
       {
         userId: userStore.user.id,
-        creatorUsername: annotationToClone.value?.creatorUsername, 
+        creatorUsername: annotationToClone.value?.creatorUsername,
         isPublic: false,
         workTitle: annotationToClone.value?.workTitle,
         workAuthors: annotationToClone.value?.workAuthors
       },
-      { headers: { Authorization: `Bearer ${userStore.token}`} }
+      { headers: { Authorization: `Bearer ${userStore.token}` } }
     )
 
     router.push(`/fichamentos/${res.data.data.id}/citacoes`)
-  } catch (error:any) {
+  } catch (error: any) {
     console.log(error)
   }
 }
@@ -91,24 +90,23 @@ onMounted(async () => {
   try {
     let data
     if (home.value) {
-    data = await api.get('/annotations', {
-      params: { isPublic : true },
-      headers: { Authorization: `Bearer ${userStore.token}` }
-    }) 
-  }
-  else {
-    data = await api.get('/annotations', {
-      params: { creatorUsername : userStore.user.username },
-      headers: { Authorization: `Bearer ${userStore.token}` }
-    })
-  }
+      data = await api.get('/annotations', {
+        params: { isPublic: true },
+        headers: { Authorization: `Bearer ${userStore.token}` }
+      })
+    } else {
+      const params = { user: { id: userStore.user.id } }
+      data = await api.get('/annotations', {
+        params: params,
+        headers: { Authorization: `Bearer ${userStore.token}` }
+      })
+    }
 
-  annotations.value = data.data.data
+    annotations.value = data.data.data
   } catch (e) {
     console.log(e)
   }
 })
-
 </script>
 
 <template>
@@ -118,7 +116,13 @@ onMounted(async () => {
       <div class="content">
         <SectionHeader :pageName="name"></SectionHeader>
         <div v-if="showOptions" class="panel" id="sectionOptions">
-          <SearchBar />
+          <!-- <SearchBar /> -->
+          <form>
+            <input type="text" v-model="searchItem" placeholder="Buscar" />
+            <button type="submit" class="btn-icon btn-plain">
+              <span class="material-symbols-outlined"> search </span>
+            </button>
+          </form>
           <div class="holder">
             <RouterLink to="/fichamentos/novo" as="button">
               <button class="btn-primary">
@@ -133,12 +137,16 @@ onMounted(async () => {
             <div class="card">
               <RouterLink :to="`/fichamentos/${annotation.id}/citacoes`"
                 ><h3>{{ annotation.workTitle }}</h3>
-                </RouterLink>
+              </RouterLink>
               <p class="body1" style="align-self: stretch">{{ annotation.workAuthors }}</p>
               <div class="footer">
                 <ul>
-                  <li v-if="annotation.creatorUsername == userStore.user.username" class="body2"> Por <strong>você</strong></li>
-                  <li v-else>Por <strong>{{ annotation.creatorUsername }}</strong></li>
+                  <li v-if="annotation.creatorUsername == userStore.user.username" class="body2">
+                    Por <strong>você</strong>
+                  </li>
+                  <li v-else class="body2">
+                    Por <strong>{{ annotation.creatorUsername }}</strong>
+                  </li>
                 </ul>
                 <div class="holder">
                   <RouterLink :to="`/fichamentos/${annotation.id}/citacoes`">
@@ -146,7 +154,11 @@ onMounted(async () => {
                       <span class="material-symbols-outlined"> visibility </span>
                     </button>
                   </RouterLink>
-                  <button @click="askToClone(annotation.id)" v-if="!showCardOptions" class="btn-icon-sm">
+                  <button
+                    @click="askToClone(annotation.id)"
+                    v-if="!showCardOptions"
+                    class="btn-icon-sm"
+                  >
                     <span class="material-symbols-outlined"> file_copy </span>
                   </button>
                   <RouterLink v-if="showCardOptions" :to="`/fichamentos/${annotation.id}/editar`">
@@ -208,7 +220,8 @@ onMounted(async () => {
 
         <div class="modal-body">
           <p class="body1">
-            Deseja clonar o fichamento da obra <strong>{{ annotationToClone?.workTitle }}</strong>? 
+            Deseja clonar o fichamento da obra <strong>{{ annotationToClone?.workTitle }}</strong
+            >?
           </p>
         </div>
 
