@@ -1,15 +1,16 @@
 <script setup lang="ts">
 import NavBar from '@/components/NavBar.vue'
 import SectionHeader from '@/components/SectionHeader.vue'
-import SearchBar from '@/components/SearchBar.vue'
 import { computed, onMounted, ref } from 'vue'
 import type { Annotation } from '@/types'
 import { api } from '@/api'
 import { useUserStore } from '@/stores/userStore'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 const props = defineProps({
   name: String,
+  title: String, 
+  link: String,
   showOptions: Boolean,
   showCardOptions: Boolean,
   home: Boolean
@@ -18,13 +19,36 @@ const props = defineProps({
 const annotations = ref([] as Annotation[])
 const userStore = useUserStore()
 const router = useRouter()
+
 const annotationToRemove = ref<Annotation>()
 const annotationToClone = ref<Annotation>()
 const deleteRequested = ref(false)
 const cloneRequested = ref(false)
 const home = computed(() => props.home)
-const searchItem = ref('')
 
+
+async function fetchAnnotations() {
+  try {
+    let data
+    if (home.value) {
+      data = await api.get('/annotations', {
+        params: { isPublic: true },
+        headers: { Authorization: `Bearer ${userStore.token}` }
+      })
+    } else {
+      const params = { user: { id: userStore.user.id } }
+      data = await api.get('/annotations', {
+        params: params,
+        headers: { Authorization: `Bearer ${userStore.token}` }
+      })
+    }
+    annotations.value = data.data.data
+  } catch (e) {
+    console.log(e)
+  }
+}
+
+const searchItem = ref('')
 function filteredList() {
   return annotations.value.filter((annotation)=>
     annotation.workTitle.toLowerCase().includes(searchItem.value.toLowerCase())
@@ -90,21 +114,7 @@ async function toggleCloneModal() {
 
 onMounted(async () => {
   try {
-    let data
-    if (home.value) {
-      data = await api.get('/annotations', {
-        params: { isPublic: true },
-        headers: { Authorization: `Bearer ${userStore.token}` }
-      })
-    } else {
-      const params = { user: { id: userStore.user.id } }
-      data = await api.get('/annotations', {
-        params: params,
-        headers: { Authorization: `Bearer ${userStore.token}` }
-      })
-    }
-
-    annotations.value = data.data.data
+    fetchAnnotations()
   } catch (e) {
     console.log(e)
   }
@@ -118,9 +128,8 @@ onMounted(async () => {
       <div class="content">
         <SectionHeader :pageName="name"></SectionHeader>
         <div v-if="showOptions" class="panel" id="sectionOptions">
-          <!-- <SearchBar :searchItem="searchItem" /> -->
           <form class="searchform">
-            <input class="searchinput" type="text" v-model="searchItem" placeholder="Buscar" />
+            <input class="searchinput" type="text" v-model="searchItem" placeholder="Buscar fichamentos" />
             <button type="submit" class="btn-icon btn-plain searchbutton">
               <span class="material-symbols-outlined"> search </span>
             </button>
@@ -137,13 +146,13 @@ onMounted(async () => {
         <div class="grid-list">
           <div v-for="annotation in filteredList()">
             <div class="card">
-              <RouterLink :to="`/fichamentos/${annotation.id}/citacoes`"
+              <RouterLink :to="`/${link}/${annotation.id}/citacoes`"
                 ><h3>{{ annotation.workTitle }}</h3>
               </RouterLink>
               <p class="body1" style="align-self: stretch">{{ annotation.workAuthors }}</p>
               <div class="footer">
                 <ul>
-                  <li v-if="annotation.creatorUsername == userStore.user.username" class="body2">
+                  <li v-if="annotation.creatorUsername == userStore.user?.username" class="body2">
                     Por <strong>você</strong>
                   </li>
                   <li v-else class="body2">
@@ -158,7 +167,7 @@ onMounted(async () => {
                   </RouterLink>
                   <button
                     @click="askToClone(annotation.id)"
-                    v-if="!showCardOptions"
+                    v-if="!showCardOptions && userStore.user?.id"
                     class="btn-icon-sm"
                   >
                     <span class="material-symbols-outlined"> file_copy </span>

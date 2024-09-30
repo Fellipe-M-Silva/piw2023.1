@@ -55,6 +55,13 @@ async function toggleModal() {
   deleteRequested.value = !deleteRequested.value
 }
 
+const searchItem = ref('')
+function filteredList() {
+  return annotation.value.quotes.filter((quote)=>
+    quote.text.toLowerCase().includes(searchItem.value.toLowerCase())
+  )
+}
+
 onMounted(async () => {
   try {
     id.value = route.params.id.toString()
@@ -119,7 +126,13 @@ function copyText(quoteId: string) {
           </div>
         </div>
         <div class="panel" id="sectionOptions">
-          <SearchBar />
+          <!-- <SearchBar /> -->
+           <form class="searchform">
+            <input class="searchinput" type="text" v-model="searchItem" placeholder="Buscar fichamentos" />
+            <button type="submit" class="btn-icon btn-plain searchbutton">
+              <span class="material-symbols-outlined"> search </span>
+            </button>
+          </form> 
           <div v-if="creator" class="holder">
             <!-- <RouterLink :to="`/fichamentos/${id}/editar`">
               <button class="button btn-secondary">

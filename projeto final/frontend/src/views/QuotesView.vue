@@ -24,6 +24,15 @@ function copyText(quoteId: string) {
   alert('Texto copiado: ' + copyText)
 }
 
+
+const searchItem = ref('')
+function filteredList() {
+  return quotes.value.filter((quote)=>
+    quote.text.toLowerCase().includes(searchItem.value.toLowerCase())
+  )
+}
+
+
 onMounted(async () => {
   try {
     const { data } = await api.get('/quotes', {
@@ -45,7 +54,13 @@ onMounted(async () => {
       <div class="content">
         <SectionHeader pageName="Citações"></SectionHeader>
         <div class="panel" id="sectionOptions">
-          <SearchBar />
+          <!-- <SearchBar /> -->
+          <form class="searchform">
+            <input class="searchinput" type="text" v-model="searchItem" placeholder="Buscar fichamentos" />
+            <button type="submit" class="btn-icon btn-plain searchbutton">
+              <span class="material-symbols-outlined"> search </span>
+            </button>
+          </form>
           <div class="holder">
           </div>
         </div>
@@ -59,7 +74,7 @@ onMounted(async () => {
               <td class="col4 body2 stretchy-column">Nota</td>
               <td class="col5 body2">Ações</td>
             </thead>
-            <tr v-for="quote in quotes" >
+            <tr v-for="quote in filteredList()" >
               <td class="col1 stretchy-column min">“&hairsp;{{ quote.text }}&hairsp;”</td>
               <td class="col2 body2 stretchy-column">{{ quote.annotation.workTitle }}</td>
               <td class="col3 body2" style="display: flex; flex-direction: row; gap:0">{{ quote.startingPage }} 

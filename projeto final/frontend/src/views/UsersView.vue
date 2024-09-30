@@ -56,6 +56,13 @@ async function toggleModal() {
   deleteRequested.value = !deleteRequested.value
 }
 
+const searchItem = ref('')
+function filteredList() {
+  return users.value.filter((user)=>
+    user.name.toLowerCase().includes(searchItem.value.toLowerCase())
+  )
+}
+
 onMounted(async () => {
   try {
     let data
@@ -87,7 +94,13 @@ onMounted(async () => {
       <div class="content">
         <SectionHeader :pageName="name"></SectionHeader>
         <div class="panel" id="sectionOptions">
-          <SearchBar />
+          <!-- <SearchBar /> -->
+          <form class="searchform">
+            <input class="searchinput" type="text" v-model="searchItem" placeholder="Buscar fichamentos" />
+            <button type="submit" class="btn-icon btn-plain searchbutton">
+              <span class="material-symbols-outlined"> search </span>
+            </button>
+          </form>
           <div class="holder">
             <RouterLink :to="`/${link}/novo`" as="button">
               <button class="btn-primary">
@@ -105,7 +118,7 @@ onMounted(async () => {
               <td class="body2">Nome de usuário</td>
               <td class="body2">Ações</td>
             </thead>
-            <tr v-for="user in users">
+            <tr v-for="user in filteredList()">
               <td class="body1">{{ user.name }}</td>
               <td>{{ user.email }}</td>
               <td>{{ user.username }}</td>

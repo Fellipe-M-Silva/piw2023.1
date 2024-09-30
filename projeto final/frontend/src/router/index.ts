@@ -16,28 +16,29 @@ const router = createRouter({
   linkActiveClass: 'router-link-active',
   
   routes: [
-    {path: '/', component: AnnotationsView, props: { showOptions: false, name: "Repositório", showCardOptions: false, home:true }},
+    {path: '/', alias: '/repositorio', component: AnnotationsView, props: { showOptions: false, name: "Repositório", link: 'repositorio', showCardOptions: false, home: true }},
+    {path: '/repositorio/:id/citacoes', component: AnnotationView},
     {path: '/login', component: LoginView},
     {path: '/cadastro', component: RegisterView},
 
-    {path: '/usuarios', component: UsersView, props: { name: 'Usuários', admin: false, buttonLabel: 'Novo usuário', buttonLink: 'usuarios' }},
-    {path: '/usuarios/novo', component: UserDetail, props: { name: 'Usuário', showAdmin: false, hideEditSelf: false }},
-    {path: '/usuarios/:id', component: UserDetail, props:{ name: 'Usuário', hideEditSelf : false } },
-
-    {path: '/administradores', component: UsersView, props: { name: 'Administradores', admin :true, buttonLabel: 'Novo administrador', buttonLink: 'administradores' } },
-    {path: '/administradores/novo', component: UserDetail, props: { name: 'Administrador' } },
-    {path: '/administradores/:id', component: UserDetail, props: { name: 'Administrador' } },
+    {path: '/fichamentos', component: AnnotationsView, props: { showOptions: true, name: "Fichamentos", link: 'fichamentos', showCardOptions: true, home: false}, meta: { requiresAuth: true }},
+    {path: '/fichamentos/novo', component: AnnotationDetail, meta: { requiresAuth: true }},
+    {path: '/fichamentos/:id/citacoes', component: AnnotationView, meta: { requiresAuth: true }},
+    {path: '/fichamentos/:id/editar', component: AnnotationDetail, meta: { requiresAuth: true }},
     
-    {path: '/fichamentos/', component: AnnotationsView, props: { showOptions: true, name: "Fichamentos", showCardOptions: true, home: false}},
-    {path: '/fichamentos/novo', component: AnnotationDetail },
-    {path: '/fichamentos/:id/citacoes', component: AnnotationView},
-    {path: '/fichamentos/:id/editar', component: AnnotationDetail },
-    
-    {path: '/citacoes', component: QuotesView },
-    {path: '/fichamentos/:id/citacoes/:quoteId', component: QuoteDetail },
-    {path: '/fichamentos/:id/citacoes/nova', component: QuoteDetail },
+    {path: '/citacoes', component: QuotesView, meta: { requiresAuth: true }},
+    {path: '/fichamentos/:id/citacoes/:quoteId', component: QuoteDetail, meta: { requiresAuth: true }},
+    {path: '/fichamentos/:id/citacoes/nova', component: QuoteDetail, meta: { requiresAuth: true }},
 
-    {path: '/conta/:id', component: UserDetail, props:{hideEditSelf: true}},
+    {path: '/usuarios', component: UsersView, props: { name: 'Usuários', admin: false, buttonLabel: 'Novo usuário', buttonLink: 'usuarios' }, meta: { requiresAuth: true }},
+    {path: '/usuarios/novo', component: UserDetail, props: { name: 'Usuário', showAdmin: false, hideEditSelf: false }, meta: { requiresAuth: true }},
+    {path: '/usuarios/:id', component: UserDetail, props:{ name: 'Usuário', hideEditSelf : false }, meta: { requiresAuth: true }},
+
+    {path: '/administradores', component: UsersView, props: { name: 'Administradores', admin :true, buttonLabel: 'Novo administrador', buttonLink: 'administradores' }, meta: { requiresAuth: true }},
+    {path: '/administradores/novo', component: UserDetail, props: { name: 'Administrador' }, meta: { requiresAuth: true }},
+    {path: '/administradores/:id', component: UserDetail, props: { name: 'Administrador' }, meta: { requiresAuth: true }},
+
+    {path: '/conta/:id', component: UserDetail, props:{hideEditSelf: true}, meta: { requiresAuth: true }},
 
     {path: '/notfound', component: NotFound},
     {path: '/:pathMatch(.*)*', component: NotFound}
@@ -45,17 +46,14 @@ const router = createRouter({
 })
 
 router.beforeEach(async(to, from) => {
-  const publicPages = [ '/', '/login', '/cadastro']
   const adminPages = [ '/usuarios' ]
   const superAdminPages = [ '/administradores' ]
-
-  const authRequired = !publicPages.includes(to.path)
   const adminRequired = adminPages.includes(to.path)
   const superAdminRequired = superAdminPages.includes(to.path)
 
   const auth = useUserStore()
 
-  if (authRequired && !auth.user?.id) {
+  if (to.meta.requiresAuth && !auth.user?.id) {
     console.log('não autenticado')
     return '/login'
   }
