@@ -20,13 +20,13 @@ const router = createRouter({
     {path: '/login', component: LoginView},
     {path: '/cadastro', component: RegisterView},
 
-    {path: '/usuarios', component: UsersView, props: { name: 'Usuários', admin: false }},
-    {path: '/usuarios/novo', component: UserDetail, props: { showAdmin: false, hideEditSelf: false }},
-    {path: '/usuarios/:id', component: UserDetail, props:{ hideEditSelf : false } },
+    {path: '/usuarios', component: UsersView, props: { name: 'Usuários', admin: false, buttonLabel: 'Novo usuário', buttonLink: 'usuarios' }},
+    {path: '/usuarios/novo', component: UserDetail, props: { name: 'Usuário', showAdmin: false, hideEditSelf: false }},
+    {path: '/usuarios/:id', component: UserDetail, props:{ name: 'Usuário', hideEditSelf : false } },
 
-    {path: '/administradores', component: UsersView, props: { name: 'Administradores', admin :true } },
-    {path: '/administradores/novo', component: UsersView },
-    {path: '/administradores/:id', component: UsersView },
+    {path: '/administradores', component: UsersView, props: { name: 'Administradores', admin :true, buttonLabel: 'Novo administrador', buttonLink: 'administradores' } },
+    {path: '/administradores/novo', component: UserDetail, props: { name: 'Administrador' } },
+    {path: '/administradores/:id', component: UserDetail, props: { name: 'Administrador' } },
     
     {path: '/fichamentos/', component: AnnotationsView, props: { showOptions: true, name: "Fichamentos", showCardOptions: true, home: false}},
     {path: '/fichamentos/novo', component: AnnotationDetail },
@@ -46,12 +46,28 @@ const router = createRouter({
 
 router.beforeEach(async(to, from) => {
   const publicPages = [ '/', '/login', '/cadastro']
+  const adminPages = [ '/usuarios' ]
+  const superAdminPages = [ '/administradores' ]
+
   const authRequired = !publicPages.includes(to.path)
+  const adminRequired = adminPages.includes(to.path)
+  const superAdminRequired = superAdminPages.includes(to.path)
+
   const auth = useUserStore()
 
   if (authRequired && !auth.user?.id) {
+    console.log('não autenticado')
     return '/login'
   }
+  else if (adminRequired && !auth.user?.isAdmin) {
+    console.log('acesso negado. área de administradores')
+    return '/'
+  }
+  else if (superAdminRequired && !auth.user?.isSuperAdmin) {
+    console.log('acesso negado. área de super administradores')
+    return '/'
+  }
+
 })
 
 export default router

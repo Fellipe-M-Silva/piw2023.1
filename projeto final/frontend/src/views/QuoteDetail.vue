@@ -32,6 +32,7 @@ async function fetchQuote() {
     quote.value = res.data
   } catch (error) {
     console.log(error)
+    router.push('/notFound')
   }
 }
 

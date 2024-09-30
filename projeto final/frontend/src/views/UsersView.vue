@@ -10,7 +10,9 @@ import { useUserStore } from '@/stores/userStore'
 
 const props = defineProps({
   name: String,
-  admin: Boolean
+  admin: Boolean,
+  buttonLabel: String,
+  buttonLink: String
 })
 
 const users = ref([] as User[])
@@ -18,6 +20,7 @@ const userToRemove = ref<User>()
 const deleteRequested = ref(false)
 const userStore = useUserStore()
 const admin = computed(() => props.admin )
+const link = ref(String(props.buttonLink) || '')
 
 const showError = ref(false)
 const message = ref('')
@@ -53,7 +56,7 @@ async function toggleModal() {
   deleteRequested.value = !deleteRequested.value
 }
 
-onBeforeMount(async () => {
+onMounted(async () => {
   try {
     let data
     if (admin.value) {
@@ -68,7 +71,6 @@ onBeforeMount(async () => {
         headers: { Authorization: `Bearer ${userStore.token}`}
       })
     }
-    
     users.value = data.data.data
   } catch (error) {
     console.log(error)
@@ -87,10 +89,10 @@ onBeforeMount(async () => {
         <div class="panel" id="sectionOptions">
           <SearchBar />
           <div class="holder">
-            <RouterLink to="/usuarios/novo" as="button">
+            <RouterLink :to="`/${link}/novo`" as="button">
               <button class="btn-primary">
                 <span class="material-symbols-outlined">add</span>
-                Novo usuário
+                {{ buttonLabel }}
               </button>
             </RouterLink>
           </div>
@@ -109,7 +111,7 @@ onBeforeMount(async () => {
               <td>{{ user.username }}</td>
               <td class="hold">
                 <div class="holder">
-                  <RouterLink :to="`/usuarios/${user.id}`">
+                  <RouterLink :to="`/${link}/${user.id}`">
                     <button class="btn-icon-sm">
                       <span class="material-symbols-outlined"> edit </span>
                     </button>

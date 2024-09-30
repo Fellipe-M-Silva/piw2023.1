@@ -20,9 +20,10 @@ async function fetchAnnotation() {
       headers: { Authorization: `Bearer ${userStore.token}` }
     })
     annotation.value = res.data.data
-    console.log(annotation.value)
+    
   } catch (error) {
     console.log(error)
+    router.push('/notFound')
   }
 }
 

@@ -8,6 +8,7 @@ import type { User } from '@/types'
 import { useUserStore } from '@/stores/userStore'
 
 defineProps({
+  name: String,
   showAdmin: Boolean,
   hideEditSelf: Boolean
 })
@@ -119,8 +120,8 @@ onMounted(async () => {
     <NavBar></NavBar>
     <div class="container">
       <div class="content">
-        <SectionHeader pageName="Usuário" v-if="modoEdicao"></SectionHeader>
-        <SectionHeader pageName="Novo usuário" v-else></SectionHeader>
+        <SectionHeader :pageName="name" v-if="modoEdicao"></SectionHeader>
+        <SectionHeader :pageName="`Novo ${name}`" v-else></SectionHeader>
 
         <div class="panel">
           <form name="userForm" @submit.prevent="id ? updateUser() : createUser()">
