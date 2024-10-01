@@ -56,7 +56,7 @@ async function createQuote() {
       }
     )
     quote.value = res.data.data
-    console.log(quote.value)
+    alert("Citação cadastrada com sucesso.")
     router.push(`/fichamentos/${id.value}/citacoes`)
   } catch (error) {
     console.log(error)
@@ -85,6 +85,7 @@ async function updateQuote() {
       }
     )
     quote.value = res.data
+    alert("Citação atualizada com sucesso.")
     router.push(`/fichamentos/${id.value}/citacoes`)
   } catch (error) {
     console.log(error)

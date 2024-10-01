@@ -44,6 +44,7 @@ async function removeUser() {
     const removedUser: User = res.data.data
     const toRemove = users.value.findIndex((u) => removedUser.id == u.id)
     users.value.splice(toRemove, 1)
+    alert("Usuário excluído com sucesso.")
   } catch (error) {
     toggleMessage()
     message.value = 'Não foi possível excluir o usuário.'

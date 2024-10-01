@@ -1,19 +1,42 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
-import { api } from '@/api';
-import { useUserStore } from '@/stores/userStore';
+import { computed, ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { api } from '@/api'
+import { useUserStore } from '@/stores/userStore'
 
 const login = ref('')
 const password = ref('')
 const router = useRouter()
 const userStore = useUserStore()
 
+const hidePassword = ref(true)
+const inputType = computed(() => {
+  if (hidePassword.value) {
+    return 'password'
+  }
+  else {
+    return 'text'
+  }
+})
+const inputIcon = computed(() => {
+  if (hidePassword.value) {
+    return 'visibility'
+  }
+  else {
+    return 'visibility_off'
+  }
+})
+
+
 const showError = ref(false)
 const message = ref('')
 
 async function toggleMessage() {
   showError.value = !showError.value
+}
+
+async function toggleVisibility() {
+  hidePassword.value = !hidePassword.value
 }
 
 async function authUser() {
@@ -29,7 +52,7 @@ async function authUser() {
   } catch (error) {
     console.log(error)
     toggleMessage()
-    message.value = "Login ou senha incorretos."
+    message.value = 'Login ou senha incorretos.'
   }
 }
 </script>
@@ -43,7 +66,6 @@ async function authUser() {
       </div>
       <form name="loginForm" @submit.prevent="authUser()">
         <div class="grid-list">
-
           <div class="inputsection">
             <label for="login">Login</label>
             <input type="text" id="login" v-model="login" placeholder="E-mail ou nome de usuário" />
@@ -51,34 +73,35 @@ async function authUser() {
 
           <div class="inputsection">
             <label for="password">Senha</label>
-            <input type="password" id="password" v-model="password" />
+            <input :type="inputType" id="password" v-model="password" />
+            <button type="button" @click="toggleVisibility()" class="toggle-password btn-icon-sm btn-plain" >
+              <span class="material-symbols-outlined"> {{ inputIcon }}</span>
+            </button>
           </div>
         </div>
 
         <button class="btn-primary" type="submit" name="login" method="post">Entrar</button>
       </form>
       <div class="footer">
-        <p class="body2 centered"> ou </p>
+        <p class="body2 centered">ou</p>
         <RouterLink to="/cadastro">
           <button class="btn-plain">Criar conta</button>
-          </RouterLink>
+        </RouterLink>
       </div>
     </div>
   </div>
 
-  <div class="non-modal" v-if="showError">
-    <div class="non-modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5>Erro</h5>
-          <button @click="toggleMessage()" class="btn-icon btn-icon-sm btn-plain">
-            <span class="material-symbols-outlined"> close </span>
-          </button>
-        </div>
+  <div v-if="showError" class="non-modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5>Erro</h5>
+        <button @click="toggleMessage()" class="btn-icon btn-icon-sm btn-plain">
+          <span class="material-symbols-outlined"> close </span>
+        </button>
+      </div>
 
-        <div class="modal-body">
-          <p class="body1">{{ message }}</p>
-        </div>
+      <div class="modal-body">
+        <p class="body1">{{ message }}</p>
       </div>
     </div>
   </div>
@@ -93,7 +116,7 @@ async function authUser() {
   min-width: none;
   align-self: center;
   /* flex: 0 1 0; */
-  
+
   /* align-self: stretch; */
   width: 400px;
 }
@@ -111,5 +134,11 @@ async function authUser() {
 
 .footer button {
   flex: 1 0 0;
+}
+
+.toggle-password {
+  position:relative;
+  bottom: 2.5rem;
+  left: calc(100% - 2rem);
 }
 </style>

@@ -71,6 +71,7 @@ async function removeAnnotation() {
     const removedUser: Annotation = res.data
     const toRemove = annotations.value.findIndex((u) => removedUser.id == u.id)
     annotations.value.splice(toRemove, 1)
+    alert("Fichamento excluído com sucesso.")
   } catch (error) {
     console.log(error)
   } finally {
@@ -97,7 +98,7 @@ async function cloneAnnotation() {
       },
       { headers: { Authorization: `Bearer ${userStore.token}` } }
     )
-
+    alert("Fichamento clonado com sucesso.")
     router.push(`/fichamentos/${res.data.data.id}/citacoes`)
   } catch (error: any) {
     console.log(error)

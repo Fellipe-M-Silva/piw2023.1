@@ -1,14 +1,16 @@
 <script setup lang="ts">
 import NavBar from '@/components/NavBar.vue'
 import SectionHeader from '@/components/SectionHeader.vue'
+import Toast from '@/components/Toast.vue'
 import { onMounted, ref } from 'vue'
 import { api } from '@/api'
 import { useRoute, useRouter } from 'vue-router'
 import type { User } from '@/types'
 import { useUserStore } from '@/stores/userStore'
 
-defineProps({
+const props = defineProps({
   name: String,
+  link: String,
   showAdmin: Boolean,
   hideEditSelf: Boolean
 })
@@ -37,9 +39,10 @@ async function fetchUser() {
     user.value = res.data.data
   } catch (error) {
     console.log(error)
-    toggleMessage()
     message.value = "Usuário não encontrado"
     router.push('/notfound')
+    toggleMessage()
+    
   }
 }
 
@@ -62,13 +65,14 @@ async function createUser() {
       }
     )
     user.value = res.data
-    toggleMessage()
-    message.value = "Usuário cadastrado com sucesso!"
-    router.push(`/usuarios/${user.value.id}`)
+    alert("Usuário cadastrado com sucesso.")
+    router.push(`/${props.link}`)
     
   } catch (error) {
-    toggleMessage()
+    console.log(error)  
     message.value = "Dados obrigatórios não adicionados."
+    toggleMessage()
+    console.log(showError.value)
   }
 }
 
@@ -91,8 +95,7 @@ async function updateUser() {
       }
     )
     user.value = res.data
-    toggleMessage()
-    message.value = "Usuário atualizado com sucesso!"
+    alert("Usuário atualizado com sucesso.")
     
   } catch (error) {
     toggleMessage()
@@ -102,7 +105,7 @@ async function updateUser() {
 
 onMounted(async () => {
   try {
-    id.value = route.params.id.toString()
+    id.value = route.params.id?.toString()
     if (id.value && id.value != '') {
       modoEdicao.value = true
       await fetchUser()
@@ -121,7 +124,7 @@ onMounted(async () => {
     <div class="container">
       <div class="content">
         <SectionHeader :pageName="name" v-if="modoEdicao"></SectionHeader>
-        <SectionHeader :pageName="`Novo ${name}`" v-else></SectionHeader>
+        <SectionHeader :pageName="`Novo ${name?.toLowerCase()}`" v-else></SectionHeader>
 
         <div class="panel">
           <form name="userForm" @submit.prevent="id ? updateUser() : createUser()">
@@ -146,7 +149,7 @@ onMounted(async () => {
                 <input type="password" id="password" v-model="user.password" />
               </div>
 
-              <div class="inputsection" v-if="userStore.user.isAdmin && !hideEditSelf">
+              <div class="inputsection" v-if="userStore.user?.isAdmin && !hideEditSelf">
                 <label for="isAdmin">Administrador</label>
                 <input type="checkbox" id="isAdmin" v-model="user.isAdmin" />
               </div>
@@ -185,7 +188,9 @@ onMounted(async () => {
       </div>
     </div>
   </main>
-    <div v-if="showError" class="non-modal-dialog">
+    
+  <div class="non-modal" v-if="showError">
+    <div class="non-modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
           <h5>Erro</h5>
@@ -199,6 +204,8 @@ onMounted(async () => {
         </div>
       </div>
     </div>
+  </div>
+  <!-- <Toast :visible="showError" :message="message" tone="error"></Toast> -->
 </template>
 
 <style scoped>

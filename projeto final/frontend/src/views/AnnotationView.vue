@@ -44,6 +44,7 @@ async function removeQuote() {
     const removedUser: Annotation = res.data
     const toRemove = annotation.value.quotes.findIndex((u) => removedUser.id == u.id)
     annotation.value.quotes.splice(toRemove, 1)
+    alert("Citação excluída com sucesso.")
   } catch (error) {
     console.log(error)
   } finally {
@@ -119,9 +120,9 @@ function copyText(quoteId: string) {
                   <span class="material-symbols-outlined">edit</span>Editar
                 </button>
               </RouterLink>
-              <button class="button btn-negative btn-sm">
+              <!-- <button class="button btn-negative btn-sm">
                 <span class="material-symbols-outlined">delete</span>Excluir
-              </button>
+              </button> -->
             </div>
           </div>
         </div>

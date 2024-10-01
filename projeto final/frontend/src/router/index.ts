@@ -31,14 +31,14 @@ const router = createRouter({
     {path: '/fichamentos/:id/citacoes/nova', component: QuoteDetail, meta: { requiresAuth: true }},
 
     {path: '/usuarios', component: UsersView, props: { name: 'Usuários', admin: false, buttonLabel: 'Novo usuário', buttonLink: 'usuarios' }, meta: { requiresAuth: true }},
-    {path: '/usuarios/novo', component: UserDetail, props: { name: 'Usuário', showAdmin: false, hideEditSelf: false }, meta: { requiresAuth: true }},
+    {path: '/usuarios/novo', component: UserDetail, props: { name: 'Usuário', showAdmin: false, hideEditSelf: false, link: 'usuarios'}, meta: { requiresAuth: true }},
     {path: '/usuarios/:id', component: UserDetail, props:{ name: 'Usuário', hideEditSelf : false }, meta: { requiresAuth: true }},
 
     {path: '/administradores', component: UsersView, props: { name: 'Administradores', admin :true, buttonLabel: 'Novo administrador', buttonLink: 'administradores' }, meta: { requiresAuth: true }},
-    {path: '/administradores/novo', component: UserDetail, props: { name: 'Administrador' }, meta: { requiresAuth: true }},
+    {path: '/administradores/novo', component: UserDetail, props: { name: 'Administrador', link: 'administradores' }, meta: { requiresAuth: true }},
     {path: '/administradores/:id', component: UserDetail, props: { name: 'Administrador' }, meta: { requiresAuth: true }},
 
-    {path: '/conta/:id', component: UserDetail, props:{hideEditSelf: true}, meta: { requiresAuth: true }},
+    {path: '/conta/:id', component: UserDetail, props:{name: 'Conta', hideEditSelf: true}, meta: { requiresAuth: true }},
 
     {path: '/notfound', component: NotFound},
     {path: '/:pathMatch(.*)*', component: NotFound}
@@ -54,15 +54,15 @@ router.beforeEach(async(to, from) => {
   const auth = useUserStore()
 
   if (to.meta.requiresAuth && !auth.user?.id) {
-    console.log('não autenticado')
+    alert('Não autenticado. faça login para continuar.')
     return '/login'
   }
   else if (adminRequired && !auth.user?.isAdmin) {
-    console.log('acesso negado. área de administradores')
+    alert('Acesso negado. Área de administradores.')
     return '/'
   }
   else if (superAdminRequired && !auth.user?.isSuperAdmin) {
-    console.log('acesso negado. área de super administradores')
+    alert('Acesso negado. Área de super administradores.')
     return '/'
   }
 

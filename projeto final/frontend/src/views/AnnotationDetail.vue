@@ -53,6 +53,7 @@ async function createAnnotation() {
       }
     )
     annotation.value = res.data.data
+    alert("Fichamento cadastrado com sucesso.")
     router.push(`/fichamentos/${annotation.value.id}/citacoes`)
   } catch (error:any) {
     console.log(error)
@@ -77,7 +78,7 @@ async function updateAnnotation() {
       }
     )
     annotation.value = res.data
-
+    alert("Fichamento atualizado com sucesso.")
     router.push(`/fichamentos/${id.value}/citacoes`)
   } catch (error) {
     toggleMessage()
@@ -123,7 +124,7 @@ onMounted(async () => {
                 <label for="workAuthors">Autoria</label>
                 <input type="text" id="workAuthors" v-model="annotation.workAuthors" />
               </div>
-              <div v-if="annotation.creatorUsername == userStore.user.username" class="inputsection">
+              <div v-if="annotation.creatorUsername == userStore.user.username || !route?.params?.id" class="inputsection">
                 <label for="isPublic">Marcar como público</label>
                 <input type="checkbox" id="isPublic" checked v-model="annotation.isPublic" />
               </div>

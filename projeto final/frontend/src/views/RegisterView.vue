@@ -22,6 +22,7 @@ async function createUser() {
       password: user.value.password
     })
     user.value = res.data
+    alert("Conta criada! faça login para continuar.")
     router.push('/fichamentos')
   } catch (error) {
     console.log(error)
